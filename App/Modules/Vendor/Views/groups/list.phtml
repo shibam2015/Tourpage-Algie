@@ -1,0 +1,77 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Mapped Tour</h4>
+    <form class="form-inline" method="post">
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "tn",
+                "class" => "form-control",
+                "placeholder" => "By Tour Name",
+            ));
+            ?>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/vendor/groups/list", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Map Tours Listing <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            <?php if ($this->vendors->isAllowed('groups', 'map')) { ?>
+                <div class="pull-right">
+                    <a class="btn btn-default btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('groups|map_tour'); ?>" role="button" title="Add new tour">
+                        <span class="glyphicon glyphicon-plus"></span> New Tour Map
+                        
+                    </a>
+                 
+                </div>
+            <?php } ?>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Tour Name</th>
+                        <th>Group Name</th>
+                        <?php if ($this->vendors->isAllowed('groups', 'edit') || $this->vendors->isAllowed('groups', 'remove') || $this->vendors->isAllowed('groups', 'report')) { ?>
+                            <th>Action</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                            <tr>
+                            <td><?php echo $item->tour->tourTitle; ?></td>
+                            <td><?php echo $item->group->groupName; ?></td>
+                                <td>
+                                    <?php if ($this->vendors->isAllowed('groups', 'remove')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/groups/remove/' . $item->groupId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour Mapping')); ?>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="9" class="text-center">No tour mapping is here</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<style>
+    .jq-ry-container {padding: 0;}
+</style>
+
+

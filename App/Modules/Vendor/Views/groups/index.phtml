@@ -1,0 +1,83 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Group</h4>
+    <form class="form-inline" method="post">
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "tn",
+                "class" => "form-control",
+                "placeholder" => "By Group Name",
+            ));
+            ?>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/vendor/groups", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Groups <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            <?php if ($this->vendors->isAllowed('groups', 'add')) { ?>
+                <div class="pull-right">
+                    <a class="btn btn-default btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('groups|new_group'); ?>" role="button" title="Add new tour">
+                        <span class="glyphicon glyphicon-plus"></span> New Group
+                        
+                    </a>
+                 
+                </div>
+            <?php } ?>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Group Name</th>
+                        <?php if ($this->vendors->isAllowed('groups', 'edit') || $this->vendors->isAllowed('groups', 'remove') || $this->vendors->isAllowed('groups', 'report')) { ?>
+                           <th>Status</th>
+                             <th>Action</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                            <tr>
+                            <td><?php echo $item->group->groupName; ?></td>
+                            <td><?php if($item->group->status ==1){
+                                echo "Actived";
+                              $diplaytext="Inactive";  
+                            }else{ 
+                                echo "Deactived";
+                              $diplaytext="Active";    
+                            } ?></td>
+                                <td>
+                                    <?php if ($this->vendors->isAllowed('groups', 'remove')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/groups/remove/' . $item->groupId . '/' . $item->group->status, $diplaytext, 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Update status')); ?>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="9" class="text-center">No group is here</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<style>
+    .jq-ry-container {padding: 0;}
+</style>
+
+

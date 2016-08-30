@@ -1,0 +1,56 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Users <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="usrlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Status</th>
+                            <?php if ($this->vendors->isAllowed('members', 'view')) { ?>
+                                <th>Action</th>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($pager->getTotalItems() > 0) { ?>
+                            <?php foreach ($pager->getItems() as $item) { ?>
+                                <tr>
+                                    <td><?php echo $item->member->firstName . ' ' . $item->member->lastName; ?></td>
+                                    <td><?php echo $item->member->emailAddress; ?></td>
+                                    <td><?php echo $item->member->phone; ?></td>
+                                    <td><?php echo $item->member->city; ?></td>
+                                    <td><?php echo $item->member->state ? $item->member->state->name : ''; ?></td>
+                                    <td><?php echo $item->member->country ? $item->member->country->name : ''; ?></td>
+                                    <td><?php echo $item->member->getStatus(); ?></td>
+                                    <?php if ($this->vendors->isAllowed('members', 'view')) { ?>
+                                        <td>
+                                            <?php echo $this->tag->linkTo(array('/vendor/members/view/' . $item->memberId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View Users Details')); ?>
+                                        </td>
+                                    <?php } ?>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="8" class="text-center">No user is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>

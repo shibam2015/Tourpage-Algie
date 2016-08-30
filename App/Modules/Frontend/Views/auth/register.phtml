@@ -1,0 +1,210 @@
+
+<?php 
+$this->assets->outputJs();
+$this->assets->outputCss();
+?>
+
+       <div class="container">
+        <div class="login-content">
+         <div class="col-lg-2 col-md-1"></div>
+           <div class="col-lg-4 col-md-5 col-sm-6">
+          
+        <form class="login-form" id="member_register" method="post">
+          
+          <h3>Sign Up</h3>
+           
+                <?php echo $form->renderElement('first_name'); ?>
+                <?php echo $form->renderElement('last_name'); ?>
+                <?php echo $form->renderElement('email_address'); ?>
+                <?php echo $form->renderElement('password'); ?>
+                <?php echo $form->renderElement('re_password'); ?>
+                
+           
+        
+                    <div class="clearfix"></div>
+                    <input type="submit" value="Create Account">
+                    <div class="clearfix"></div>
+                    <p><span>Already a member?</span><a href="<?php echo $this->url->get('/auth/login'); ?>">Login</a></p>
+                    <div class="clearfix"></div>
+           <!-- <div>
+            <a class="btn btn-primary btn-lg" onclick="jQuery('#member_register').submit(); return false;" style="cursor: pointer;">Create account</a>
+            </div>-->
+        
+        </form>
+        </div>
+        
+       
+       
+    <!--//subWrap-->
+    <style>/*.signupForm{list-style:none; margin-left: 10px;}.signupForm li label{display:inline-block;width:120px}.signupForm li{text-align:left}*/</style>
+
+               <div class="col-lg-4 col-md-5 col-sm-6">
+            	<div class="support-login">
+                <h3>Or sign up with</h3>
+                <div class="social-login-btn">
+
+                <a id="google_btn" onclick="checkLoginState();
+                    return false;">
+                <i class="fa fa-google-plus"></i>
+                       <p>Google</p>
+                </a>
+                <a id="google_btn" onclick="checkLoginState();
+                    return false;">
+               <i class="fa fa-facebook"></i>
+                         <p>Facebook</p>
+               </a>
+               </div>
+                   
+                    <div class="vacation-img">
+                    	<img src="../public/elements/frontend/assets/images/vacation-img.jpg">
+                    </div>
+                </div>
+            </div>
+        	<div class="col-lg-2 col-md-1"></div>
+            <div class="clearfix"></div>
+        </div>
+      
+</div>
+</main>
+        
+<?php /*?><script type="text/javascript">
+    jQuery(function () {
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>-- Select State --</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+</script>*/ ?>
+<script src="https://apis.google.com/js/platform.js"></script>
+<script type="text/javascript">
+    var auth2;
+    function initGApi() {
+        gapi.load('auth2', function () {
+            auth2 = gapi.auth2.init({
+                client_id: "456240196979-0riuvevl5h5og9h2umrgbcqnr04lucbu.apps.googleusercontent.com"
+            });
+            auth2.attachClickHandler('google_btn', {}, onSuccess, onFailure);
+        });
+    }
+    function onSuccess(user) {
+        var basicProfile = { 
+            id: user.getBasicProfile().getId(),
+            name: user.getBasicProfile().getName(),
+            email: user.getBasicProfile().getEmail()
+        };
+        
+        jQuery.ajax({
+            url: "<?php echo $this->url->get('/ajax/socialLogin');?>",
+            method: "POST",
+            dataType: "json",
+            data: jQuery.extend({
+                <?php if (isset($_GET['_rt']) && !empty($_GET['_rt'])) { ?>
+                    <?php if ($targetUri = base64_decode($_GET['_rt'])) { ?>
+                        target_uri: "<?php echo $targetUri;?>",
+                    <?php } ?>
+                <?php } ?>
+                base_uri: "<?php echo $this->url->get('/');?>",
+                login_uri: "<?php echo $this->url->get('/auth/login');?>",
+                register_uri: "<?php echo $this->url->get('/auth/register');?>"
+            }, basicProfile),
+            beforeSend: function (jqXHR, settings) {
+                console.log('Searching for users');
+            },
+            success: function (data, textStatus, jqXHR) {
+                window.location.href = data.redirect_uri;
+            }
+        });
+    }
+    function onFailure(error) {
+        console.log(error);
+    }
+    initGApi();
+</script>
+<script src="//connect.facebook.net/en_US/all.js"></script>
+<script type="text/javascript">
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '484302985080949',
+            xfbml: false,
+			//xfbml: true,
+            status: true,
+		    oauth: true,
+            cookie: true,
+            version: 'v2.4'
+        });
+    };
+
+    // Load the SDK asynchronously
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id))
+            return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function checkLoginState() {
+        var status = null;
+        FB.getLoginStatus(function (response) {
+            status = response.status;
+            if (status !== 'connected') {
+                FB.login(function (response) {
+                    if (response.status === 'connected') {
+                        fetchProfile();
+                    }
+                }, {
+                    scope: 'publish_actions',
+                    return_scopes: true
+                });
+            }
+            
+            if (status === 'connected') {
+                fetchProfile();
+            }
+        });
+    }
+    
+    function fetchProfile() {
+        FB.api('/me', function (response) {
+            var basicProfile = { 
+                id: response.id,
+                name: response.name,
+                email: response.email
+            };
+
+            jQuery.ajax({
+                url: "<?php echo $this->url->get('/ajax/socialLogin');?>",
+                method: "POST",
+                dataType: "json",
+                data: jQuery.extend({
+                    <?php if (isset($_GET['_rt']) && !empty($_GET['_rt'])) { ?>
+                        <?php if ($targetUri = base64_decode($_GET['_rt'])) { ?>
+                            target_uri: "<?php echo $targetUri;?>",
+                        <?php } ?>
+                    <?php } ?>
+                    base_uri: "<?php echo $this->url->get('/');?>",
+                    login_uri: "<?php echo $this->url->get('/auth/login');?>",
+                    register_uri: "<?php echo $this->url->get('/auth/register');?>"
+                }, basicProfile),
+                beforeSend: function (jqXHR, settings) {
+                    console.log('Searching for users');
+                },
+                success: function (data, textStatus, jqXHR) {
+                    window.location.href = data.redirect_uri;
+                }
+            });
+        });
+    }
+</script>

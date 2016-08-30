@@ -1,0 +1,71 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Local Agents <span class="badge"><?php echo $agents->getTotalItems(); ?></span>
+            <div class="pull-right">
+                <?php if ($this->vendors->isAllowed('agents', 'add')) { ?>
+                    <a class="btn btn-default btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('agents|new_local_agents'); ?>" role="button" title="Add New Local Agents">
+                        <span class="glyphicon glyphicon-plus"></span> New Local Agents
+                    </a>
+                <?php } ?>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="usrlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Commission</th>
+                            <th>Status</th>
+                            <?php if ($this->vendors->isAllowed('agents', 'edit') || $this->vendors->isAllowed('agents', 'remove')) { ?>
+                                <th>Action</th>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($agents->getTotalItems() > 0) { ?>
+                            <?php foreach ($agents->getItems() as $agent) { ?>
+                                <tr>
+                                    <td><?php echo $agent->firstName . ' ' . $agent->lastName; ?></td>
+                                    <td><?php echo $agent->emailAddress; ?></td>
+                                    <td><?php echo $agent->phone; ?></td>
+                                    <td><?php echo $agent->city; ?></td>
+                                    <td><?php echo $agent->state ? $agent->state->name : ''; ?></td>
+                                    <td><?php echo $agent->country ? $agent->country->name : ''; ?></td>
+                                    <td><?php echo $agent->commission; ?>%</td>
+                                    <td><?php echo $agent->getStatus(); ?></td>
+                                    <?php if ($this->vendors->isAllowed('agents', 'edit') || $this->vendors->isAllowed('agents', 'remove')) { ?>
+                                        <td>
+                                            <?php //echo $this->tag->linkTo(array('/vendor/agents/view/' . $agent->vlagentId . '/local', '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View Local Agent Details')); ?>
+                                            <?php if ($this->vendors->isAllowed('agents', 'edit')) { ?>
+                                                <?php echo $this->tag->linkTo(array('/vendor/agents/edit/' . $agent->vlagentId . '/local', '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Local Agent Details')); ?>
+                                            <?php } ?>
+                                            <?php if ($this->vendors->isAllowed('agents', 'remove')) { ?>
+                                                <a onClick="return confirmRedirect('<?php echo $this->url->get('/vendor/agents/remove/' . $agent->vlagentId . '/local'); ?>');" class="btn btn-danger btn-xs tooltips" title="Remove Local Agent Details"><span class="glyphicon glyphicon-trash"></span></a>
+                                            <?php } ?>
+                                        </td>
+                                    <?php } ?>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="9" class="text-center">No local agents is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $agents->getLinks(); ?>
+</nav>

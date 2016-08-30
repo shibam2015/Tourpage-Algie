@@ -1,0 +1,377 @@
+<style>
+    .masthead, .mastfoot, .cover-container{
+			width: 70%;
+		}
+    .cover {
+        padding: 30px;
+    }
+    @media (min-width: 992px) {
+        
+    }
+    @media (max-width: 480px) {
+        .masthead,
+        .mastfoot,
+        .cover-container {
+            width: 90%;
+        }
+    }
+</style>
+
+<!--  ---------------------------------header-----------------------------  --->
+<div class="section header">
+<div class="container">
+<div class="row">
+<div class="col-lg-3 col-md-3 col-sm-3">
+<div class="sitelogo">
+<a href="Supplier_home.html"><img style="max-width:100%; height:auto;" src="/public/elements/vendor/images/main-logo.png" alt="site-logo" /></a>
+</div>
+</div>
+<!--  ---------------------------------nav-----------------------------  --->
+
+<div class="col-lg-6 col-md-6 col-sm-3">
+<div class="menu-section">
+<nav>
+<ul>
+<li><a class="" href="#">Features</a></li>
+<li><a href="Supplier_pricing.html">Pricing</a></li>
+<li><a href="#">News</a></li>
+<li><a href="#">Support</a></li>
+<div class="clear"></div>
+</ul>
+</nav>
+</div>
+</div>
+
+<div class="col-lg-3 col-md-3 col-sm-3">
+<div class="login-sec">
+<ul>
+<li>
+   <?php echo $this->tag->linkTo(array('/vendor', 'LogIn', 'class' => 'sup_login')); ?> 
+    </li>
+<li><?php echo $this->tag->linkTo(array('/vendor/auth/register', 'Get Started Today', 'class' => 'sup_register')); ?></li>
+
+</ul>
+<div class="clear"></div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+</div>
+
+
+<section class="signup-sec">
+<h1>Just a Few More Details For Your Registration</h1>
+<form id="register-form" class="form-horizontalll" method="post">
+<input type="hidden" name="<?php echo $this->security->getTokenKey() ?>" value="<?php echo $this->security->getToken() ?>"/>
+<div class="cover-container">
+
+<div class="field-sec">
+
+<div class="form-group">
+<!--<label class="col-sm-3 control-label" for="">Name</label>-->
+<div class="col-sm-12">
+<!--<input class="form-control name-field" type="text" placeholder="First Name">
+<input class="form-control name-field2" type="text" placeholder="Last Name">-->
+<?php $form->renderBootstrap('vendor_first_name'); ?>
+<?php $form->renderBootstrap('vendor_last_name'); ?>
+</div>
+
+<div class="clearfix"></div>
+</div>
+
+<div class="form-group">
+<!--<label class="col-sm-3 control-label" for="">Email</label>-->
+<div class="col-sm-12">
+<?php $form->renderBootstrap('vendor_email'); ?>
+</div>
+<div class="clearfix"></div>
+</div>
+
+<div class="form-group">
+<!--<label class="col-sm-3 control-label" for="">Password</label>-->
+<div class="col-sm-12">
+<?php $form->renderBootstrap('vendor_password'); ?>
+</div>
+<div class="clearfix"></div>
+</div>
+    
+<div class="form-group">
+<!--<label class="col-sm-3 control-label" for="">Confirm Password</label>-->
+<div class="col-sm-12">
+<?php $form->renderBootstrap('vendor_re_password'); ?>
+</div>
+<div class="clearfix"></div>
+</div>
+
+
+<div class="form-group">
+<label class="col-sm-6 control-label" for="">Are you listed on Trip Advisor?</label>
+<div class="col-sm-6">
+<?php
+foreach (array("y" => "Yes", "n" => "No", "ns" => "Not Sure") as $tadvKey => $tadv) {
+        $attribute = array("vendor_is_trip_advisor", "value" => $tadvKey);
+        $attribute["onclick"] = "disableAdvisorLink(this);";
+        ?>
+        <div><?php echo \Phalcon\Tag::radioField($attribute); ?> <?php echo $tadv; ?></div>
+<?php } ?>
+</div>
+
+<div class="clearfix"></div>
+</div>
+
+
+<div class="form-group">
+<!--<label class="col-sm-6 control-label" for="">Trip Advisor Link</label>-->
+<div class="col-sm-12">
+<?php $form->renderBootstrap('vendor_trip_advisor_link'); ?>
+</div>
+
+<div class="clearfix"></div>
+</div>
+
+<div class="form-group col-sm-12">
+<label class="control-label" for="">Security</label>
+<div class="col-sm-12">
+<div class="col-sm-6">
+        <div class="form-group">
+         <?php \Tourpage\Helpers\Captcha::RenderImage(); ?>
+         </div>
+</div>
+<div class="col-sm-6"><?php echo $form->renderHorizental('captcha'); ?></div>
+</div>
+
+<div class="clearfix"></div>
+</div>
+</div>
+
+<div class="img-sec">
+<a href="#"><img style="max-width:100%; height:auto;" src="/public/elements/vendor/images/login-img.jpg" alt="img" /></a>
+</div>
+
+<div class="clearfix"></div>
+
+<!--<div class="sign-up-btn">
+<a class="sup_register b-pading b-color signup-btn" href="#">Get Started</a>
+</div>-->
+<div class="col-lg-12 text-center">
+    <div class="form-group">
+            <?php echo $form->render('submit'); ?>
+            <?php echo $this->tag->linkTo(array('/vendor', 'Cancel', 'class' => 'btn btn-info')); ?>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+</div>
+</form>
+</section>
+<section class="login-text">
+<div class="container">
+<div class="row">
+<div class="col-lg-12 col-md-12 col-sm-12">
+<p>
+<span>Ei amet expetenda usu. Ut nec libris conceptam complectitur</span>
+<br>
+id tollit menandri disputationi has. Ex omittam accusata honestatis mea, pro no animal denique nominavi. Et mea primis prompta, nostrum eligendi cum ne, at viris dicunt dolores vim. id tollit menandri disputationi has. Ex omittam accusata honestatis mea, pro no animal denique nominavi. Et mea primis prompta, nostrum eligendi cum ne, at viris dicunt dolores vim. id tollit menandri disputationi has. Ex omittam accusata honestatis mea, pro no animal denique nominavi. Et mea primis prompta, nostrum eligendi cum ne.
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<!------------------------------------footer----------------------------->
+
+<section class="footer">
+<div class="container">
+<div class="row">
+<div class="col-lg-4 col-md-4 col-sm-4">
+<div class="footer-holder1">
+<ul>
+<li><a href="#"><img src="/public/elements/vendor/images/footer-icon1.png" alt="icon" /></a></li>
+<li><a href="#"><img src="/public/elements/vendor/images/footer-icon2.png" alt="icon" /></a></li>
+<li><a href="#"><img src="/public/elements/vendor/images/footer-icon3.png" alt="icon" /></a></li>
+</ul>
+
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-4 col-sm-4">
+<div class="footer-holder2">
+<ul>
+<li><a href="#">About Tourpage</a></li>
+<li><a href="#">Careers	</a></li>
+<li><a href="#">Privacy, Terms & Condition</a></li>
+
+</ul>
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-4 col-sm-4">
+<div class="footer-holder2">
+<ul>
+<li><a href="#">Mobile Solution</a></li>
+<li><a href="#">FAQ</a></li>
+<li><a href="#">Support & Documentation</a></li>
+
+</ul>
+</div>
+
+</div>
+
+<div class="clear"></div>
+<div class="footer-bottom">
+Copyright © Tourpage 2016, All rights reserved
+</div>
+
+
+</div>
+</div>
+</section>
+
+
+
+<!------------------------------------footer---------------------------------->
+
+<script type="text/javascript">
+ 
+function disableAdvisorLink(element) {
+        var advisorLinkElement = jQuery("#vendor_trip_advisor_link");
+        if (element.value != 'y') {
+            if (!advisorLinkElement.is(":disabled")) {
+                advisorLinkElement.val("").prop("disabled", true);
+            }
+        } else {
+            advisorLinkElement.prop("disabled", false);
+        }
+    }
+</script>
+    
+</body>
+</html>
+<!-- /***********************signup-sec***********************/ -->
+<style>
+    
+.signup-sec{} 
+.signup-sec h1{margin:35px 0 50px; text-align:center; color:#044467; font-size:36px;}
+.cover-container{width:70%; margin:20px auto 100px;} 
+.field-sec {
+    float: left;
+    width: 60%;
+}
+.img-sec {
+    float: right;
+    width: 36%;
+} 
+.name-field{width:48%; float:left;} 
+.name-field2{width:48%; float:right;}  
+.fild-mar{margin-top:15px;} 
+.field-select{width:50%;}
+
+.signup-sec .cap{margin:2px 0;}
+.signup-sec p{font-size:14px; color:#1e769e;}
+
+.signup-sec p a{color:#1e769e; text-decoration:none; outline:none;}
+.signup-sec p a:hover{color:#1e769e; text-decoration:underline; outline:none;}
+.signup-sec p .fa{margin-right:6px;}
+.sign-up-btn{margin:50px 0; text-align:center;}
+.login-text { margin-bottom: 0;}
+.login-text p {
+    color: #191919;
+    font-size: 14px;
+    line-height: 20px;
+}
+.login-text p span {
+    font-weight: bold;
+}
+.signup-btn{padding:10px 80px !important; background:#1e769e !important;}
+/***************************************header-css***************************************/
+div, h1, h2, h3, h4, h5, h6, p, tr, td{margin:0; padding:0;}
+
+ul{list-style-type:none; margin:0; padding:0;}
+
+.header{background:#044467; padding:10px 0;}
+.sitelogo{}
+.sitelogo a{outline:none;}
+
+
+@media only screen and (min-width:970px){
+/**************************nav*************************************/
+.menu-section{padding:20px 0 0; text-align:center; }
+.menu-section ul{margin:0; padding:0;  padding-bottom:1px;}
+.menu-section ul li{display:inline-block;}
+.menu-section ul li:last-child{}
+.menu-section ul li a{color:#fff; font-size:16px; text-transform:uppercase; text-decoration:none; outline:none; line-height:15px; padding: 15px 25px ;}
+.menu-section ul li a:hover, .active{ color:#ccc !important; text-decoration:none; outline:none; }
+
+/**************************sub-menu*************************************/
+.menu-section ul ul {
+    padding:0;
+    margin: 0;
+	z-index:9999; background:#b7b7b7; transition: all 200ms linear 0s;  width:250px; color:#fff; top:39px;} 
+
+
+.menu-sectionul ul li {
+    list-style-type: none;
+    display:block; float:none;
+	width:250px;
+	border:none;
+	
+	
+}
+
+.menu-section ul ul li a {
+    text-decoration: none;
+    color:#fff;
+   	padding:10px 20px;
+    display:inline-block;
+	line-height:0!important;
+	width:250px;
+	line-height: 20px!important;
+	font-size:15px;
+	border:none;
+	text-transform:none;
+
+}
+
+.menu-section ul ul li a:hover{ color:#fff; border:none; width:250px;}
+
+.menu-section li ul {
+    display:none!important;
+    position: absolute;
+    
+}
+.menu-section li:hover ul {
+    display:block!important;
+}
+}
+/**************************nav-end***************************************/
+.login-sec{text-align:right; margin-top:18px;}
+
+.login-sec ul li{display:inline-block; margin-left:2px;}
+.sup_login{border:1px solid #fff; font-size:16px; text-transform:uppercase; padding:6px 10px; outline:none;
+	 text-decoration:none; color:#fff;}
+.sup_login:hover{color:#ccc; text-decoration:none; outline: none;}
+
+.sup_register{font-size:16px; padding:6px 10px; outline:none; text-decoration:none; color:#fff; background:#f08f25;}
+
+.sup_register:hover {color:#ccc; text-decoration:none; outline: none;}
+.sup_register:focus{color:#ccc; text-decoration:none; outline: none;}
+.sup_register a:active{color:#ccc; text-decoration:none; outline: none;}
+.login-sec ul li a:active{color:#ccc; text-decoration:none; outline: none;}
+/**************************footer****************************/
+.footer{margin-top:15px; background:#044467; padding:50px 0; position:inherit;}
+.footer-holder1{}
+.footer-holder1 ul li{list-style:none; display:inline-block; margin-right:10px;}
+
+.footer-holder2{}
+.footer-holder2 ul li{list-style:none; margin:10px 0; font-size:14px;}
+.footer-holder2 ul li a{text-decoration:none; outline:none; color:#fff;}
+.footer-holder2 ul li a:hover{text-decoration:none; outline:none; color:#ccc;}
+
+.footer-bottom{margin-top:30px; font-size:12px; color:#fff; text-align:center;}
+
+</style>

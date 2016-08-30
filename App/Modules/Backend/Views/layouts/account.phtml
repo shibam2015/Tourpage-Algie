@@ -1,0 +1,24 @@
+<?php $this->partial('layouts/common/header'); ?>
+<div class="container-fluid">
+    <div class="starter-template row">
+        <div class="col-md-12">
+            <div class="container">
+                <div class="col-md-3">
+                    <?php echo $this->element->getAccountMenu(); ?>
+                </div>
+                <div class="col-md-9">
+                    <?php $this->flash->output(); ?>
+                    <div class="panel panel-danger">
+                        <?php echo $this->getContent(); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .list-group-item{
+        border-color: #a94442;
+    }
+</style>
+<?php $this->partial('layouts/common/footer'); ?>

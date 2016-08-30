@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<head>
+    <?php echo $this->tag->getMeta(); ?>
+    <link href="<?php echo $this->url->get("/public/felm/favicon.ico") ?>" rel="icon" type="image/x-icon" />
+    <?php echo $this->tag->getTitle(); ?>
+    <?php $this->assets->outputCss('header_css'); ?>
+    <!--[if (lte IE 8)]>
+    <?php $this->assets->outputCss('header_ie_css'); ?>
+    <?php $this->assets->outputJs('header_ie_js'); ?>
+    <![endif]-->
+    <script type="text/javascript">
+        var setting = {"baseUri" : "<?php echo $this->url->getBaseUri();?>"};
+    </script>
+    <?php echo $this->tag->javascriptInclude(COMMON_DIR . "js/jquery.js"); ?>
+    <?php $this->assets->outputJs('header_js'); ?>
+</head>
+<body >
+    <?php echo $this->getContent(); ?>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Bookings</h4>
+    <form class="form-inline" method="post">
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "invn",
+                "class" => "form-control",
+                "placeholder" => "Invoice Number",
+                "autocomplete" => "off",
+            ));
+            ?>
+        </div>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "bkf",
+                "class" => "form-control",
+                "placeholder" => "Booked On >",
+                "autocomplete" => "off",
+            ));
+            ?>
+        </div>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "bkt",
+                "class" => "form-control",
+                "placeholder" => "< Booked On",
+                "autocomplete" => "off",
+            ));
+            ?>
+        </div>
+        <?php if ($this->vendors->getVendorData()->isParent()) { ?>
+            <?php if (count($bookedByAgents) > 0) { ?>
+                <div class="form-group">
+                    <?php
+                    echo Phalcon\Tag::selectStatic(array(
+                        "ba",
+                        "useEmpty" => true,
+                        "emptyText" => "Agents",
+                        'emptyValue' => "[all]",
+                        $bookedByAgents,
+                        "class" => "form-control"
+                    ));
+                    ?>
+                </div>
+            <?php } ?>
+            <?php if (count($bookingEmployees) > 0) { ?>
+                <div class="form-group">
+                    <?php
+                    echo Phalcon\Tag::selectStatic(array(
+                        "be",
+                        "useEmpty" => true,
+                        "emptyText" => "Employees",
+                        'emptyValue' => "[all]",
+                        $bookingEmployees,
+                        "class" => "form-control"
+                    ));
+                    ?>
+                </div>
+            <?php } ?>
+        <?php } ?>
+        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/vendor/booking", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Bookings <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <?php /* <th>#Booking No.</th> */ ?>
+                        <th>#Invoice No.</th>
+                        <th>Booked On</th>
+                        <th>User</th>
+                        <?php if ($this->vendors->getVendorData()->isParent()) { ?>
+                            <th>Agent (Reg.)</th>
+                            <th>Employee</th>
+                        <?php } ?>
+                        <th>Amount</th>
+                        <th>Booking</th>
+                        <th>Payment</th>
+                        <?php if ($this->vendors->isAllowed('booking', 'details')) { ?>
+                            <th>Action</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                            <tr>
+                                <?php /* <td>#<?php echo $item->bookingId; ?></td> */ ?>
+                                <td>#<?php echo $this->tag->linkTo(array('/vendor/booking/details/' . $item->bookingId, $item->booking->invoiceNumber)); ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatDate($item->booking->bookedOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?></td>
+                                <?php if ($this->vendors->getVendorData()->isParent()) { ?>
+                                    <td><?php echo!$item->booking->member->isAgent() ? $this->tag->linkTo(array('/vendor/members/view/' . $item->booking->member->memberId, $item->booking->member->getName(), 'target' => '_blank')) : '-'; ?></td>
+                                <?php } ?>
+                                <?php if ($this->vendors->getVendorData()->isParent()) { ?>
+                                    <td><?php echo $item->booking->agent ? $this->tag->linkTo(array('/vendor/agents/report/' . $item->booking->agent->agentWith->vragentId . '/registered', $item->booking->agent->getName(), 'target' => '_blank')) : '-'; ?></td>
+                                    <td><?php echo $item->employee ? $this->tag->linkTo(array('/vendor/employees/view/' . $item->employee->vendorId, $item->employee->getName(), 'target' => '_blank')) : '-'; ?></td>
+                                <?php } ?>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->booking->getTotalAmountByVendor($item->vendorId)); ?></td>
+                                <td><?php echo $item->booking->getBookingStatusText(FALSE); ?></td>
+                                <td><?php echo $item->booking->getPaymentStatusText(FALSE); ?></td>
+                                <?php if ($this->vendors->isAllowed('booking', 'details')) { ?>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/vendor/booking/details/' . $item->bookingId, '<span class="glyphicon glyphicon-eye-open"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View booking details')); ?>
+                                        <?php //echo $this->tag->linkTo(array('/vendor/booking/remove/' . $item->bookingId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Remove this booking')); ?>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="7" class="text-center">No booking is here</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery(document).on('keypress', '.hasDatepicker, .seasonal_datepicker', function (e) {
+            return false;
+        });
+        jQuery('#bkf, #bkt').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+</script>

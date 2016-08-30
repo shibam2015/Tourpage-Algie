@@ -1,0 +1,96 @@
+<section class="bodysection">
+
+<section class="contact-banner">
+<img style="max-width:100%; height:auto;" src="/Tour_Page/public/elements/frontend/assets/images/banner-img2.png" alt="c-banner" />
+</section>
+
+<section class="contact-contant-sec">
+<div class="container">
+<div class="row">
+
+<div class="contact_form_sec">
+<h1>Contact Us</h1>
+<div class="clear"></div>
+<div class="contact_form_sec_left">
+
+    <form id="contact-form" class="form-horizontalll" method="post">
+        
+       
+<!--<div class="form-holder clearfix">
+<select class="form-control input-field" name="">
+<option>Subject</option>
+<option>Subject-1</option>
+<option>Subject-2</option>
+</select>
+</div>-->
+ <div class="form-holder clearfix">
+<!--<input class="form-control input-field" name="" type="text" placeholder="Your Name*" />-->
+  <?php $form->renderElement('subject'); ?>   
+</div>
+
+<div class="form-holder clearfix">
+<!--<input class="form-control input-field" name="" type="text" placeholder="Your Name*" />-->
+  <?php $form->renderElement('name'); ?>   
+</div>
+
+<div class="form-holder clearfix">
+<!--<input class="form-control input-field" name="" type="text" placeholder="Email Address*" />-->
+ <?php echo $form->renderElement('email_address'); ?>
+</div>
+
+<div class="form-holder clearfix">
+<!--<input class="form-control input-field" name="" type="text" placeholder="Phone Number*" />-->
+<?php echo $form->renderElement('phone'); ?>
+</div>
+
+<div class="form-holder clearfix">
+<!--<textarea class="form-control" name="" cols="" rows="" placeholder="Your Message*"></textarea>-->
+<?php echo $form->renderElement('message'); ?>
+</div>
+
+<div class="form-holder clearfix">
+<input class="btn" name="" type="submit" value="Submit" />
+</div>
+
+</form>
+</div>
+
+<div class="contact_form_sec_right">
+<div class="contat-text-holder clearfix">
+<h3>Customer Service</h3>
+<p>customerservice@newyork.com</p>
+<p>212-962-6577 or toll free 800-220-6282</p>
+</div>
+
+<div class="contat-text-holder clearfix">
+<h3>Mailing Address</h3>
+<p>Leisure Pass North America</p>
+<p>36 West 44th Street, Suite 1407</p>
+<p>New York, NY 10036</p>
+</div>
+
+<div class="contat-text-holder clearfix">
+<h3>Office Hours</h3>
+
+<p><span>Mon</span>7:00 am - 7:00 pm</p>
+<p><span>Tue</span>7:00 am - 7:00 pm</p>
+<p><span>Wed</span>7:00 am - 7:00 pm</p>
+<p><span>Thu</span>7:00 am - 7:00 pm</p>
+<p><span>Fri</span>7:00 am - 7:00 pm</p>
+<p><span>Sat</span>9:00 am - 1:00 pm</p>
+<p><span>Sun</span>9:00 am - 1:00 pm</p>
+</div>
+
+
+</div>
+
+
+<div class="clear"></div>
+</div>
+
+</div>
+</div>
+</section>
+
+</section>
+

@@ -1,0 +1,106 @@
+<div class="panel-heading">
+    <h3 class="panel-title">
+        <?php echo $this->tag->getTitle(FALSE); ?>
+        <div class="pull-right">
+            <button class="btn btn-info btn-xs" onclick="return addBannerPanel();"><i class="fa fa-plus"></i> Add New Banner</button>
+        </div>
+    </h3>
+</div>
+<form class="form-inline" method="post" enctype="multipart/form-data">   
+    <div class="panel-body">
+        <div id="banner_panel_body" class="container_full">
+            <?php if ($vendor->vendorBanners->count() > 0) { ?>
+                <?php foreach ($vendor->vendorBanners as $vendorBanner) { ?>
+                    <div class="banner_wrapper" style="padding-bottom: 10px;float: left;width: 100%;">
+                        <div class="col-xs-8">
+                            <?php
+                            echo $this->tag->image(array(
+                                $vendorBanner->getBannerUri(),
+                                'class' => 'img-thumbnail'
+                            ));
+                            ?>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <input type="checkbox" id="remove_banner_<?php echo $vendorBanner->bannerId; ?>" name="remove_banner[]" value="<?php echo $vendorBanner->bannerId; ?>" onclick="if (this.checked) {if(!confirm('This banner will remove. Are you sure?')) { return false;}}">
+                                <label for="remove_banner_<?php echo $vendorBanner->bannerId; ?>">Remove Banner</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="banner_link_<?php echo $vendorBanner->bannerId; ?>">Banner Link</label>
+                                <input type="text" class="form-control" id="banner_link_<?php echo $vendorBanner->bannerId; ?>" name="banner_link[<?php echo $vendorBanner->bannerId; ?>]" value="<?php echo $vendorBanner->bannerLink; ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="banner_image_<?php echo $vendorBanner->bannerId; ?>">Banner Image</label>
+                                <input type="file" class="form-control" id="banner_image_<?php echo $vendorBanner->bannerId; ?>" name="banner_image[<?php echo $vendorBanner->bannerId; ?>]">
+                            </div>
+                            <div class="form-group">
+                                <label for="banner_status_<?php echo $vendorBanner->bannerId; ?>">Banner Status</label>
+                                <select class="form-control" id="banner_status_<?php echo $vendorBanner->bannerId; ?>" name="banner_status[<?php echo $vendorBanner->bannerId; ?>]">
+                                    <option value="<?php echo $vendorBanner::ACTIVE_STATUS_CODE; ?>"<?php echo $vendorBanner->bannerStatus == $vendorBanner::ACTIVE_STATUS_CODE ? ' selected="selected"' : ''; ?>>Active</option>
+                                    <option value="<?php echo $vendorBanner::INACTIVE_STATUS_CODE; ?>"<?php echo $vendorBanner->bannerStatus == $vendorBanner::INACTIVE_STATUS_CODE ? ' selected="selected"' : ''; ?>>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            <?php } else { ?>
+                To add banner click on "Add New Banner" button
+            <?php } ?>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <input type="submit" class="btn btn-primary" value="Submit" />
+    </div>
+</form>
+<style>
+    .form-inline .form-group{
+        margin-right: 5px;
+    }
+    input[type="file"].form-control {
+        border: 0;
+        box-shadow: none;
+        padding: 0px 2px;
+    }
+    label {
+        margin-right: 5px;
+    }
+</style>
+<script type="text/javascript">
+    var bannerCount = <?php echo $vendor->vendorBanners->count(); ?>;
+    function addBannerPanel() {
+        var uid = generateUid();
+        if (bannerCount <= 4) {
+            var bannerPanel = jQuery('#banner_panel_body');
+            if (jQuery('.banner_wrapper').length <= 0) {
+                bannerPanel.html('');
+            }
+            var bannerContainer = jQuery('<div/>');
+            bannerContainer.addClass('banner_wrapper');
+            bannerContainer.css('padding-bottom', '5px');
+            bannerContainer.attr('id', uid);
+            var panel = '<div class="form-group"><label for="banner_image">Banner Image</label>';
+            panel += '<input id="banner_image" name="banner_image[' + uid + ']" type="file" class="form-control">';
+            panel += '</div><div class="form-group">';
+            panel += '<label for="banner_link">Link to</label>';
+            panel += '<input type="text" class="form-control" name="banner_link[' + uid + ']" id="banner_link">';
+            panel += '</div>';
+            panel += '<button onclick="return removeBannerPanel(\'' + uid + '\');"><i class="fa fa-close"></i></button>';
+            bannerContainer.html(panel);
+            bannerPanel.append(bannerContainer);
+            bannerCount++;
+        } else {
+            alert('Maximum banner reach.');
+        }
+        return false;
+    }
+
+    function removeBannerPanel(uid) {
+        jQuery('#' + uid).remove();
+        bannerCount = bannerCount - 1;
+        var bannerPanel = jQuery('#banner_panel_body');
+        if (jQuery('.banner_wrapper').length === 0) {
+            bannerPanel.html('To add banner click on "Add New Banner" button');
+        }
+        return false;
+    }
+</script>

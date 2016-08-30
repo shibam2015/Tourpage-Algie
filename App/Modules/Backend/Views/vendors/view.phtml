@@ -1,0 +1,53 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">Vendor Details</div>
+    <div class="panel-body">
+        <div class="col-sm-8">
+            <dl class="dl-horizontal">
+                <dt>Name :</dt><dd><?php echo $vendor->firstName . ' ' . $vendor->lastName; ?></dd>
+                <dt>Category :</dt><dd><?php echo $vendor->category->categoryTitle; ?></dd>
+                <dt>Business Name :</dt><dd><?php echo $vendor->businessName; ?></dd>
+                <dt>Established since :</dt><dd><?php echo $vendor->estd; ?></dd>
+                <dt>Job Title :</dt><dd><?php echo $vendor->jobTitle; ?></dd>
+                <dt>Email Address :</dt><dd><?php echo $vendor->emailAddress; ?></dd>
+                <dt>Phone Number :</dt><dd><?php echo $vendor->phone; ?></dd>
+                <dt>City :</dt><dd><?php echo $vendor->city; ?></dd>
+                <dt>State :</dt><dd><?php echo $vendor->state->name; ?></dd>
+                <dt>Country :</dt><dd><?php echo $vendor->country->name; ?></dd>
+                <dt>Trip Advisor Link :</dt><dd><?php echo $vendor->tripAdvLink != '' ? '<a href="' . $vendor->tripAdvLink . '" target="_blank">' . $vendor->tripAdvLink . '</a>' : ''; ?></dd>
+                <dt>Tour & activities Type :</dt>
+                <?php
+                if (count($vendor->getVTTypes()) > 0) {
+                    $i = 1;
+                    ?>
+                    <?php foreach ($vendor->getVTTypes() as $vtType) { ?>
+                        <dd><?php echo $i . '. ' . $vtType->tourTypesTitle; ?></dd>
+                        <?php
+                        $i++;
+                    }
+                    ?>
+                <?php } else { ?>
+                    <dd></dd>
+                <?php } ?>
+                <dt>Status :</dt><dd><?php echo $vendor->getStatus(TRUE); ?></dd>
+                <dt>Member since :</dt><dd><?php echo \Tourpage\Helpers\Utils::formatDate($vendor->createdOn, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></dd>
+            </dl>
+        </div>
+        <div class="col-sm-4">
+            <?php
+            if ($vendor->getAvatarUri()) {
+                echo $this->tag->image(array(
+                    $vendor->getAvatarUri(),
+                    "alt" => $vendor->firstName . ' ' . $vendor->lastName,
+                    "title" => $vendor->firstName . ' ' . $vendor->lastName,
+                    "class" => "img-thumbnail",
+                ));
+            }
+            ?>
+        </div>
+        <div class="col-sm-12">
+            <?php echo $this->tag->linkTo(array('/admin/vendors/edit/' . $vendor->vendorId, 'Edit', 'class' => 'btn btn-info')); ?>
+            <?php echo $this->tag->linkTo(array('/admin/vendors/remove/' . $vendor->vendorId, 'Remove', 'class' => 'btn btn-danger')); ?>
+            <?php echo $this->tag->linkTo(array('/admin/vendors', 'Back', 'class' => 'btn btn-success')); ?>
+        </div>
+    </div>
+</div>

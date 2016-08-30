@@ -1,0 +1,113 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><?php echo ucfirst($formType);?> Employee</h3>
+    </div>
+    <form id="form-employee" class="form-horizontal" method="post" enctype="multipart/form-data">
+		<div class="panel-body">
+			<div class="col-sm-6">
+				<fieldset>
+					<legend style="border-width:0"><h3>About Employee</h3></legend>
+                    <?php //$form->renderBootstrap('job_title'); ?>
+					<?php $form->renderBootstrap('first_name'); ?>
+					<?php $form->renderBootstrap('last_name'); ?>
+				</fieldset>
+				<fieldset>
+					<legend style="border-width:0"><h3>Location Detail</h3></legend>
+					<?php $form->renderBootstrap('country'); ?>
+					<?php $form->renderBootstrap('state'); ?>
+					<?php $form->renderBootstrap('city'); ?>
+				</fieldset>
+            </div>
+            <div class="col-sm-6">
+				<fieldset>
+					<legend style="border-width:0"><h3>Contact Detail</h3></legend>
+					<?php $form->renderBootstrap('email_address'); ?>
+					<?php $form->renderBootstrap('phone'); ?>
+				</fieldset>
+				<fieldset>
+					<legend style="border-width:0"><h3>Account Detail</h3></legend>
+					<?php $form->renderBootstrap('password'); ?>
+					<?php $form->renderBootstrap('re_password'); ?>
+					<?php $form->renderBootstrap('emp_status'); ?>
+				</fieldset>
+            </div>
+            <div class="col-sm-12">
+				<fieldset>
+					<legend><h3>Employee Access Level <a id="sacl" class="btn btn-warning btn-xs sa">Select All</a></h3></legend>
+					<?php if (count($employeeAcl->aclMap()) > 0) { ?>
+						<dl class="dl-horizontal">
+						<?php foreach ($employeeAcl->aclMap() as $controller => $resource) { ?>
+							<?php
+							$aclResourceTagParam = ["aclr[]", "value" => $controller, "class" => "acl"];
+							if ($employeeAcl->isAllowed($controller)) {
+								$aclResourceTagParam["checked"] = "checked";
+							}
+							else{
+								  
+								}
+							?>
+							<dt><?php echo $this->tag->checkField($aclResourceTagParam);?> <?php echo $resource['title'];?></dt>
+							<?php if (isset($resource['actions']) && count($resource['actions']) > 0) { ?>
+								<?php foreach ($resource['actions'] as $action => $actionTitle) { ?>
+									<?php
+									$aclTagParam = ["acl[".$controller."][]", "value" => $action, "class" => "acl" . $controller . " acl"];
+									if ($employeeAcl->isAllowed($controller, $action)) {
+										$aclTagParam["checked"] = "checked";
+									}
+									?>
+									<dd><?php echo $this->tag->checkField($aclTagParam);?> <?php echo $actionTitle;?></dd>
+								<?php } ?>
+							<?php } ?>
+							<br />
+						<?php } ?>
+						</dl>
+					<?php } ?>
+				</fieldset>
+            </div>
+		</div>
+		<div class="panel-footer">
+			<?php echo $form->render('submit'); ?>
+			<?php echo $this->tag->linkTo(array('/vendor/employees', 'Back', 'class' => 'btn btn-success')); ?>
+		</div>
+    </form>
+</div>
+<style>
+	.dl-horizontal dd { border-left: 1px solid #ccc;padding-left: 20px;}
+	.dl-horizontal dt { text-align: left; }
+</style>
+<script type="text/javascript">
+    jQuery(function() {
+		jQuery("#sacl").click(function(evt){
+			evt.preventDefault();
+			if (jQuery(this).hasClass('sa')) {
+                jQuery('input[type="checkbox"].acl').prop('checked', true);
+                jQuery(this).removeClass('sa').addClass('ca');
+            } else {
+                jQuery('input[type="checkbox"].acl').prop('checked', false);
+                jQuery(this).removeClass('ca').addClass('sa');
+            }
+		});
+		jQuery('input[type="checkbox"].acl').click(function(){
+			var classText = "acl" + jQuery(this).val();
+			if (jQuery(this).is(':checked')) {
+                jQuery('input[type="checkbox"].' + classText).prop('checked', true);
+            } else {
+                jQuery('input[type="checkbox"].' + classText).prop('checked', false);
+            }
+		});
+        jQuery("#country").change(function() {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/');?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function(data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>Please, choose one...</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='"+response.states[s].stateId+"'>"+response.states[s].stateName+"</option>");
+                    }
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,175 @@
+<?php if ($tour) { ?>
+    <h4>Reviews for <em>"<?php echo $tour->tourTitle; ?>"</em></h4>
+<?php } ?>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Reviews <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            <?php if ($tour) { ?>
+                <div class="pull-right">
+                    <a class="btn btn-default btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('tours|manage_tours'); ?>" role="button" title="Back to tour lis">
+                        <span class="glyphicon glyphicon-arrow-left"></span> Back to list
+                    </a>
+                </div>
+            <?php } ?>
+        </h3>
+    </div>
+    <form id="form-reivews" class="form-inline" method="post">
+        <div class="panel-body">
+            <div class="col-lg-<?php echo $tour ? '9' : '12'; ?>">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" name="s_all" id="s_all"></th>
+                                <th colspan="2">Review By</th>
+                                <th>Review</th>
+                                <th>Rating</th>
+                                <th>Review On</th>
+                                <?php if (!$tour) { ?>
+                                    <th>Tour</th>
+                                <?php } ?>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ($pager->getTotalItems() > 0) { ?>
+                                <?php foreach ($pager->getItems() as $review) { ?>
+                                    <tr>
+                                        <td><input type="checkbox" name="rvt[]" value="<?php echo $review->reviewId; ?>" class="rv_t"></td>
+                                        <td>
+                                            <?php
+                                            $reviewerAvator = $this->url->getStatic(FRONT_END_DIR . 'images/reviewer_avatar_default.png');
+                                            if ($review->isMember()) {
+                                                if ($review->memberTourReview && $review->memberTourReview->count() > 0) {
+                                                    $reviewerAvator = $review->memberTourReview->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_ICON);
+                                                }
+                                            }
+                                            echo $this->tag->image(array(
+                                                $reviewerAvator,
+                                                "width" => 45,
+                                                "height" => 45
+                                            ));
+                                            ?>
+                                        </td>
+                                        <td><?php echo \Tourpage\Helpers\Utils::decodeString($review->reviewByName); ?></td>
+                                        <td><?php echo \Tourpage\Helpers\Utils::decodeString($review->reviewContent); ?></td>
+                                        <td>
+                                            <span id="star_count_<?php echo $review->reviewId; ?>"></span>
+                                            <script>jQuery(function () {jQuery('#star_count_<?php echo $review->reviewId; ?>').rateYo({rating: <?php echo $review->starCount; ?>, starWidth: "20px", readOnly: true});});</script>
+                                        </td>
+                                        <td><?php echo \Tourpage\Helpers\Utils::formatDate($review->reviewOn, \Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?></td>
+                                        <?php if (!$tour) { ?>
+                                            <td><?php echo $this->tag->linkTo(array($review->tour->getUri(), $review->tour->tourTitle, 'local' => false, 'target' => '_blank')); ?></td>
+                                        <?php } ?>
+                                        <td><?php echo $review->getStatus(); ?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        No one has given review
+                                        <?php if ($tour) { ?>
+                                            for "<em><?php echo $tour->tourTitle; ?></em>"
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <?php if ($tour) { ?>
+                <div class="col-lg-3">
+                    <div class="row">
+                        <div class="thumbnail">
+                            <?php echo $this->tag->image(array($tour->getDefaultImage()->getImageUri('thumb'))); ?>
+                            <div style="margin:10px 0;">
+                                <div id="star-rate-<?php echo $tour->tourId; ?>"></div>
+                                <script>jQuery(function () {jQuery('#star-rate-<?php echo $tour->tourId; ?>').rateYo({rating: <?php echo $tour->tourRating ? $tour->tourRating->getStar() : 0; ?>, starWidth: "20px", readOnly: true});});</script>
+                            </div>
+                            <hr/>
+                            <h4>Detail Ratings</h4>
+                            <dl class="star-dtls dl-horizontal">
+                                <?php for ($s = 5; $s >= 1; $s--) { ?>
+                                    <dt>
+                                    <div id="star-dtls-<?php echo $tour->tourId; ?>-<?php echo $s; ?>"></div>
+                                    <script>jQuery(function () {jQuery('#star-dtls-<?php echo $tour->tourId; ?>-<?php echo $s; ?>').rateYo({rating: <?php echo $s; ?>, starWidth: "20px", readOnly: true});});</script>
+                                    </dt>
+                                    <dd><?php echo $tour->tourRating ? $tour->tourRating->getRating($s) : 0; ?></dd>
+                                <?php } ?>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+        <?php if ($pager->getTotalItems() > 0) { ?>
+            <div class="panel-footer">
+                <div class="form-group">
+                    <select class="form-control" name="review_action" id="review_action">
+                        <option value=""> -- Select Review Action -- </option>
+                        <option value="active">Make Reviews Active</option>
+                        <option value="inactive">Make Reviews Inactive</option>
+                        <option value="remove">Remove Reviews</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input class="btn btn-success" type="submit" name="submit" value="Submit">
+                </div>
+            </div>
+        <?php } ?>
+    </form>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<style>
+    ul.list-inline{margin-left: 0;margin-bottom: 0;}
+    ul.list-inline > li{padding-left: 0;padding-right: 0;}
+    ul.list-inline > li > h6{margin-bottom: 0; margin-top: 0;margin-left: 10px;}
+    .jq-ry-container{padding:0;}
+    p.bg-info {padding: 15px;}
+</style>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery('#s_all').click(function () {
+            if (jQuery(this).is(':checked')) {
+                jQuery('input[type="checkbox"].rv_t').prop('checked', true);
+            } else {
+                jQuery('input[type="checkbox"].rv_t').prop('checked', false);
+            }
+        });
+        jQuery('input[type="checkbox"].rv_t').click(function () {
+            var rvtCount = jQuery('input[type="checkbox"].rv_t').length, rvtCheckedCount = 0;
+            if (jQuery(this).is(':checked')) {
+                rvtCheckedCount = jQuery('input[type="checkbox"].rv_t:checked').length;
+            }
+            if (jQuery('#s_all').is(':checked')) {
+                jQuery('#s_all').prop('checked', false);
+            }
+            if (rvtCount === rvtCheckedCount) {
+                jQuery('#s_all').prop('checked', true);
+            }
+        });
+        jQuery("#form-reivews").submit(function () {
+            var rvtCount = jQuery('input[type="checkbox"].rv_t:checked').length;
+            if (jQuery("#review_action").val() == '') {
+                alert("Please select review action.");
+                return false;
+            }
+            if (rvtCount == 0) {
+                alert("Please select review to apply review action.");
+                return false;
+            } else {
+                if (jQuery("#review_action").val() == 'remove') {
+                    if (!confirm("Selected reviews will remove. This action cann't be undone. Are you sure?")) {
+                        return false;
+                    }
+                }
+            }
+        });
+
+    });
+</script>

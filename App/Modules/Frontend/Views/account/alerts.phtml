@@ -1,0 +1,36 @@
+<div class="layout sidebar">
+    <ol>
+        <li class="active" style="border:0px;"><a><i class="glyphicon glyphicon-comment"></i> Alerts</a></li>
+    </ol>
+</div><!--//layout.sidebar-->
+<div class="layout contents alertList">
+    <h2><i class="glyphicon glyphicon-comment"></i> Alerts</h2>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <?php if ($alertLists->getTotalItems() > 0) { ?>
+    <?php $i = 1;?>
+        <?php foreach ($alertLists->getItems() as $item) { ?>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <span class="date">Alert :  <?php echo $i;?></span>
+						<?php if($item->getMemberNotificationStatus(true)==\Tourpage\Models\MembersNotifications::UNREAD_STATUS_CODE) { ?>
+                        <a href="<?php echo $this->url->get('/account/readalerts/').$item->notificationId; ?>"><span class="badge notyet">mark read</span></a>
+						<?php } else { ?>
+                        	<?php echo $item->getMemberNotificationStatus(false); ?>
+					<?php } ?>
+                    </span>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <?php echo $item->notification->notificationText;?>
+                </div>
+            </div>
+        </div>
+        <?php $i++;?>
+        <?php } ?>
+    <?php } ?>
+    </div>
+</div><!--//layout.contents-->

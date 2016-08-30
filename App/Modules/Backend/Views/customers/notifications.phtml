@@ -1,0 +1,81 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Notifications</h4>
+    <form class="form-inline" method="post">
+        <div class="col-lg-1 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::selectStatic(array(
+                    "s",
+                    "useEmpty" => true,
+                    "emptyText" => "All",
+                    'emptyValue' => "[all]",
+                    array(
+                        \Tourpage\Models\MembersNotifications::READ_STATUS_CODE => 'Read',
+                        \Tourpage\Models\MembersNotifications::UNREAD_STATUS_CODE => 'Unread',
+                    ),
+                    "class" => "form-control",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <input type="hidden" name="formtp" value="fltr" />
+        <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-search"></span> Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/admin/customers/notifications", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Notifications <span class="badge"><?php echo $pager->getTotalItems();?></span>
+            <div class="pull-right">
+                <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/customers/notifications/create');?>" role="button" title="" data-original-title="Post New Notofications">
+                    <span class="glyphicon glyphicon-plus"></span> Post New Notifications
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="usrlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Sl.</th>
+                            <th>Notification Text</th>
+                            <th>Sent To</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $i =1; ?>
+                        <?php if ($pager->getTotalItems() > 0) { ?>
+                            <?php foreach ($pager->getItems() as $item) { ?>
+                                <tr>
+                                	<td><?php echo $i; ?></td>
+                                    <td><?php echo $item->notification->notificationText; ?></td>
+                                    <td><?php echo $item->member->getName(); ?></td>
+                                    <td><?php echo $item->getMemberNotificationStatus(true); ?></td>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/admin/customers/notifications/remove/1/' . $item->notificationId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Notifications')); ?>
+                                    </td>
+                                </tr>
+                                <?php $i++;?>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="6" class="text-center">No Notifications Available</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>

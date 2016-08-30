@@ -1,0 +1,128 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Bookings</h4>
+    <form class="form-inline" method="post">
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "invn",
+                "class" => "form-control",
+                "placeholder" => "Invoice Number",
+                "autocomplete" => "off",
+            ));
+            ?>
+        </div>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "bkf",
+                "class" => "form-control",
+                "placeholder" => "Booked On >",
+                "autocomplete" => "off",
+            ));
+            ?>
+        </div>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "bkt",
+                "class" => "form-control",
+                "placeholder" => "< Booked On",
+                "autocomplete" => "off",
+            ));
+            ?>
+        </div>
+        <?php if (count($bookedByMembers) > 0) { ?>
+			<div class="form-group">
+				<?php
+				echo Phalcon\Tag::selectStatic(array(
+					"bm",
+					"useEmpty" => true,
+					"emptyText" => "Customer",
+					'emptyValue' => "[all]",
+					$bookedByMembers,
+					"class" => "form-control"
+				));
+				?>
+			</div>
+        <?php } ?>
+        <?php /*<div class="form-group">
+            <?php
+            echo Phalcon\Tag::selectStatic(array(
+                "bs",
+                "useEmpty" => true,
+                "emptyText" => "All Booking Status",
+                'emptyValue' => "[all]",
+                array(
+                    \Tourpage\Models\Booking::COMPLETE_STATUS_CODE => \Tourpage\Models\Booking::COMPLETE_STATUS_TEXT,
+                    \Tourpage\Models\Booking::CANCEL_STATUS_CODE => \Tourpage\Models\Booking::CANCEL_STATUS_TEXT,
+                ),
+                "class" => "form-control"
+            ));
+            ?>
+        </div>*/ ?>
+        <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-search"></span> Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/admin/booking", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Bookings <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>#Invoice No.</th>
+                        <th>Booked On</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Booking</th>
+                        <th>Payment</th>
+                        <th class="text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                            <tr>
+                                <td>#<?php echo $item->invoiceNumber; ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatDate($item->bookedOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?></td>
+                                <td><?php echo $item->member->getName() . ($item->member->isAgent() ? ' (Reg. Agent)' : ''); ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->bookingAmount); ?></td>
+                                <td><?php echo $item->getBookingStatusText(FALSE); ?></td>
+                                <td><?php echo $item->getPaymentStatusText(FALSE); ?></td>
+                                <td class="text-right">
+                                    <?php echo $this->tag->linkTo(array('/admin/booking/details/' . $item->bookingId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-default btn-xs tooltips', 'title' => 'View booking details')); ?>
+                                    <?php //echo $this->tag->linkTo(array('/admin/booking/remove/' . $item->bookingId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove this booking')); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="7" class="text-center">No booking is here</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery(document).on('keypress', '.hasDatepicker, .seasonal_datepicker', function (e) {
+            return false;
+        });
+        jQuery('#bkf, #bkt').datepicker({
+            changeMonth: true,
+            changeYear: true
+        });
+    });
+</script>

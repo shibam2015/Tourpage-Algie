@@ -1,0 +1,131 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Requests <span class="badge"><?php echo $agents->getTotalItems(); ?></span>
+            <div class="pull-right">
+                <a class="btn btn-default btn-xs" href="<?php echo $this->elements->getMainMenuItemUrl('agents|manage_registered_agents'); ?>" role="button">
+                    <span class="glyphicon glyphicon-arrow-left"></span> Back
+                </a>
+            </div>
+        </h3>
+    </div>
+    <form id="form-request" class="form-inline" method="post">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" name="s_all" id="s_all"></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Commission</th>
+                            <th>Status</th>
+                            <th>Request</th>
+                            <?php if ($this->vendors->isAllowed('agents', 'edit') || $this->vendors->isAllowed('agents', 'remove')) { ?>
+                                <th>Action</th>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($agents->getTotalItems() > 0) { ?>
+                            <?php foreach ($agents->getItems() as $agent) { ?>
+                                <tr>
+                                    <td><input type="checkbox" name="rqt[]" value="<?php echo $agent->vragentId; ?>" class="rqt_a"></td>
+                                    <td><?php echo $agent->member->firstName . ' ' . $agent->member->lastName; ?></td>
+                                    <td><?php echo $agent->member->emailAddress; ?></td>
+                                    <td><?php echo $agent->member->phone; ?></td>
+                                    <td><?php echo $agent->member->city; ?></td>
+                                    <td><?php echo $agent->member->state ? $agent->member->state->name : ''; ?></td>
+                                    <td><?php echo $agent->member->country ? $agent->member->country->name : ''; ?></td>
+                                    <td><?php echo $agent->commission; ?>%</td>
+                                    <td><?php echo $agent->getStatus(); ?></td>
+                                    <td><?php echo $agent->getRequestStatus(); ?></td>
+                                    <td>
+                                        <?php //echo $this->tag->linkTo(array('/vendor/agents/view/' . $agent->vragentId . '/registered', '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View Registered Agent Details')); ?>
+                                        <?php if ($this->vendors->isAllowed('agents', 'edit')) { ?>
+                                            <?php echo $this->tag->linkTo(array('/vendor/agents/edit/' . $agent->vragentId . '/registered', '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Registered Agent Details')); ?>
+                                        <?php } ?>
+                                        <?php if ($this->vendors->isAllowed('agents', 'remove')) { ?>
+                                            <a onClick="return confirmRedirect('<?php echo $this->url->get('/vendor/agents/remove/' . $agent->vragentId . '/registered'); ?>');" class="btn btn-danger btn-xs tooltips" title="Remove Local Agent Details"><span class="glyphicon glyphicon-trash"></span></a>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="9" class="text-center">No request for agents is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <?php if ($agents->getTotalItems() > 0) { ?>
+            <div class="panel-footer">
+                <div class="form-group">
+                    <select class="form-control" name="request_action" id="request_action">
+                        <option value=""> -- Select Action -- </option>
+                        <option value="approve">Approve Request</option>
+                        <option value="reject">Reject Request</option>
+                        <option value="remove">Remove Request</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input class="btn btn-success" type="submit" name="submit" value="Submit">
+                </div>
+            </div>
+        <?php } ?>
+    </form>
+</div>
+<nav>
+    <?php echo $agents->getLinks(); ?>
+</nav>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery('#s_all').click(function () {
+            if (jQuery(this).is(':checked')) {
+                jQuery('input[type="checkbox"].rqt_a').prop('checked', true);
+            } else {
+                jQuery('input[type="checkbox"].rqt_a').prop('checked', false);
+            }
+        });
+        jQuery('input[type="checkbox"].rqt_a').click(function () {
+            var pdtCount = jQuery('input[type="checkbox"].rqt_a').length, pdtCheckedCount = 0;
+            if (jQuery(this).is(':checked')) {
+                pdtCheckedCount = jQuery('input[type="checkbox"].rqt_a:checked').length;
+            }
+            if (jQuery('#s_all').is(':checked')) {
+                jQuery('#s_all').prop('checked', false);
+            }
+            if (pdtCount === pdtCheckedCount) {
+                jQuery('#s_all').prop('checked', true);
+            }
+        });
+        jQuery("#form-request").submit(function () {
+            var rvtCount = jQuery('input[type="checkbox"].rqt_a:checked').length;
+            if (jQuery("#request_action").val() == '') {
+                alert("Please select action.");
+                return false;
+            }
+            if (rvtCount == 0) {
+                alert("Please select request to apply action.");
+                return false;
+            } else {
+                if (jQuery("#request_action").val() == 'reject') {
+                    if (!confirm("Selected request will reject. Are you sure?")) {
+                        return false;
+                    }
+                }
+                if (jQuery("#request_action").val() == 'remove') {
+                    if (!confirm("Selected request will remove. This action cann't be undone. Are you sure?")) {
+                        return false;
+                    }
+                }
+            }
+        });
+    });
+</script>

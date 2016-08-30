@@ -1,0 +1,195 @@
+<div class="layout sidebar">
+    <ol>
+        <li class="active"><a><i class="glyphicon glyphicon-heart"></i> Favorite</a></li>
+    </ol>
+	<?php /*
+    <div class="filter sortby">
+        <label>Filter by Category</label>
+        <ul>
+            <li><input type="checkbox"> Cancun</li>
+            <li><input type="checkbox"> Maxico</li>
+            <li><input type="checkbox"> Hawaii</li>
+            <li><input type="checkbox"> Canada</li>
+            <li><input type="checkbox"> United states</li>
+            <li><input type="checkbox"> Cancun</li>
+            <li><input type="checkbox"> Maxico</li>
+            <li><input type="checkbox"> Hawaii</li>
+            <li><input type="checkbox"> Canada</li>
+            <li><input type="checkbox"> United states</li>
+            <li><input type="checkbox"> Cancun</li>
+            <li><input type="checkbox"> Maxico</li>
+            <li><input type="checkbox"> Hawaii</li>
+            <li><input type="checkbox"> Canada</li>
+            <li><input type="checkbox"> United states</li>
+        </ul>
+    </div>
+    <div class="filter sortby">
+        <label>Filter by Location</label>
+        <ul>
+            <li><input type="checkbox"> Cancun</li>
+            <li><input type="checkbox"> Maxico</li>
+            <li><input type="checkbox"> Hawaii</li>
+            <li><input type="checkbox"> Canada</li>
+            <li><input type="checkbox"> United states</li>
+            <li><input type="checkbox"> Cancun</li>
+            <li><input type="checkbox"> Maxico</li>
+            <li><input type="checkbox"> Hawaii</li>
+            <li><input type="checkbox"> Canada</li>
+            <li><input type="checkbox"> United states</li>
+            <li><input type="checkbox"> Cancun</li>
+            <li><input type="checkbox"> Maxico</li>
+            <li><input type="checkbox"> Hawaii</li>
+            <li><input type="checkbox"> Canada</li>
+            <li><input type="checkbox"> United states</li>
+        </ul>
+    </div>*/ ?>
+    <div class="filter sortby favList">
+        <?php /*<label>Favorite List <button type="button" class="btn newList" data-toggle="modal" data-target=".bs-example-modal-sm">New List</button>*/ ?></label>
+        <?php /*<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <label>New Favorite List </label>
+                    <input type="text"><button type="button" class="btn btn-default save" data-dismiss="modal">Submit</button> 
+                </div>
+            </div>
+        </div>*/ ?>
+        <p></p>
+        <label>Filter by Category</label>
+        <ul>
+            <?php if (count($favoriteFilter->Categories) > 0) { ?>
+				<?php foreach ($favoriteFilter->Categories as $category) { ?>
+					<li><a href="<?php echo $this->url->get('/account/favorites');?>?sl=<?php echo urlencode($category->slug);?>&ci=<?php echo $category->id;?>"><?php echo $category->title;?> <span>(<?php echo $category->tourCount;?>)</span></a></li>
+				<?php } ?>
+			<?php } else { ?>
+            	<small>Category list is empty</small>
+            <?php } ?>
+        </ul>
+        <p></p>
+        <label>Filter by Location</label>
+        <ul>
+			<?php if (count($favoriteFilter->Cities) > 0) { ?>
+				<?php foreach ($favoriteFilter->Cities as $city) { ?>
+					<li><a href="<?php echo $this->url->get('/account/favorites');?>?l=<?php echo urlencode($city->title);?>"><?php echo $city->title;?> <span>(<?php echo $city->tourCount;?>)</span></a></li>
+				<?php } ?>
+			<?php } else { ?>
+            	<small>City list is empty</small>
+            <?php } ?>
+        </ul>
+        <p></p>
+        <label>Filter by Attraction</label>
+        <ul>
+			<?php if (count($favoriteFilter->Attractions) > 0) { ?>
+				<?php foreach ($favoriteFilter->Attractions as $attraction) { ?>
+					<li><a href="<?php echo $this->url->get('/account/favorites');?>?at=<?php echo urlencode($attraction->id);?>"><?php echo $attraction->title;?> <span>(<?php echo $attraction->tourCount;?>)</span></a></li>
+				<?php } ?>
+			<?php } else { ?>
+            	<small>Attraction list is empty</small>
+            <?php } ?>
+        </ul>
+    </div>
+</div><!--//layout.sidebar-->
+
+<div class="layout contents favorite">
+    <div class="filter sortby">
+        <ol>
+        <?php if (count($favoriteFilter->Keywords) > 0) { ?>
+				<?php foreach ($favoriteFilter->Keywords as $keyword) { ?>
+					<li><a href="<?php echo $this->url->get('/account/favorites');?>?ti=<?php echo $keyword->tourId;?>"><?php echo $keyword->title;?></a></li>
+				<?php } ?>
+			<?php } else { ?>
+            	<p class="padding5"><small>Keyword list is empty</small></p>
+            <?php } ?>
+            <!--<li>Favorite list 001 <input type="checkbox"></li>
+            <li>Maxico <input type="checkbox"></li>
+            <li>Hawaii <input type="checkbox"></li>
+            <li>Favorite list 001 <input type="checkbox"></li>
+            <li>United states <input type="checkbox"></li>
+            <li>Cancun <input type="checkbox"></li>
+            <li>Maxico <input type="checkbox"></li>
+            <li>Favorite list 001Favorite list 001 <input type="checkbox"></li>
+            <li>Canada <input type="checkbox"></li>
+            <li>United states <input type="checkbox"></li>
+            <li>Favorite list 001Favorite list 001 <input type="checkbox"></li>
+            <li>Maxico <input type="checkbox"></li>
+            <li>Hawaii <input type="checkbox"></li>
+            <li>Canada <input type="checkbox"></li>
+            <li>United states <input type="checkbox"></li>-->
+        </ol>
+    </div>
+    <div class="account column3">
+        <?php if ($favoriteTours->getTotalItems() > 0) { ?>
+            <?php foreach ($favoriteTours->getItems() as $favotiteItem) { ?>
+				<div class="item col-sm-3">
+					<?php if ($favotiteItem->tour->getDefaultImage()) { ?>
+						<?php echo $this->tag->image(array($favotiteItem->tour->getDefaultImage()->getImageUri(), "alt" => $favotiteItem->tour->tourTitle, "class" => "big"), false); ?>
+					<?php }?>
+					<div class="info">
+						<h1 title="<?php echo $favotiteItem->tour->tourTitle; ?>"><a style='width:auto;' target="_blank" href="<?php echo $favotiteItem->tour->getUri(); ?>"><?php echo strlen($favotiteItem->tour->tourTitle) > 63 ? substr($favotiteItem->tour->tourTitle, 0, 60) . '...' : $favotiteItem->tour->tourTitle; ?></a></h1>
+						<div class="price" style="margin-top:-30px;">
+							<span class="oriPrice" style="margin-bottom:5px;"><?php echo \Tourpage\Helpers\Utils::formatCurrency($favotiteItem->tour->tourPrice->getPrice()); ?></span>
+                            <p><a style='width:auto;' class="btn btn-xs btn-primary" href="<?php echo $favotiteItem->tour->getUri(); ?>">Book Now</a></p>
+						</div><!--//price-->
+					</div><!--//info-->
+					<div class="info opt">
+						<hr>
+						<div class="left">
+							<div class="operator">
+								<?php
+								$vendorAvator = $this->url->getStatic(FRONT_END_DIR . 'images/no_face.png');
+								if ($favotiteItem->tour->tourVendor->vendor->getAvatarUri()) {
+									$vendorAvator = $favotiteItem->tour->tourVendor->vendor->getAvatarUri();
+								}
+								echo $this->tag->image(array(
+									$vendorAvator,
+									"alt" => $favotiteItem->tour->tourVendor->vendor->getName(),
+									"title" => $favotiteItem->tour->tourVendor->vendor->getName(),
+								));
+								?>
+								<ul>
+									<li class="companyname" title="<?php echo $favotiteItem->tour->tourVendor->vendor->getBusinessName(); ?>"><a style='width:auto;' target="_blank" href="<?php echo $favotiteItem->tour->tourVendor->vendor->getStorFrontUri();?>"><?php echo strlen($favotiteItem->tour->tourVendor->vendor->getBusinessName()) > 22 ? ucwords(substr($favotiteItem->tour->tourVendor->vendor->getBusinessName(), 0, 19)). '...' : ucwords($favotiteItem->tour->tourVendor->vendor->getBusinessName()); ?></a>
+                                    </li>
+                                    <li class="additional"><i class="glyphicon glyphicon-user"></i> <?php echo strlen($favotiteItem->tour->tourVendor->vendor->getName()) > 22 ? ucwords(substr($favotiteItem->tour->tourVendor->vendor->getName(), 0, 19)). '...' : ucwords($favotiteItem->tour->tourVendor->vendor->getName()); ?></li>
+									<li class="additional"><i class="glyphicon glyphicon-map-marker"></i> <?php echo ($favotiteItem->tour->tourVendor->vendor->state ? $favotiteItem->tour->tourVendor->vendor->state->name . ', ' : '') . ($favotiteItem->tour->tourVendor->vendor->country ? $favotiteItem->tour->tourVendor->vendor->country->name : ''); ?></li>
+									<li class="additional"><i class="glyphicon glyphicon-earphone"></i> <?php echo $favotiteItem->tour->tourVendor->vendor->phone;?></li>
+									<li class="additional"><i class="glyphicon glyphicon-envelope"></i> <?php echo $favotiteItem->tour->tourVendor->vendor->emailAddress;?></li>
+								</ul>
+							</div><!--//operator-->
+						</div><!--//left-->
+						<div class="right"></div><!--//right-->
+					</div><!--//info-->
+				</div><!--//item-->
+            <?php } ?>
+        <?php } else { ?>
+            <p class="jumbotron">Favorite list is empty</p>
+        <?php } ?>
+    </div><!--//account.column1-->
+    <div class="clearfix"></div>
+    <nav><?php echo $favoriteTours->getLinks(); ?></nav>
+
+</div><!--//layout.contents favorite-->
+
+<?php /*<td style="vertical-align:top">
+	<?php echo $this->tag->linkTo(array($favotiteItem->model->getUri(), 'View', 'local' => false, 'class' => 'btn btn-info')); ?>
+	<?php //echo $this->tag->linkTo(array('/account/removefavorite/' . $favotiteItem->id . '/' . $favotiteItem->type, 'Remove')); ?>
+	<a class="btn btn-danger" onclick="return confirmRedirect('<?php echo $this->url->get('/account/removefavorite/' . $favotiteItem->id . '/' . $favotiteItem->type); ?>')">Remove</a>
+</td>*/?>
+
+<?php /* <tr>
+  <td style="vertical-align:top">
+  <?php if ($favotiteItem->model->getLogoUri()) { ?>
+  <?php echo $this->tag->image(array($favotiteItem->model->getLogoUri(), "alt" => $favotiteItem->model->businessName), false); ?>
+  <?php } else { ?>
+  Logo not found
+  <?php } ?>
+  </td>
+  <td style="vertical-align:top">
+  <?php echo $this->tag->linkTo(array($favotiteItem->model->getStorFrontUri(), $favotiteItem->model->businessName, 'local' => false)); ?>
+  <br /><span style="font-size: 12px;">Operator: <?php echo $favotiteItem->model->firstName . ' ' . $favotiteItem->model->lastName; ?></span>
+  <br /><span style="font-size: 12px;">Location: <?php echo $favotiteItem->model->city . ', ' . $favotiteItem->model->state->name . ', ' . $favotiteItem->model->country->name; ?></span>
+  </td>
+  <td style="vertical-align:top">
+  <?php echo $this->tag->linkTo(array($favotiteItem->model->getStorFrontUri(), 'View', 'local' => false, 'class' => 'btn btn-info')); ?>
+  <?php //echo $this->tag->linkTo(array('/index/removefavorite/' . $favotiteItem->id . '/' . $favotiteItem->type, 'Remove')); ?>
+  <a class="btn btn-danger" onclick="return confirmRedirect('<?php echo $this->url->get('/account/removefavorite/' . $favotiteItem->id . '/' . $favotiteItem->type); ?>')">Remove</a>
+  </td>
+  </tr> */ ?>

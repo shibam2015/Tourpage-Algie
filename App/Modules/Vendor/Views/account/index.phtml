@@ -1,0 +1,51 @@
+<div class="panel-heading"><?php echo $this->tag->getTitle(FALSE); ?></div>
+<div class="panel-body">
+    <div class="col-sm-8">
+        <dl class="dl-horizontal">
+            <dt>Name :</dt><dd><?php echo $vendor->getFullName(); ?></dd>
+            <?php if ($vendor->getVendorData()->isParent()) { ?>
+            <dt>Category :</dt><dd><?php if ($vendor->getVendorData()->category) { echo $vendor->getVendorData()->category->categoryTitle; }?></dd>
+                <dt>Business Name :</dt><dd><?php echo $vendor->getVendorData()->businessName; ?></dd>
+                <dt>Established since :</dt><dd><?php echo $vendor->getVendorData()->estd; ?></dd>
+                <dt>Job Title :</dt><dd><?php echo $vendor->getVendorData()->jobTitle; ?></dd>
+            <?php } ?>
+            <dt>Email Address :</dt><dd><?php echo $vendor->getEmail(); ?></dd>
+            <dt>Phone Number :</dt><dd><?php echo $vendor->getVendorData()->phone; ?></dd>
+            <dt>Address 1 :</dt><dd><?php echo $vendor->getVendorData()->addressOne; ?></dd>
+            <dt>Address 2 :</dt><dd><?php echo $vendor->getVendorData()->addressTwo; ?></dd>
+            <dt>City :</dt><dd><?php echo $vendor->getVendorData()->city; ?></dd>
+            <dt>State :</dt><dd><?php if ($vendor->getVendorData()->state) { echo $vendor->getVendorData()->state->name; }?></dd>
+            <dt>Country :</dt><dd><?php if ($vendor->getVendorData()->country) { echo $vendor->getVendorData()->country->name; }?></dd>
+            <dt>ZIP :</dt><dd><?php echo $vendor->getVendorData()->zipCode; ?></dd>
+            <?php if ($vendor->getVendorData()->isParent()) { ?>
+                <dt>Trip Advisor :</dt><dd><?php echo $vendor->isTripAdvisor(); ?></dd>
+                <dt>Trip Advisor Link :</dt><dd><?php echo $vendor->getVendorData()->tripAdvLink != '' ? '<a href="' . $vendor->getVendorData()->tripAdvLink . '" target="_blank">' . $vendor->getVendorData()->tripAdvLink . '</a>' : ''; ?></dd>
+                <dt>Tour & activities Type :</dt>
+                <?php
+                if (count($vendor->getVendorData()->getVTTypes()) > 0) {
+                    $i = 1;
+                    ?>
+                    <?php foreach ($vendor->getVendorData()->getVTTypes() as $vtType) { ?>
+                        <dd><?php echo $i . '. ' . $vtType->tourTypesTitle; ?></dd>
+                        <?php
+                        $i++;
+                    }
+                    ?>
+                <?php } else { ?>
+                    <dd></dd>
+                <?php } ?>
+                <dt>Vendor From :</dt><dd><?php echo \Tourpage\Helpers\Utils::formatDate($vendor->getVendorData()->createdOn, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></dd>
+            <?php } ?>
+        </dl>
+    </div>
+    <div class="col-sm-4">
+        <?php
+        echo $this->tag->image(array(
+            $vendor->getVendorData()->getAvatarUri(),
+            "alt" => $vendor->getFullName(),
+            "title" => $vendor->getFullName(),
+            "class" => "img-thumbnail",
+        ));
+        ?>
+    </div>
+</div>

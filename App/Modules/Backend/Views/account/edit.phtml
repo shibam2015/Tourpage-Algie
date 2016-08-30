@@ -1,0 +1,21 @@
+<div class="panel-heading"><i class="fa fa-pencil-square-o"></i> Account Edit</div>
+<div class="panel-body">
+    <form class="form-horizontal" method="post">
+        <fieldset>
+            <div class="tab-wrapper">
+                <div class="col-xs-8">
+                    <?php $form->renderBootstrap('username'); ?>
+                    <?php $form->renderBootstrap('first_name'); ?>
+                    <?php $form->renderBootstrap('last_name'); ?>
+                    <?php $form->renderBootstrap('email'); ?>
+                    <?php $form->renderBootstrap('phone'); ?>
+                    <?php //$form->renderBootstrap('status'); ?>
+                </div>
+            </div>
+        </fieldset>
+        <div class="col-lg-12 no-pad">
+            <?php echo $form->render('submit'); ?>
+            <?php echo $this->tag->linkTo(array('/admin/account', 'Cancel', 'class' => 'btn btn-primary')); ?>
+        </div>
+    </form>
+</div>

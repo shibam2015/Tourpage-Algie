@@ -1,0 +1,341 @@
+<?php $this->partial('account/common/index_sidebar'); ?>
+<div class="layout contents">
+    <form id="payment-options" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="form_type" value="new_card">
+        <h2><i class="glyphicon glyphicon-credit-card"></i> Saved Credit Cards <a class="btn btn-primary pull-right add_card">Add credit/debit card</a></h2>
+        <div style="display: none;" class="account basicinfo step01">
+            <ul>
+                <li>
+                    <label>Enter your credit card</label>
+                    <?php
+                    echo $this->tag->image($this->url->getStatic(FRONT_END_DIR . 'images/card/amax.jpg'));
+                    echo $this->tag->image($this->url->getStatic(FRONT_END_DIR . 'images/card/discover.jpg'));
+                    echo $this->tag->image($this->url->getStatic(FRONT_END_DIR . 'images/card/jcb.jpg'));
+                    echo $this->tag->image($this->url->getStatic(FRONT_END_DIR . 'images/card/master.jpg'));
+                    echo $this->tag->image($this->url->getStatic(FRONT_END_DIR . 'images/card/unionpay.jpg'));
+                    echo $this->tag->image($this->url->getStatic(FRONT_END_DIR . 'images/card/visa.jpg'));
+                    ?>
+                </li>
+                <li>
+                    <label>Card type</label>
+                    <?php echo $this->tag->selectStatic(array('card_type', array_merge(array('' => 'Please choose one...'), \Tourpage\Helpers\Utils::getCcList())));?>
+                </li>
+                <li><label>Card number</label><?php echo $this->tag->textField('card_number'); ?></li>
+                <li><label>Name on card</label><?php echo $this->tag->textField('card_name'); ?></li>
+                <li><label>CVV</label><?php echo $this->tag->passwordField('card_cvv'); ?></li>
+                <li>
+                    <label>Expiration date</label>
+                    <?php
+                    echo $this->tag->selectStatic(array('card_exp_month', \Tourpage\Helpers\Utils::getMonths()));
+                    echo $this->tag->selectStatic(array('card_exp_year', \Tourpage\Helpers\Utils::getYears(array('range' => array('end' => 20)))));
+                    ?>
+                </li>
+            </ul>
+            <div class="lastcontent thebuttonlayout001" style="float:none;padding-left:10px;margin-bottom:20px;">
+                <a class="btn cancel"> Cancel </a>
+                <a class="btn next">Next </a>
+            </div>
+        </div><!--//account.basicinfo step01-->
+        <div class="account basicinfo step02" style="clear: both; display: none;">
+            <ul>
+                <li><label>First name</label><?php echo $this->tag->textField('first_name'); ?></li>
+                <li><label>Last name</label><?php echo $this->tag->textField('last_name'); ?></li>
+                <li><label>Address (Line 1)</label><?php echo $this->tag->textField('address_1'); ?></li>
+                <li><label>Address (Line 2)</label><?php echo $this->tag->textField('address_2'); ?></li>
+                <li><label>Phone Number</label><?php echo $this->tag->textField('phone'); ?></li>
+            </ul>
+            <ul>
+                <li>
+                    <label>Country</label>
+                    <?php
+                    echo $this->tag->select(array(
+                        'country',
+                        \Tourpage\Models\Country::find('status = ' . \Tourpage\Models\Country::ACTIVE_STATUS_CODE),
+                        "using" => array("countryId", "name"),
+                        "useEmpty" => true,
+                        "emptyText" => "Please choose one..."
+                    ));
+                    ?>
+                </li>
+                <li>
+                    <label>Province/State</label>
+                    <?php
+                    echo $this->tag->select(array(
+                        'state',
+                        \Tourpage\Models\State::find('countryId = ' . $this->member->getResource()->countryId . ' AND status = ' . \Tourpage\Models\State::ACTIVE_STATUS_CODE),
+                        "using" => array("stateId", "name"),
+                        "useEmpty" => true,
+                        "emptyText" => "Please choose one..."
+                    ));
+                    ?>
+                </li>
+                <li><label>City</label><?php echo $this->tag->textField('city'); ?></li>
+                <li><label>Postcode/ZIP</label><?php echo $this->tag->textField('zip'); ?></li>
+            </ul>
+            <div class="lastcontent thebuttonlayout001">
+                <a class="btn back">Back </a> <a class="btn save"> Save this card </a> 
+            </div>
+        </div><!--//account.basicinfo step02-->
+    </form>
+    <form id="payment-options-list" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="form_type" value="saved_card">
+        <div class="account basicinfo tabletype01 cardlist" style="clear:both">
+            <table>
+                <thead>
+                    <tr>
+                        <td><span>Credit &amp; Debit Cards</span><span>Expires</span></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($memberCards && $memberCards->count() > 0) { ?>
+                        <?php foreach ($memberCards as $memberCard) { ?>
+                            <?php
+                            $cardCountry = \Tourpage\Models\Country::find('status = ' . \Tourpage\Models\Country::ACTIVE_STATUS_CODE);
+                            $cardState = \Tourpage\Models\State::find('countryId = ' . $memberCard->countryId . ' AND status = ' . \Tourpage\Models\State::ACTIVE_STATUS_CODE);
+                            ?>
+                            <tr>
+                                <td>
+                                    <a class="ttit" data-toggle="collapse" data-target="#detailContent0" aria-expanded="false" aria-controls="detailContents">
+                                        <span><i class="glyphicon glyphicon-credit-card"></i> <?php echo $memberCard->cardNumber; ?>  </span>
+                                        <span><?php echo $memberCard->expiryMonth; ?>/<?php echo $memberCard->expiryYear; ?></span>
+                                        <span><i class="glyphicon glyphicon-chevron-down"></i></span>
+                                    </a>
+                                    <ul style="display: none;" class="detailContents" id="detailContent0">
+                                        <li><label>Name on card</label><input name="card[<?php echo $memberCard->cardId; ?>][card_name]" value="<?php echo $memberCard->cardName; ?>" type="text"></li>
+                                        <li><label>Card type</label>
+                                            <select name="card[<?php echo $memberCard->cardId; ?>][card_type]">
+                                                <option value="">Please choose one...</option>
+                                                <?php foreach (\Tourpage\Helpers\Utils::getCcList() as $typeCode => $typeName) { ?>
+                                                    <option value="<?php echo $typeCode; ?>"<?php echo $typeCode == $memberCard->cardType ? ' selected' : ''; ?>><?php echo $typeName; ?></option>
+                                                <?php } ?>
+                                            </select> 
+                                        </li>
+                                        <li><label>Card number</label><input name="card[<?php echo $memberCard->cardId; ?>][card_number]" value="<?php echo $memberCard->cardNumber; ?>" type="text"></li>
+                                        <li><label>CVV</label><input name="card[<?php echo $memberCard->cardId; ?>][card_cvv]" value="<?php echo $memberCard->cardCvv; ?>" type="password"></li>
+                                        <li><label>Expiration date</label>
+                                            <select name="card[<?php echo $memberCard->cardId; ?>][card_exp_month]">
+                                                <?php foreach (\Tourpage\Helpers\Utils::getMonths() as $monthIndex => $monthName) { ?>
+                                                    <option value="<?php echo $monthIndex; ?>"<?php echo $monthIndex == $memberCard->expiryMonth ? ' selected' : ''; ?>><?php echo $monthName; ?></option>
+                                                <?php } ?>
+                                            </select> 
+                                            <select name="card[<?php echo $memberCard->cardId; ?>][card_exp_year]">
+                                                <?php foreach (\Tourpage\Helpers\Utils::getYears(array('range' => array('end' => 20))) as $yearIndex => $yearName) { ?>
+                                                    <option value="<?php echo $yearIndex; ?>"<?php echo $yearIndex == $memberCard->expiryYear ? ' selected' : ''; ?>><?php echo $yearName; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </li>
+                                        <li><label>Billing address</label>
+                                            <div>
+                                                <ul>
+                                                    <li><label>First name</label><input name="card[<?php echo $memberCard->cardId; ?>][first_name]" value="<?php echo $memberCard->firstName; ?>" type="text"></li>
+                                                    <li><label>Last name</label><input name="card[<?php echo $memberCard->cardId; ?>][last_name]" value="<?php echo $memberCard->lastName; ?>" type="text"></li>
+                                                    <li><label>Address (Line 1)</label><input name="card[<?php echo $memberCard->cardId; ?>][address_1]" value="<?php echo $memberCard->addressOne; ?>" type="text"></li>
+                                                    <li><label>Address (Line 2)</label><input name="card[<?php echo $memberCard->cardId; ?>][address_2]" value="<?php echo $memberCard->addressTwo; ?>" type="text"></li>
+                                                    <li><label>City</label><input name="card[<?php echo $memberCard->cardId; ?>][city]" value="<?php echo $memberCard->city; ?>" type="text"></li>
+                                                </ul>
+                                                <ul>
+                                                    <li>
+                                                        <label>Country</label>
+                                                        <select name="card[<?php echo $memberCard->cardId; ?>][country]" id="card_<?php echo $memberCard->cardId; ?>_country" class="ccountry" relid="<?php echo $memberCard->cardId; ?>">
+                                                            <option value="">Please choose one...</option>
+                                                            <?php if ($cardCountry && $cardCountry->count() > 0) { ?>
+                                                                <?php foreach ($cardCountry as $cntry) { ?>
+                                                                    <option value="<?php echo $cntry->countryId; ?>"<?php echo $cntry->countryId == $memberCard->countryId ? ' selected' : ''; ?>><?php echo $cntry->name; ?></option>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </li>
+                                                    <li>
+                                                        <label>Province/State</label>
+                                                        <select name="card[<?php echo $memberCard->cardId; ?>][state]" id="card_<?php echo $memberCard->cardId; ?>_state" class="cstate">
+                                                            <option value="">Please choose one...</option>
+                                                            <?php if ($cardState && $cardState->count() > 0) { ?>
+                                                                <?php foreach ($cardState as $stat) { ?>
+                                                                    <option value="<?php echo $stat->stateId; ?>"<?php echo $stat->stateId == $memberCard->stateId ? ' selected' : ''; ?>><?php echo $stat->name; ?></option>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </select>
+                                                    </li>
+                                                    <li><label>Postcode/ZIP</label><input name="card[<?php echo $memberCard->cardId; ?>][zip]" value="<?php echo $memberCard->zipCode; ?>" type="text"></li>
+                                                    <li><label>Phone Number</label><input name="card[<?php echo $memberCard->cardId; ?>][phone]" value="<?php echo $memberCard->phone; ?>" type="text"></li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="lastcontent thebuttonlayout001">
+                                                <a class="btn cancel remove-card" data-card-id="<?php echo $memberCard->cardId; ?>">Delete </a> <a class="btn btn-info edit-card"> Save </a> 
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr><td class="text-center">No saved cards</td></tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div><!--//layout.contents-->
+        <br class="clearFix">
+    </form>
+</div>
+<script>
+    jQuery(function () {
+        jQuery(".detailContents").hide();
+        jQuery(".add_card").click(function () {
+            jQuery(".step01").show();
+        });
+        jQuery(".step01 .cancel").click(function () {
+            jQuery(".step01").hide();
+        });
+        jQuery(".step01 .next").click(function () {
+            var errors = [];
+            var cardNumber = jQuery("#card_number").val();
+            var cardName = jQuery("#card_name").val();
+            var cardCvv = jQuery("#card_cvv").val();
+            jQuery('.error-field').removeClass('error-field');
+            jQuery('span.error-message').remove();
+            if (cardNumber.length <= 0) {
+                errors.push('card_number:Card number is required');
+            } else {
+                if (!validateCardNumber(cardNumber, true)) {
+                    errors.push('card_number:Card number is not valid');
+                }
+            }
+            if (cardName.length <= 0) {
+                errors.push('card_name:Name on card is required');
+            }
+            if (cardCvv.length <= 0) {
+                errors.push('card_cvv:Card CVV is required');
+            } else {
+                var regex = new RegExp("^[0-9]{3,4}$");
+                if (!regex.test(cardCvv)) {
+                    errors.push('card_cvv:Invalid CVV Number');
+                }
+            }
+            if (errors.length > 0) {
+                for (var e in errors) {
+                    var errorData = errors[e].split(':');
+                    if (typeof errorData[0] != 'undefined' && errorData[0].length > 0) {
+                        var element = jQuery('#' + errorData[0]);
+                        element.addClass('error-field');
+                        var message = jQuery('<span/>');
+                        message.html(errorData[1]);
+                        message.addClass('error-message');
+                        element.after(message);
+                    }
+                }
+            } else {
+                jQuery(".step01").hide();
+                jQuery(".step02").show();
+            }
+        });
+        jQuery(".step02 .back").click(function () {
+            jQuery(".step01").show();
+            jQuery(".step02").hide();
+        });
+        jQuery(".step02 .save").click(function () {
+            var errors = [];
+            var firstName = jQuery('#first_name').val();
+            var lastName = jQuery('#last_name').val();
+            var addressOne = jQuery('#address_1').val();
+            var addressTwo = jQuery('#address_2').val();
+            var phone = jQuery('#phone').val();
+            var country = jQuery('#country').val();
+            var state = jQuery('#state').val();
+            var city = jQuery('#city').val();
+            var zipCode = jQuery('#zip').val();
+            jQuery('.error-field').removeClass('error-field');
+            jQuery('span.error-message').remove();
+            if (firstName.length <= 0) {
+                errors.push('first_name:First Name is required');
+            }
+            if (lastName.length <= 0) {
+                errors.push('last_name:Last Name is required');
+            }
+            if (addressOne.length <= 0) {
+                errors.push('address_1:Address 1 is required');
+            }
+            if (phone.length > 0) {
+                var regex = new RegExp("^[0-9]+$");
+                if (!regex.test(phone)) {
+                    errors.push('phone:Invalid Phone Number');
+                }
+            }
+            if (country.length <= 0) {
+                errors.push('country:Country is required');
+            }
+            if (state.length <= 0) {
+                errors.push('state:State is required');
+            }
+            if (city.length <= 0) {
+                errors.push('city:City is required');
+            }
+            if (zipCode.length > 0) {
+                var regex = new RegExp("^[0-9]+$");
+                if (!regex.test(zipCode)) {
+                    errors.push('zip:Invalid Postcode/ZIP');
+                }
+            }
+            console.log(errors);
+            if (errors.length > 0) {
+                for (var e in errors) {
+                    var errorData = errors[e].split(':');
+                    if (typeof errorData[0] != 'undefined' && errorData[0].length > 0) {
+                        var element = jQuery('#' + errorData[0]);
+                        element.addClass('error-field');
+                        var message = jQuery('<span/>');
+                        message.html(errorData[1]);
+                        message.addClass('error-message');
+                        element.after(message);
+                    }
+                }
+            } else {
+                jQuery("form#payment-options").submit();
+            }
+        });
+        jQuery(".cardlist td a.ttit").click(function () {
+            jQuery(this).next(".detailContents").toggle();
+        });
+        jQuery('.collapse').collapse();
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>Please choose one...</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+        jQuery(".ccountry").change(function () {
+            var countryId = jQuery(this).val();
+            var relateId = jQuery(this).attr('relid');
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#card_" + relateId + "_state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>Please choose one...</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+        jQuery(".edit-card").click(function (evt) {
+            evt.preventDefault();
+            jQuery("form#payment-options-list").submit();
+        });
+        jQuery(".remove-card").click(function (evt) {
+            evt.preventDefault();
+            var cardId = jQuery(this).data('card-id');
+            var redirectUrl = getUrl('account/removeCard/' + cardId);
+            confirmRedirect(redirectUrl, 'Are you sure? You want to remove this card');
+        });
+    });
+</script>

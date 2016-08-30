@@ -1,0 +1,8 @@
+<?php $this->partial('layouts/common/header'); ?>
+<section class="container subContain accountLayout">
+    <?php echo $this->member->accountMenu(); ?>
+    <div class="layout wide">
+        <?php echo $this->getContent(); ?>
+    </div>
+</section>
+<?php $this->partial('layouts/common/footer'); ?>

@@ -1,0 +1,643 @@
+<header class="header">
+<div class="s-banner">
+<div class="banner-caption">
+ <h1>Book tickets for top attractions around the world</h1>
+</div>
+   <div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
+			<!-- Indicators -->
+			<ol class="carousel-indicators">
+				<li data-target="#transition-timer-carousel" data-slide-to="0" class="active"></li>
+				<li data-target="#transition-timer-carousel" data-slide-to="1"></li>
+				
+			</ol>
+
+			<!-- Wrapper for slides -->
+			<div class="carousel-inner">
+				<div class="item active">
+                    <img src="/public/elements/frontend/images/banner.jpg" alt="" />
+                    <div class="carousel-caption">
+                      
+                        
+                    </div>
+                </div>
+                
+                <div class="item">
+                  <img src="/public/elements/frontend/images/banner1.jpg" alt="" />
+                   
+                </div>
+                
+                
+            </div>
+
+			<!-- Controls -->
+			
+            
+            <!-- Timer "progress bar" -->
+          
+		</div>   
+ </div>
+</header>
+
+
+<section class="tour-content">
+    <div class="container">
+        <div class="tab-pane" style="position:relative;margin-top: 3%;">
+        <h2>Our Tours</h2>
+        
+         <?php if ($groupVendors && $groupVendors->count() > 0) { ?>
+                <ul class="nav nav-tabs" id="gtabs">
+                    <?php foreach ($groupVendors as $groupVendor) { ?>
+                        <li><a id="<?php echo $groupVendor->groupId; ?>" class="tours"><?php echo $groupVendor->group->groupName; ?></a></li>
+                        <?php }?>
+                </ul>
+         <div class="clearfix"></div>
+               <!--------- <hr style="position:absolute;top:68px; left: 0px;width:100%;border-top: solid 1px #332525;">---->
+                <?php } else { ?>
+                No Data
+                <?php } ?>
+        
+             <div class="pull-right grid-btn">
+                <div class="btn-group" aria-label="Tour View Group" role="group">
+                <button class="btn btn-default btn-tour-view " id="btn1" data-view-target="grid" type="button">
+                <span class="glyphicon glyphicon-th"></span>
+                </button>
+                <button class="btn btn-default btn-tour-view active" id="btn2" data-view-target="list" type="button">
+                <span class="glyphicon glyphicon-list"></span>
+                </button>
+                </div>
+                </div>
+          <div class="clearfix"></div>
+        
+    <div class="row tour-box-container" id="form1" style="display:none" >
+                  <?php if ($groupTours && $groupTours->count() > 0) { ?>
+                    <?php foreach ($groupTours as $groupTour) { ?>
+                
+               <div id="grid" class="tour-box-view show" >
+               <div class="col-xs-6 col-sm-4">
+                    <div class="tour-box-smr clearfix">
+                   <img style="width:100%; height:300px;" src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" />
+                   <div class="tour-box-smr-detail">
+                      <div class="tour-box-smr-review">
+                         <i class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star" aria-hidden="true"></i>
+                             <i class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star" aria-hidden="true"></i>
+                                   <span>(1403)</span>
+                                      </div>
+
+                    <div class="tour-box-smr-dtls">
+                    <a href="<?php echo $groupTour->tour->getUri(); ?>"><?php echo $groupTour->tour->tourTitle; ?></a>
+                    </div>
+                    
+                    <div class="tour-box-smr-detail-bottom clearfix">
+                    <div class="tour-box-smr-detail-bottom-lft">Fellow LLC •&nbsp;<?php 
+					if($groupTour->tour->tourCity){ echo $groupTour->tour->tourCity; } else { echo '';}
+					?>
+                    </div>
+                    <div class="tour-box-smr-detail-bottom-rht w-col">
+				   <?php if ($groupTour->tour->tourPrice->hasDiscount() || $groupTour->tour->tourPrice->hasOffers()) { ?>
+                   <?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice()); ?>
+                   <?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice(true)); ?>                   <?php } else { ?> 
+                   <?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice()); ?>
+                   <?php } ?>
+                  </div>
+                  
+                    <?php if ($groupTour->tour->tourPrice->hasDiscount() || $groupTour->tour->tourPrice->hasOffers()) { ?>
+                    <div class="tour-box-smr-detail-bottom-rht"><span><?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice()); ?></span><?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice(true)); ?><span><?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice()); ?></span>
+                                                    <?php } ?>
+                    </div>
+                    </div>
+                    
+                    
+                    </div>
+                    <div class="tour-box-smr-icon2"><i class="fa fa-heart" aria-hidden="true"></i></div>
+                   <!-- <div class="tour-box-smr-icon1" style="margin-left:8px;"><span>45%</span> OFF</div>-->
+                    </div>
+                    </div>
+                    <?php } ?>
+                    <?php } ?>
+                 </div>
+                 </div>
+
+
+            
+            
+            
+            
+            <div class="tab-contents" id="form2" >
+            
+                <?php if ($groupTours && $groupTours->count() > 0) { ?>
+                    <?php foreach ($groupTours as $groupTour) { ?>
+                        <div class="tour tour-<?php echo $groupTour->groupId; ?>">
+                            <div class="tour-box clearfix">
+                                <div class="col-md-3">
+                                    <?php if ($groupTour->tour->tourPrice->hasDiscount() || $groupTour->tour->tourPrice->hasOffers()) { ?>
+                                        <div class="sale-<?php echo $groupTour->groupId; ?>" style="position:absolute;top:15px;left:4px;background:url(<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/sale.png'); ?>) center center no-repeat;height: 25px;width: 92px;padding-top:8px;padding-left: 30px;color:#ffffff;font-size: 10px;font-weight: bold;"><?php echo $groupTour->tour->tourPrice->data->discount->price.'% OFF';?>
+                                        </div>
+                                        <?php } else { ?>
+                                        <div class="sale-<?php echo $groupTour->groupId; ?>" style="position:absolute;top:15px;left:4px;height: 25px;width: 92px;padding-top:8px;padding-left: 30px;color:#ffffff;font-size: 10px;font-weight: bold;">&nbsp;
+                                        </div>
+                                        <?php } ?>
+                                    <a href="<?php echo $groupTour->tour->getUri(); ?>"><img src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>
+                                </div>
+                                <div class="col-md-7">
+                                    <section class="content-header">
+                                        <h1><a href="<?php echo $groupTour->tour->getUri(); ?>"><?php echo $groupTour->tour->tourTitle; ?></a></h1>
+                                        <ul class="review">
+                                            <li class="text-yellow">
+                                                <div id="star-rate-grid-<?php echo $groupTour->tour->tourId; ?>"></div>
+                                                <script>jQuery(function () {
+                                                    jQuery('#star-rate-grid-<?php echo $groupTour->tour->tourId; ?>').rateYo({rating: <?php echo $groupTour->tour->tourRating ? $groupTour->tour->tourRating->getStar() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
+                                                });</script>
+                                            </li>
+                                            <li class="review-count">(<?php echo $groupTour->tour->tourReviews ? $groupTour->tour->tourReviews->count() : 0; ?>)</li>
+                                        </ul>
+                                        <div style="float: left; width: 100%; margin-top: 20px; margin-bottom: 0px;">
+                                            <?php if ($groupTour->tour->tourAttributes->count() > 0) { ?>
+                                                <?php foreach ($groupTour->tour->tourAttributes as $tourAttribute) { ?>
+                                                    <?php if ($tourAttribute->keyId == 2) { ?>
+                                                        <?php
+                                                            $attributeContent = \Tourpage\Helpers\Utils::decodeString($tourAttribute->attributeContent);
+                                                            if (strlen($attributeContent) > 180) {
+                                                                $attributeContent = substr($attributeContent, 0, 180);
+                                                                $attributeContent .= '.. ';
+                                                                $attributeContent .= $this->tag->linkTo(array($groupTour->tour->getUri(), 'more', 'local' => false));
+                                                            }
+                                                            echo $attributeContent;
+                                                        ?>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            <p>Location: <strong><?php 
+                                                        if($groupTour->tour->tourCity){ echo $groupTour->tour->tourCity; } else { echo '';}
+                                                    /*if($groupTour->tour->country->name){ echo ', '.$groupTour->tour->country->name;} else{ echo '';}*/?></strong>, Duration: <strong>
+                                                    <?php echo $groupTour->tour->tourDuration->lengthTypeText;?>
+                                                </strong></p>
+                                        </div>
+                                        <?php if($groupTour->tour->tourImages->count() > 0){ ?>
+                                            <div id="tour-images" class="carousel tour-images">
+                                                <div class="carousel-inner" role="listbox">
+                                                    <?php
+                                                        $fccatv = 1;
+                                                        foreach ($groupTour->tour->tourImages as $tourImage) {
+                                                        ?>
+                                                        <div class="item<?php echo ($fccatv == 1 ? ' active' : ''); ?>">
+                                                            <div class="tour-images-item">
+                                                                <img src="<?php echo $tourImage->getImageUri('thumb');?>" style="width:50px;height:50px"/>
+                                                            </div>
+                                                        </div>
+                                                        <?php $fccatv++; ?>
+                                                        <?php } ?>
+                                                </div>
+                                                <!-- Controls -->
+                                                <a class="left carousel-control" href="#tour-images" role="button" data-slide="prev">
+                                                    <span class="glyphicon glyphicon-chevron-left left-box-control" aria-hidden="true"></span>
+                                                    <span class="sr-only">&lt;</span>
+                                                </a>
+                                                <a class="right carousel-control" href="#tour-images" role="button" data-slide="next">
+                                                    <span class="glyphicon glyphicon-chevron-right left-box-control" aria-hidden="true"></span>
+                                                    <span class="sr-only">&gt;</span>
+                                                </a>
+                                        	</div>
+                                        <?php } ?>
+                                    </section>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <?php if ($groupTour->tour->tourPrice->hasDiscount() || $groupTour->tour->tourPrice->hasOffers()) { ?>
+                                                <div class="sale-button-<?php echo $groupTour->groupId; ?>" style="background:#ef3d23;color:#ffffff;font-size: 10px;font-weight: bold;text-align:center;height:20px;line-height:20px;margin-bottom:3px;">SALE</div>
+                                                <?php } else { ?>
+                                                <div class="sale-button-<?php echo $groupTour->groupId; ?>" style="color:#ffffff;font-size: 10px;font-weight: bold;text-align:center;height:20px;line-height:20px;margin-bottom:3px;">&nbsp;</div>
+                                                <?php } ?>
+                                            <?php if ($groupTour->tour->tourCapacity > 0) { ?>
+                                                <div class="left_button-<?php echo $groupTour->groupId; ?>" style="background:#ed952e;color:#ffffff;font-size: 10px;font-weight: bold;text-align:center;height:20px;line-height:20px;"><?php echo 'Only '.$groupTour->tour->tourCapacity.' left'; ?>
+                                                </div>
+                                                <?php } else { ?>
+                                                <div class="left_button-<?php echo $groupTour->groupId; ?>" style="color:#ffffff;font-size: 10px;font-weight: bold;text-align:center;height:20px;line-height:20px;">&nbsp;</div>
+                                                <?php } ?>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <?php if (!$this->member->isFavoriteTour($groupTour->tourId)) { ?>
+                                                <a href="#" class="text-red fav-tour" onclick="return addToFavTour('<?php echo $groupTour->tourId; ?>', '<?php echo $groupTour->vendorId; ?>');"><i class="glyphicon glyphicon-heart fa-lg" aria-hidden="true"></i></a>
+                                                <?php } ?>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <ul class="price">
+                                                <li class="text-info-from">From</li>
+                                                <?php if ($groupTour->tour->tourPrice->hasDiscount() || $groupTour->tour->tourPrice->hasOffers()) { ?>
+                                                    <li class="ori-price" style="font-size:16px;"><?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice()); ?></li>
+                                                    <li class="text-info" style="color:#ef3d23;"><?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice(true)); ?></li>
+                                                    <?php } else { ?>
+                                                    <li class="ori-price" style="font-size:16px;text-decoration:none;">&nbsp;</li>
+                                                    <li class="text-info"><?php echo \Tourpage\Helpers\Utils::formatCurrency($groupTour->tour->tourPrice->getPrice()); ?></li>
+                                                    <?php } ?>
+                                            </ul>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                 
+                                    <div class="row">
+                                        <div class="col-md-12 tour-14">
+                                            <a href="<?php echo $groupTour->tour->getUri(); ?>" class=" btn-lg btn-block btn-book-tour">Book Now</a>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php } ?>
+                        <article class="jumbotron no-tour text-center"></article>
+                    <?php } else { ?>
+                    <article class="jumbotron">No Tour Found</article>
+                    <?php } ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>             
+    </div>
+</section>
+
+
+<!-----------------pagination---------------->
+
+<!--<section class="pagination-area">
+<div class="pagination">
+  <ul>
+    <li><a href="#">Prev</a></li>
+    <li class="active">
+      <a href="#">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">Next</a></li>
+  </ul>
+</div>
+</section>-->
+
+
+<script type="text/javascript">
+    jQuery(function () {
+		jQuery("button.btn-tour-view").click(function(evt) {
+			evt.preventDefault();
+			jQuery("button.btn-tour-view").removeClass('active');
+			jQuery(".tour-box-view").removeClass('show').addClass('hidden');
+			var viewTarget = jQuery(this).data('view-target');
+			var targetBox = jQuery("#" + viewTarget);
+			jQuery(this).addClass('active');
+			targetBox.removeClass('hidden').addClass('show');
+			jQuery(this).blur();
+		});
+    });
+</script>
+
+
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery(".tours").each(function() {
+            if(jQuery(this).is(':first-child')){
+                var tourId = jQuery(this).attr("id");
+                jQuery(".tours").css({"border-bottom": "0", "color": "#333"})
+                jQuery(".tour").hide();
+				if(jQuery(".tour").hasClass("tour-"+tourId)){
+                	jQuery(".tour-"+tourId).show();
+					jQuery(".no-tour").css('display','none');
+				} else {
+					jQuery(".no-tour").css('display','block');
+					jQuery(".no-tour").html("<h4>No Tour Found</h4>");
+				}
+				jQuery(this).css({"border-bottom": "solid 8px #1e769e", "color": "#1e769e"});
+                return false;
+            }
+        });
+        jQuery(".tours").click(function() {
+            var tourId = jQuery(this).attr("id");
+            jQuery(".tours").css({"border-bottom": "0", "color": "#333"})
+            jQuery(".tour").hide();
+            if(jQuery(".tour").hasClass("tour-"+tourId)){
+                jQuery(".tour-"+tourId).show();
+				jQuery(".no-tour").css('display','none');
+			} else {
+				jQuery(".no-tour").css('display','block');
+				jQuery(".no-tour").html("<h4>No Tour Found</h4>");
+			}
+            jQuery(this).css({"border-bottom": "solid 8px #1e769e", "color": "#1e769e"});            
+        });
+    });
+	
+	
+	
+</script>
+
+<script>
+$(document).ready(function(){
+    $("#btn1").click(function(){
+        $("#form2").hide();
+        $("#form1").show();
+    });
+    $("#btn2").click(function(){
+        $("#form1").hide();
+        $("#form2").show();
+    });
+});
+</script>
+
+<style>
+
+.pagination-area{text-align:center;}
+
+.pagination {
+  height: 36px;
+  margin: 18px 0;
+}
+.pagination ul {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+
+  *zoom: 1;
+  margin-left: 0;
+  margin-bottom: 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.pagination li {
+  display: inline;
+}
+.pagination a {
+  float: left;
+  padding: 0 14px;
+  line-height: 34px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  border-left-width: 0;
+}
+.pagination a:hover,
+.pagination .active a {
+  background-color: #f5f5f5;
+}
+.pagination .active a {
+  color: #999999;
+  cursor: default;
+}
+.pagination .disabled span,
+.pagination .disabled a,
+.pagination .disabled a:hover {
+  color: #999999;
+  background-color: transparent;
+  cursor: default;
+}
+.pagination li:first-child a {
+  border-left-width: 1px;
+  -webkit-border-radius: 3px 0 0 3px;
+  -moz-border-radius: 3px 0 0 3px;
+  border-radius: 3px 0 0 3px;
+}
+.pagination li:last-child a {
+  -webkit-border-radius: 0 3px 3px 0;
+  -moz-border-radius: 0 3px 3px 0;
+  border-radius: 0 3px 3px 0;
+}
+.pagination-centered {
+  text-align: center;
+}
+.pagination-right {
+  text-align: right;
+}
+.pager {
+  margin-left: 0;
+  margin-bottom: 18px;
+  list-style: none;
+  text-align: center;
+  *zoom: 1;
+}
+.pager:before,
+.pager:after {
+  display: table;
+  content: "";
+}
+.pager:after {
+  clear: both;
+}
+.pager li {
+  display: inline;
+}
+.pager a {
+  display: inline-block;
+  padding: 5px 14px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+}
+.pager a:hover {
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+.pager .next a {
+  float: right;
+}
+.pager .previous a {
+  float: left;
+}
+.pager .disabled a,
+.pager .disabled a:hover {
+  color: #999999;
+  background-color: #fff;
+  cursor: default;
+}
+
+
+
+
+
+
+
+
+
+
+.error{border-color: #ff0000 !important;}.fav-opt{}.bg-info{margin-bottom: 10px;padding: 20px;}
+    .tour-content{background:#ffffff;}
+
+    .tour-options-content{background:#edf4f7;padding-bottom: 50px;}
+    .tour-btn{margin: 40px 10px;}
+    .nav-tabs {
+        border-bottom: 0px;
+    }
+    .nav-tabs>li {
+        padding: 10px 15px;
+    }
+    /*.nav-tabs>li>a {
+        font-size: 20px;
+        font-family: Arial;
+        color: #333333;
+        background: transparent;
+        text-transform: uppercase;
+        border: 0px;
+        height: 51px;
+        display: inline;
+        padding: 10px 0px;
+    }*/
+	
+	.nav-tabs>li>a {
+		font-size: 100%;
+		font-family: Arial;
+		color: #333333;
+		background: transparent;
+		text-transform: uppercase;
+		border: 0px;
+		height: 51px;
+		display: inline;
+		padding: 0px 0px;
+		line-height: 42px;
+		margin: 0px;
+		border-radius: 0px;
+		font-weight: bold;
+	}
+
+    .nav-tabs>li>a:hover {
+        border-color: transparent;
+        border-bottom: solid 5px #1e769e;
+    }
+    .nav>li>a:focus, .nav>li>a:hover {
+        text-decoration: none;
+        background-color: transparent;;
+    }
+    /*.nav-tabs>li {
+        width: 20%;
+        text-align: center;
+    }*/
+	.nav-tabs>li {
+		width: 20%;
+		text-align: center;
+		padding: 0px;
+		padding-bottom: 1%;
+	}
+    .btn-all-tour {
+        background: #888888;
+        border-color: #888888;
+        border-radius: 0px;
+        padding: 10px 50px;
+        text-decoration:none;
+    }
+    .btn-all-tour:hover {
+        background: #777777;
+        border-color: #777777;
+        text-decoration:none;
+    }
+	
+    .content-header .carousel {
+        position: relative;
+       
+        width: 100%;
+        clear: both;
+    }
+    .content-header .carousel-inner {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+    .content-header .carousel-inner>.item {
+        display: inline-block;
+        width: 60px; margin: 11px 8px 0;}
+    }
+    .content-header .carousel-control {
+        width: 5%;
+        color:#a3a3a3;
+        text-shadow:none;
+    }
+	.tour-images-item > img
+{width: 60px!important; height: 60px!important;}
+    .content-header .carousel-control:focus, .carousel-control:hover {
+        color: #aaaaaa;
+    }
+	
+	.no-tour {
+    	margin-top: 0px;
+    	background-color: #ffffff;
+    	border: 0px;
+    	border-radius: 0px!important;
+    	display: none;
+	}
+	
+a.carousel-control
+{margin-top: 0px;}
+a.carousel-control.left,
+a.carousel-control.right
+{margin-right: 40px;}	
+.carousel-control{width:5%;}	
+	
+</style>
+<style>.tour {padding: 20px;border: 1px solid #ccc;background: #f9f9f9; margin-bottom: 20px;} .tours{line-height: 55px!important;}.tour-box{border-top: none;padding:0px;}.content-header > h1{margin-top: 5px;color: #1e769e;}.content-header > h1 a{color:#1e769e;text-decoration:none;font-size: 20px;font-weight:bold;}.content-header > h1 a:hover{color:#1f5f7a;}ul.review li.text-yellow{color: #ede811;}.content-header>ul.review{margin-top:10px;    margin-left: -5px;}ul.review li.review-count{color: #aaaaaa;margin-left:-5px;}
+    .btn-book-tour {
+        color: #fff;
+        background: #1e769e;
+        border-color: #1e769e;
+        border-radius: 0px;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .btn-book-tour:hover {
+        color: #fff;
+        background: #1f5f7a;
+        border-color: #1f5f7a;
+        text-decoration: none;
+    }
+    .fav-tour {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        font-size: 25px;
+        background: #eef1f2;
+        padding: 5px;
+    }
+    ul.price li {
+        font-size: 30px;
+        color: #3e3f3f;
+        font-weight: normal;
+        font-family: Arial;
+        line-height: 30px;
+    }
+    ul.price li.text-info-from {
+        font-size: 16px;
+        color: #aaaaaa;
+        margin-top: 10%;
+    }
+    .input-group > .input-group-btn > button{
+        border-radius: 0px;
+        background: #1e769e;
+        border-color: #1e769e;
+    }
+    .input-group > input{
+        border-radius: 0px;
+    }
+    .text-22-sm > h4{
+        color: #1f5f7a;
+        font-weight: bold;
+    }
+    .text-22-sm p {
+        padding-top: 10px;
+    }
+    ul.review {
+        padding-top: 5px;
+    }
+    .tour-reviews,.tour-others{padding: 15px;}
+    .tour-reviews > h4, .tour-others > h4{font-size: 20px;margin-top:20px;}
+    .tit{border-bottom:0px;}
+    .tit > a{font-size:18px;color:#1e769e;text-decoration:none;}
+    .tit > a:hover,.ven a:hover{color:#1f5f7a;text-decoration:none;}
+    
+    .h60 {font-size: 50px;margin-left: 35%;}
+</style>
+
+
+

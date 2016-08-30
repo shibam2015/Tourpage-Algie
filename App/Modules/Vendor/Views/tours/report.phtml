@@ -1,0 +1,113 @@
+<?php
+$headCountUnit = ' Person';
+if ($tour->tourPrice->data->priceType == \Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE) {
+    $headCountUnit = ' Group';
+}
+?>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-list-alt"></span> Booking Report for "<em><?php echo $tour->getTourTitle(); ?></em>"
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="col-lg-12">
+            <h3><?php echo $tour->tourTitle; ?> ( Available From <span class="label label-default"><?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourStartFrom, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?></span> To <span class="label label-default"><?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourEndTo, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?></span> )</h3>
+            <ul class="list-inline">
+                <li><strong>Price Type:</strong> <?php echo $tour->tourPrice->data->priceTypeText; ?></li>
+                <li><strong>Tour type:</strong> <?php echo $tour->tourDuration->lengthTypeText; ?></li>
+                <li><strong>Capacity:</strong> <?php echo $tour->tourCapacity > 0 ? $tour->tourCapacity : 'N/A'; ?></li>
+                <?php if ($tour->tourPrice->data->discount->price > 0) { ?>
+                    <li><strong>Discount:</strong> <?php echo $tour->tourPrice->data->discount->price; ?>% ( <?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourPrice->data->discount->start, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?> - <?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourPrice->data->discount->end, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?> )</li>
+                <?php } ?>
+                <?php if ($tour->tourPrice->data->discount->multiplePurchase->percentage > 0) { ?>
+                    <li><strong>MPD:</strong> <?php echo $tour->tourPrice->data->discount->multiplePurchase->percentage; ?>% for min. <?php echo $tour->tourPrice->data->discount->multiplePurchase->count; ?> <?php echo $headCountUnit . '(s)'; ?> booking</li>
+                <?php } ?>
+            </ul>
+            <hr/>
+            <ul class="list-inline">
+                <li><strong>Total Booking:</strong> <?php echo $bookings ? $bookings->count() : 0; ?></li>
+                <li><strong>No. of <?php echo $headCountUnit; ?> Booked:</strong> <?php echo $totalHeadCount; ?></li>
+                <li><strong>Total Payment:</strong> <?php echo \Tourpage\Helpers\Utils::formatCurrency($totalBookingAmount); ?></li>
+            </ul>
+        </div>
+        <div class="col-lg-7">
+            <h4>Date wise report</h4>
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Journey Date</th>
+                            <th>Booked Capacity</th>
+                            <?php if ($tour->tourPrice->data->priceType == \Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE) { ?>
+                                <th>Age Group</th>
+                            <?php } ?>
+                            <th>Remaining Capacity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($tour->tourDuration->lengthType != \Tourpage\Models\Tours::LENGTH_FIXED_DAYS_CODE) { ?>
+                            <?php if (count($bookinDates) > 0) { ?>
+                                <?php foreach ($bookinDates as $bookinDate => $bookinData) { ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo \Tourpage\Helpers\Utils::formatDate($bookinDate, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?>
+                                            <?php if (isset($bookinData['to'])) { ?>
+                                                - <?php echo \Tourpage\Helpers\Utils::formatDate($bookinData['to'], Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?>
+                                            <?php } ?>
+                                        </td>
+                                        <td><?php echo $bookinData['headCount'] . ' ' . $headCountUnit . '(s)'; ?></td>
+                                        <?php if ($tour->tourPrice->data->priceType == \Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE) { ?>
+                                            <td>
+                                                <?php $c = 1; ?>
+                                                <?php foreach ($bookinData['group'] as $group) { ?>
+                                                    <?php echo $group['count'] . ' ' . $group['title']; ?>
+                                                    <?php if ($c < count($bookinData['group'])) { ?>
+                                                        |
+                                                    <?php } $c++; ?>
+                                                <?php } ?>
+                                            </td>
+                                        <?php } ?>
+                                        <td><?php echo $tour->tourCapacity > 0 ? (($tour->tourCapacity - $bookinData['headCount']) <= 0 ? 0 : ($tour->tourCapacity - $bookinData['headCount']) . ' ' . $headCountUnit . '(s)') : 'N/A'; ?></td>
+                                    </tr>
+                                <?php } ?>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <?php if (!empty($bookinDates)) { ?>
+                            <tr>
+                                <td>
+                                    <?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourStartFrom, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?> - <?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourEndTo, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?>
+                                </td>
+                                <td><?php echo $bookinDates['headCount'] . ' ' . $headCountUnit . '(s)'; ?></td>
+                                <?php if ($tour->tourPrice->data->priceType == \Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE) { ?>
+                                    <td>
+                                        <?php $c = 1; ?>
+                                        <?php foreach ($bookinDates['group'] as $group) { ?>
+                                            <?php echo $group['count'] . ' ' . $group['title']; ?>
+                                            <?php if ($c < count($bookinDates['group'])) { ?>
+                                                |
+                                            <?php } $c++; ?>
+                                        <?php } ?>
+                                    </td>
+                                <?php } ?>
+                                <td><?php echo $tour->tourCapacity > 0 ? (($tour->tourCapacity - $bookinDates['headCount']) <= 0 ? 0 : ($tour->tourCapacity - $bookinDates['headCount']) . ' ' . $headCountUnit . '(s)') : 'N/A'; ?></td>
+                            </tr>
+                            <?php } ?>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="thumbnail">
+                <img class="img-thumbnaill" src="<?php echo $tour->getDefaultImage() ? $tour->getDefaultImage()->getImageUri() : ''; ?>"/>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer text-right">
+        <?php echo $this->tag->linkTo(array('/vendor/tours', '<span class="glyphicon glyphicon-ban-circle"></span> Cancel', 'class' => 'btn btn-default')); ?>
+        <?php if ($tour->isBookingActive()) { ?>
+            <?php echo $this->tag->linkTo(array('/vendor/booking/add?ack=bk&_t=' . base64_encode($tour->getTourId()), '<span class="glyphicon glyphicon-book"></span> Book Now', 'class' => 'btn btn-default')); ?>
+        <?php } ?>
+    </div>
+</div>

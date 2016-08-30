@@ -1,0 +1,406 @@
+<?php
+$showBookingSection = false;
+if ($this->request->hasQuery('ack')) {
+    $ack = $this->request->getQuery('ack');
+    if ($ack = 'bk') {
+        if ($this->request->hasQuery('_t')) {
+            if ($this->request->getQuery('_t')) {
+                $proceedtourId = base64_decode($this->request->getQuery('_t'));
+                \Phalcon\Tag::setDefault('tid', $proceedtourId);
+                $tour = Tourpage\Models\Tours::findFirst(array(
+                            'conditions' => 'tourId = :tour_id:',
+                            'bind' => array('tour_id' => $proceedtourId)
+                ));
+                if ($tour && $tour->count() > 0) {
+                    $showBookingSection = true;
+                }
+            }
+            $headCountUnit = ' Person(s)';
+            if ($tour->tourPrice->data->priceType == \Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE) {
+                $headCountUnit = ' Group(s)';
+            }
+        }
+    }
+}
+?>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-plus"></span> New Booking
+        </h3>
+    </div>
+    <form id="customer-form" method="post">
+        <div class="panel-body">
+            <div id="tour-filter" class="col-lg-12">
+                <div class="col-lg-7 no-pad-left">
+                    <?php
+                    echo $this->tag->select(array(
+                        "tid",
+                        $tours,
+                        "using" => array("tourId", "tourTitle"),
+                        "useEmpty" => true,
+                        "emptyText" => "Please choose one tour..",
+                        "class" => "form-control"
+                    ));
+                    ?>
+                </div>
+                <?php if ($showBookingSection) { ?>
+                    <div class="col-lg-5 no-pad-right">
+                        <input type="hidden" name="total_amount" id="total_amount" value="<?php echo $bookingData['final_amount']; ?>" org="<?php echo $bookingData['final_amount']; ?>">
+                        <h4 class="pull-right">Total Booking Amount: <span id="amount"><?php echo \Tourpage\Helpers\Utils::formatCurrency($bookingData['final_amount']); ?></span></h4>
+                    </div>
+                <?php } ?>
+            </div>
+            <div class="col-lg-12">
+                <h3><?php echo $tour->tourTitle; ?> ( Available From <span class="label label-default"><?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourStartFrom, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?></span> To <span class="label label-default"><?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourEndTo, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?></span> )</h3>
+                <ul class="list-inline">
+                    <li><strong>Price Type:</strong> <?php echo $tour->tourPrice->data->priceTypeText; ?></li>
+                    <li><strong>Tour type:</strong> <?php echo $tour->tourDuration->lengthTypeText; ?></li>
+                    <li><strong>Capacity:</strong> <?php echo $tour->tourCapacity > 0 ? $tour->tourCapacity : 'N/A'; ?></li>
+                    <?php if ($tour->tourPrice->data->discount->price > 0) { ?>
+                        <li><strong>Discount:</strong> <?php echo $tour->tourPrice->data->discount->price; ?>%</li>
+                    <?php } ?>
+                    <?php if ($tour->tourPrice->data->discount->multiplePurchase->percentage > 0) { ?>
+                        <li><strong>MPD:</strong> <?php echo $tour->tourPrice->data->discount->multiplePurchase->percentage; ?>% for min. <?php echo $tour->tourPrice->data->discount->multiplePurchase->count; ?> <?php echo $headCountUnit; ?> booking</li>
+                    <?php } ?>
+                </ul>
+                <h2>Billing Information</h2>
+                <hr/>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <?php echo $this->tag->textField(array('first_name', 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="address_1">Address 1</label>
+                    <?php echo $this->tag->textField(array('address_1', 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="email_address">Email</label>
+                    <?php echo $this->tag->textField(array('email_address', 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <?php echo $this->tag->select(array('country', $countries, "using" => array("countryId", "name"), 'useEmpty' => true, 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <?php echo $this->tag->textField(array('city', 'class' => 'form-control')); ?>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <?php echo $this->tag->textField(array('last_name', 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="address_2">Address 2</label>
+                    <?php echo $this->tag->textField(array('address_2', 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <?php echo $this->tag->textField(array('phone', 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <?php echo $this->tag->select(array('state', $states, "using" => array("stateId", "name"), 'useEmpty' => true, 'class' => 'form-control')); ?>
+                </div>
+                <div class="form-group">
+                    <label for="zip_code">ZIP</label>
+                    <?php echo $this->tag->textField(array('zip_code', 'class' => 'form-control')); ?>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                  <label for="zip_code">Payment Options</label>
+                  <ul class="list-unstyled">
+                  <?php /*<li><?php echo $this->tag->radioField(array('payment_opt', 'value' => 'cash_payment')); ?> Cash Payment</li>*/?>
+                  <li><?php echo $this->tag->radioField(array('payment_opt', 'value' => 'credit_card', 'checked' => 'checked')); ?> Credit Card</li>
+                  <li><?php echo $this->tag->radioField(array('payment_opt', 'value' => 'bank_transfer')); ?> Bank Transfer</li>
+                  </ul>
+                </div>
+                <div id="payment_opt_credit_card" class="show">
+                    <?php if (count($memberCards) > 0) { ?>
+                        <div class="form-group">
+                            <label for="card">Save Cards</label>
+                            <?php echo $this->tag->selectStatic(array('card', $memberCards, 'useEmpty' => true, "class" => "form-control")); ?>
+                        </div>
+                    <?php } ?>
+                    <div id="new-card" class="<?php echo count($memberCards) > 0 ? ($this->request->isPost() && $this->request->getPost('card') == 'o' ? 'show' : 'hidden') : 'show'; ?>">
+                        <div class="form-group">
+                            <label for="card_type">Card type</label>
+                            <?php echo $this->tag->selectStatic(array('card_type', \Tourpage\Helpers\Utils::getCcList(), "class" => "form-control")); ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="card_number">Card Number</label>
+                            <?php echo $this->tag->textField(array('card_number', 'class' => 'form-control', 'autocomplete' => 'off')); ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="card_cvv">CVV</label>
+                            <?php echo $this->tag->passwordField(array('card_cvv', 'class' => 'form-control', 'autocomplete' => 'off')); ?>
+                        </div>
+                        <div class="form-group">
+                            <label>Expire on</label>
+                            <ul class="list-inline">
+                                <li style="display: inline-flex;"><?php echo $this->tag->selectStatic(array('card_exp_month', \Tourpage\Helpers\Utils::getMonths(), "class" => "form-control col-xs-1")); ?></li>
+                                <li style="display: inline-flex;"><?php echo $this->tag->selectStatic(array('card_exp_year', \Tourpage\Helpers\Utils::getYears(array('range' => array('end' => 20))), "class" => "form-control")); ?></li>
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <label for="card_name">Name on Card</label>
+                            <?php echo $this->tag->textField(array('card_name', 'class' => 'form-control', 'autocomplete' => 'off')); ?>
+                        </div>
+                    </div>
+                </div>
+                <div id="payment_opt_bank_transfer" class="hidden">
+                  <div class="form-group">
+                  <label for="bank_acc_name">Account Name</label>
+                  <?php echo $this->tag->textField(array('bank_acc_name', "class" => "form-control", 'autocomplete' => 'off')); ?>
+                  </div>
+                  <div class="form-group">
+                  <label for="bank_acc_no">Account Number</label>
+                  <?php echo $this->tag->textField(array('bank_acc_no', "class" => "form-control", 'autocomplete' => 'off')); ?>
+                  </div>
+                  <div class="form-group">
+                  <label for="bank_acc_ifsc">IFS Code</label>
+                  <?php echo $this->tag->textField(array('bank_acc_ifsc', "class" => "form-control", 'autocomplete' => 'off')); ?>
+                  </div>
+                </div>
+                <?PHP /*<div id="pay_status_group" class="form-group hidden">
+                    <label for="zip_code">Pay Status</label>
+                    <ul class="list-inline">
+                        <li><?php echo $this->tag->radioField(array('pay_status', 'value' => 'paid')); ?> Paid</li>
+                        <li><?php echo $this->tag->radioField(array('pay_status', 'value' => 'pending', 'checked' => 'checked')); ?> Pending</li>
+                    </ul>
+                </div>*/?>
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <a id="book-cancel" class="btn btn-danger" onclick="return confirmRedirect('<?php echo $this->url->get('/vendor/booking/add'); ?>');"><span class="glyphicon glyphicon-ban-circle"></span> Cancel</a>
+            <button id="book-now" class="btn btn-primary"><span class="glyphicon glyphicon-book"></span> Book Now</button>
+        </div>
+    </form>
+</div>
+<style>
+    span.error-message {
+        color: #cc0000;
+        display: block;
+        margin-top: 5px;
+    }
+    .error-field {
+        border: 1px solid #cc0000 !important;
+    }
+</style>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery(document).on('change', '#tid', function (e) {
+            var tourId = jQuery("#tid").val();
+            if (tourId != '') {
+                var redirectUrl = getUrl('vendor/booking/add');
+                redirectUrl += '?ack=bk&_t=' + base64Encode(tourId);
+                redirectTo(redirectUrl);
+            }
+        });
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>Choose...</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+        jQuery('input[name="payment_opt"]:radio').click(function () {
+            var opt = jQuery(this).val();
+            //var pay_status_group = jQuery('#pay_status_group');
+            var payment_opt_bank_transfer = jQuery('#payment_opt_bank_transfer');
+            var payment_opt_credit_card = jQuery('#payment_opt_credit_card');
+            /*if (!pay_status_group.hasClass('hidden')) {
+                pay_status_group.addClass('hidden');
+            }*/
+            if (!payment_opt_bank_transfer.hasClass('hidden')) {
+             payment_opt_bank_transfer.addClass('hidden');
+            }
+            if (!payment_opt_credit_card.hasClass('hidden')) {
+                payment_opt_credit_card.addClass('hidden');
+            }
+            switch (opt) {
+                /*case 'cash_payment':
+                    if (pay_status_group.hasClass('hidden')) {
+                        pay_status_group.removeClass('hidden');
+                    }
+                    break;*/
+				case 'bank_transfer':
+					 if (payment_opt_bank_transfer.hasClass('hidden')) {
+						payment_opt_bank_transfer.removeClass('hidden');
+					 }
+					break;
+                case 'credit_card':
+                    if (payment_opt_credit_card.hasClass('hidden')) {
+                        payment_opt_credit_card.removeClass('hidden');
+                    }
+                    break;
+            }
+        });
+        jQuery("#card").change(function () {
+            var value = jQuery(this).val();
+            var newCard = jQuery("#new-card");
+            if (value === 'o') {
+                if (newCard.hasClass('hidden')) {
+                    newCard.removeClass('hidden').addClass('show');
+                }
+            } else {
+                newCard.addClass('hidden').removeClass('show');
+            }
+        });
+        jQuery('#book-now').click(function (evt) {
+            evt.preventDefault();
+            var errors = [];
+            jQuery('.error-field').removeClass('error-field');
+            jQuery('span.error-message').remove();
+            var paymentOption = jQuery('input[name="payment_opt"]:radio:checked').val();
+            console.log(paymentOption);
+            var customerInfo = {
+                firstName : jQuery('#first_name'),
+                lastName : jQuery('#last_name'),
+                addressOne : jQuery('#address_1'),
+                emailAddress : jQuery('#email_address'),
+                phone : jQuery('#phone'),
+                country : jQuery('#country'),
+                state : jQuery('#state'),
+                city : jQuery('#city'),
+                zipCode : jQuery('#zip_code'),
+            };
+            var cardInfo = {
+                <?php if ($bookingData['customer_info']['type'] == 'e' && count($memberCards) > 0) { ?>
+                saveCard : jQuery('#card'),
+                <?php } ?>
+                cardType : jQuery('#card_type'),
+                cardNumber : jQuery('#card_number'),
+                cardCvv : jQuery('#card_cvv'),
+                cardExpMonth : jQuery('#card_exp_month'),
+                cardExpYear : jQuery('#card_exp_year'),
+                cardName : jQuery('#card_name'),
+            };
+            var bankInfo = {
+				accountName: jQuery('#bank_acc_name'),
+				accountNumber: jQuery('#bank_acc_no'),
+				accountIFSC: jQuery('#bank_acc_ifsc'),
+			}
+            
+            if (paymentOption === 'credit_card') {
+				var validateCard = true;
+				<?php if ($bookingData['customer_info']['type'] == 'e' && count($memberCards) > 0) { ?>
+				if (cardInfo.saveCard.val() !== 'o') {
+					validateCard = false;
+				}
+				<?php } ?>
+			}
+            
+            if (!customerInfo.firstName.val()) {
+                errors.push(customerInfo.firstName.attr('id') + ':Please Write First Name');
+            }
+            if (!customerInfo.lastName.val()) {
+                errors.push(customerInfo.lastName.attr('id') + ':Please Write Last Name');
+            }
+            if (!customerInfo.addressOne.val()) {
+                errors.push(customerInfo.addressOne.attr('id') + ':Please Write Address 1');
+            }
+            if (!customerInfo.emailAddress.val()) {
+                errors.push(customerInfo.emailAddress.attr('id') + ':Please Write Email Address');
+            } else {
+                if (!isValidEmail(customerInfo.emailAddress.val())) {
+                    errors.push(customerInfo.emailAddress.attr('id') + ':Please Write Valid Email Address');
+                }
+            }
+            if (customerInfo.phone.val()) {
+                var phoneRegx = /^([0-9]{10})/i;
+                if (!phoneRegx.test(customerInfo.phone.val())) {
+                    errors.push(customerInfo.phone.attr('id') + ':Please Write Valid Phone Number');
+                }
+            }
+            if (!customerInfo.country.val()) {
+                errors.push(customerInfo.country.attr('id') + ':Please Choose Country');
+            }
+            if (!customerInfo.state.val()) {
+                errors.push(customerInfo.state.attr('id') + ':Please Choose State');
+            }
+            if (!customerInfo.city.val()) {
+                errors.push(customerInfo.city.attr('id') + ':Please Write City');
+            }
+            if (customerInfo.zipCode.val()) {
+                var phoneRegx = /^([0-9]{4})/i;
+                if (!phoneRegx.test(customerInfo.zipCode.val())) {
+                    errors.push(customerInfo.zipCode.attr('id') + ':Please Write Valid ZIP Code');
+                }
+            }
+            
+            if (paymentOption === 'credit_card') {
+				<?php if ($bookingData['customer_info']['type'] == 'e' && count($memberCards) > 0) { ?>
+				if (!cardInfo.saveCard.val()) {
+					errors.push(cardInfo.saveCard.attr('id') + ':Please Choose Saved Card Number');
+				}
+				<?php } ?>
+				if (validateCard) {
+					if (!cardInfo.cardNumber.val()) {
+						errors.push(cardInfo.cardNumber.attr('id') + ':Please Write Card Number');
+					} else {
+						if (!validateCardNumber(cardInfo.cardNumber.val())) {
+							errors.push(cardInfo.cardNumber.attr('id') + ':Please Write Valid Card Number');
+						}
+					}
+					if (!cardInfo.cardCvv.val()) {
+						errors.push(cardInfo.cardCvv.attr('id') + ':Please Write Card CVV');
+					} else {
+						var cvvRegx = /^([0-9]{3})$/;
+						if (!cvvRegx.test(cardInfo.cardCvv.val())) {
+							errors.push(cardInfo.cardCvv.attr('id') + ':Please Write Valid Card CVV');
+						}
+					}
+					if (!cardInfo.cardName.val()) {
+						errors.push(cardInfo.cardName.attr('id') + ':Please Write Name on Card');
+					}
+				}
+			}
+			
+			if (paymentOption === 'bank_transfer') {
+				if (!bankInfo.accountName.val()) {
+					errors.push(bankInfo.accountName.attr('id') + ':Please Write Bank Account Name');
+				}
+				if (!bankInfo.accountNumber.val()) {
+					errors.push(bankInfo.accountNumber.attr('id') + ':Please Write Bank Account Number');
+				} else {
+					var accnoRegx = /^([0-9]+)$/;
+					if (!accnoRegx.test(bankInfo.accountNumber.val())) {
+						errors.push(bankInfo.accountNumber.attr('id') + ':Please Write Valid Bank Account Number');
+					}
+				}
+				if (!bankInfo.accountIFSC.val()) {
+					errors.push(bankInfo.accountIFSC.attr('id') + ':Please Write Bank Account IFS Code');
+				}
+			}
+            
+            if (errors.length > 0) {
+                for (var e in errors) {
+                    var errorData = errors[e].split(':');
+                    if (typeof errorData[0] !== 'undefined' && errorData[0].length > 0) {
+                        var element = jQuery('#' + errorData[0]);
+                        element.addClass('error-field');
+                        var message = jQuery('<span/>');
+                        message.html(errorData[1]);
+                        message.addClass('error-message');
+                        element.after(message);
+                    }
+                }
+            } else {
+                jQuery('#customer-form').submit();
+            }
+        });
+    });
+</script>

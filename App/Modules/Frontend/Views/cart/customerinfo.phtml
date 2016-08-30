@@ -1,0 +1,235 @@
+<div class="main-contain">
+    <div class="container">
+        <div class="row">
+            <div class="col-box-9">
+                <div class="padding-box">
+                    <form id="customer_info_form" method="post">
+                        <div class="step-one">
+                            <h3><strong>Enter your details</strong></h3>
+                            <hr>
+                            <p class="font-13">Please enter your billing information exactly as it appears on your credit card statement</p>
+                            <div class="form-box">
+                                <label class="label-180">First Name</label>
+                                <?php echo $form->render('first_name'); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Last Name</label>
+                                <?php echo $form->render('last_name'); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Address 1</label>
+                                <?php echo $form->render('address_1', array('id' => 'add1')); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Address 2</label>
+                                <?php echo $form->render('address_2'); ?>
+                                <span class="font-13">(Optional)</span>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Email Address</label>
+                                <?php echo $form->render('email_address'); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Phone No</label>
+                                <?php echo $form->render('phone'); ?>
+                                <span class="font-13">(Optional)</span>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Country</label>
+                                <?php echo $form->render('country'); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">State</label>
+                                <?php echo $form->render('state'); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">City</label>
+                                <?php echo $form->render('city'); ?>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Zip Code</label>
+                                <?php echo $form->render('zip_code'); ?>
+                                <span class="font-13">(Optional)</span>
+                                <div class="clear-fixed"></div>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="step-two">
+                            <h3><strong>Review your purchase</strong></h3>
+                            <hr>
+                            <?php if ($this->cart->totalItem > 0) { ?>
+                                <?php foreach ($this->cart->getItems() as $cartItem) { ?>
+                                    <?php $itemData = Tourpage\Models\Tours::findFirstByTourId($cartItem['tour_id']); ?>
+                                    <div class="tour-box">
+                                        <?php if ($itemData->getDefaultImage()) { ?>
+                                            <div class="tour-img">
+                                                <?php echo $this->tag->image(array($itemData->getDefaultImage()->getImageUri('thumb'), "alt" => $itemData->tourTitle), false); ?>
+                                            </div>
+                                        <?php } ?>
+                                        <div class="tour-details">
+                                            <div class="col-box-9">
+                                                <h4><?php echo $this->tag->linkTo(array($itemData->getUri(), $itemData->tourTitle, 'local' => false)); ?></h4>
+                                            </div>
+                                            <div class="col-box-3 text-right">
+                                                <h3><?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['final_amount']); ?></h3>
+                                            </div>
+                                            <div class="col-box-12">
+                                                <p><strong>Date & Time:</strong> 
+                                                    <?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($cartItem['departure_on']); ?>
+                                                    <?php if (isset($cartItem['arival_on'])) { ?>
+                                                        to <?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($cartItem['arival_on']); ?>
+                                                    <?php } ?>
+                                                </p>
+                                                <?php if (isset($cartItem['time_slot'])) { ?>
+                                                    <p>
+                                                        <strong>Preferable Time:</strong> 
+                                                        <?php echo \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->start->hours) . ':' . \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->start->minutes) . ' ' . ($cartItem['time_slot']->start->hours >= 12 ? 'PM' : 'AM'); ?> 
+                                                        To <?php echo \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->end->hours) . ':' . \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->end->minutes) . ' ' . ($cartItem['time_slot']->end->hours >= 12 ? 'PM' : 'AM'); ?> 
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['head_count']) && count($cartItem['head_count']) > 0) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Participants:</strong></span>
+                                                        <span class="pplst">
+                                                            <?php
+                                                            $c = 1;
+                                                            $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                                                            foreach ($cartItem['head_count'] as $ag => $hc) {
+                                                                ?>
+                                                                <?php echo $hc['count']; ?> <?php echo $ageGroupVar[$ag]; ?> ( Age <?php echo $itemData->tourPrice->data->priceGroup[$ag]['age_type'] . ' ' . $itemData->tourPrice->data->priceGroup[$ag]['age']; ?> ) x <?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['unit_price']); ?> = <?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['amount']); ?>
+                                                                <?php if ($c < count($cartItem['head_count'])) { ?>
+                                                                    <br>
+                                                                <?php } $c++; ?>
+                                                            <?php } ?>
+                                                        </span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['group_head_count'])) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Participants:</strong> <?php echo $cartItem['group_head_count']; ?> Group(s)</span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['tour_opt']) && count($cartItem['tour_opt']) > 0) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Options:</strong></span>
+                                                        <span class="pplst">
+                                                            <?php
+                                                            $opt = 1;
+                                                            $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                                                            foreach ($cartItem['tour_opt'] as $optId => $optVal) {
+                                                                $optMdl = \Tourpage\Models\ToursOptions::findFirst($optId);
+                                                                if ($optMdl) {
+                                                                    ?>
+                                                                    <?php echo $optMdl->optionName; ?> <?php echo \Tourpage\Helpers\Utils::formatCurrency($optVal['unit_price']); ?> ( <?php echo $optVal['type']; ?> )<?php echo isset($optVal['head_count']) ? ' x ' . $optVal['head_count'] : ''; ?> = <?php echo \Tourpage\Helpers\Utils::formatCurrency($optVal['amount']); ?>
+                                                                    <?php if ($opt < count($cartItem['tour_opt'])) { ?>
+                                                                        <br>
+                                                                    <?php } $opt++; ?>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['discount'])) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Discount:</strong> <?php echo $cartItem['discount']; ?>%</span>
+                                                        <span style="float: right;"><strong>Your Save:</strong> <?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['save_amount']); ?></span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['multi_purches_discount'])) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Multi purches discount:</strong> <?php echo $cartItem['multi_purches_discount']; ?>%</span>
+                                                        <span style="float: right;"><strong>Your Save:</strong> <?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['multi_purches_save_amount']); ?></span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <br>
+                                                <?php /* <button type="button" class="btn btn-green">Add to Wishlist</button> */ ?>
+                                                <button type="button" class="btn btn-primary" onclick="confirmRedirect('<?php echo $this->url->get('/cart/remove/' . $cartItem['key']); ?>')">Remove</button>
+                                            </div>
+                                            <div class="clear-fixed"></div>
+                                        </div>
+                                        <div class="clear-fixed"></div>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+
+                        <div class="step-three">
+                            <h3><strong>Select payment method</strong></h3>
+                            <hr>
+                            <div class="form-box">
+                                <p class="font-13">
+                                    <?php echo Phalcon\Tag::radioField(array("payment", "value" => "paypal")); ?>
+                                    <?php echo $this->tag->image(array($this->url->getStatic(FRONT_END_DIR . 'images/pay.png'))); ?>
+                                    Paypal
+                                </p>
+                            </div>
+                            <div class="form-box">
+                                <p class="font-13">
+                                    <?php echo Phalcon\Tag::radioField(array("payment", "value" => "credit_card")); ?>
+                                    <?php echo $this->tag->image(array($this->url->getStatic(FRONT_END_DIR . 'images/mas.png'))); ?> 
+                                    <?php echo $this->tag->image(array($this->url->getStatic(FRONT_END_DIR . 'images/visa.png'))); ?> 
+                                    Credit card
+                                </p>
+                            </div>
+                        </div>
+                        <div class="padding-box border-style-green">
+                            <h2 style="margin: 0 0 10px;"><div class="label label-default">Total (<?php echo $this->cart->totalItem; ?> item(s)): <?php echo \Tourpage\Helpers\Utils::formatCurrency($this->cart->totalAmount); ?></div></h2>
+                            <button type="button" class="btn btn-primary" onclick="jQuery('form#customer_info_form').submit();" id="uploadx">Proceed to payment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="clear-fixed"></div>
+        </div>
+    </div>
+</div>
+<style>
+    .pplbl{float: left;padding-right: 10px;}
+    .pplst{float: left;}
+</style>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>-- Select State --</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+///////////////
+$("#uploadx").click(function(){
+    var add1 = $("#add1").val();
+    var country = $("#country").val();
+    var state = $("#state").val();
+    var city = $("#city").val();  
+       if(add1=="" || country=="" || state=="" || city==""){  
+        $('#add1').focus();
+       alert('Please fill up required field.');
+   return false;   
+    }else{
+       return true;  
+    }
+})
+</script>

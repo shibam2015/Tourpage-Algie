@@ -1,0 +1,35 @@
+<div class="panel panel-primary">
+    <div class="panel-heading"><span class="glyphicon glyphicon-user"></span> Employee Details</div>
+    <div class="panel-body">
+        <div class="col-sm-6">
+            <div class="col-sm-5 no-pad">
+                <?php
+                echo $this->tag->image(array(
+                    $employee->getAvatarUri(),
+                    "alt" => $employee->getName(),
+                    "title" => $employee->getName(),
+                    "class" => "img-thumbnail",
+                ));
+                ?>
+            </div>
+            <div class="col-sm-7 no-pad">
+                <dl class="dl-horizontal">
+                    <dt>Name :</dt><dd><?php echo $employee->getName(); ?></dd>
+                    <dt>Email Address :</dt><dd><?php echo $employee->emailAddress; ?></dd>
+                    <dt>Phone Number :</dt><dd><?php echo $employee->phone; ?></dd>
+                    <dt>City :</dt><dd><?php echo $employee->city; ?></dd>
+                    <dt>State :</dt><dd><?php echo $employee->state ? $employee->state->name : ''; ?></dd>
+                    <dt>Country :</dt><dd><?php echo $employee->country ? $employee->country->name : ''; ?></dd>
+                    <dt>Status :</dt><dd><?php echo $employee->getStatus(TRUE); ?></dd>
+                    <dt>Member From :</dt><dd><?php echo \Tourpage\Helpers\Utils::formatDate($employee->createdOn, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <?php echo $this->tag->linkTo(array('/vendor/employees', 'Back', 'class' => 'btn btn-success')); ?>
+            <?php echo $this->tag->linkTo(array('/vendor/employees/edit/' . $employee->vendorId, 'Edit', 'class' => 'btn btn-primary')); ?>
+            <a class="btn btn-danger" onclick="return confirmRedirect('<?php echo $this->url->get('/vendor/employees/remove/' . $employee->vendorId);?>');">Remove</a>
+        </div>
+    </div>
+</div>
+

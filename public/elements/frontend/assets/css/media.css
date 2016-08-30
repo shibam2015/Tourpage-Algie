@@ -1,0 +1,79 @@
+@charset "utf-8";
+/* CSS Document */
+@media (max-width:767px){
+.logo{
+	width:200px;
+	margin:auto;}
+.head-top{
+	padding-right:0px;}
+.head-top, .menu{
+	margin:0;
+	text-align:center;}
+.head-top ul, .menu ul{
+	float:none !important}
+.head-top ul li, .menu ul li{
+	display:inline-block}
+.sujjest-img{
+	width:15vw;
+	height:15vw;}
+.sujjest-content{
+	width: calc(100% - 15vw);}
+.review-img{
+	width:140px;
+	height:140px;
+	margin:auto;
+	margin-bottom:20px;}
+.review-content{
+	width:100%;
+	padding-left:0}
+.head-top .navbar-nav .open .dropdown-menu{
+	position:absolute;
+	background:#fff;
+	border: 1px solid rgba(0, 0, 0, .15);
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);}
+footer p{
+	margin-bottom:20px;}
+footer ul{
+	margin-bottom:20px;}
+}
+@media (max-width:530px){
+.menu ul li a{
+	margin:0 10px;}
+.feature h3{
+	text-align:center;}
+.single-key-content{
+	width:100%;
+	float:none;
+	margin-bottom:20px;}
+.tour-details-img{
+	height:70vw;}
+.tour-details h3{
+	font-size:24px;}
+.rating p{
+	width:100%;
+	margin:0;}
+.rating .star{
+	margin:0;
+	margin-bottom:10px;}
+}
+@media (max-width:430px){
+.menu ul li a{
+	font-size:16px;
+	margin:0 10px;}
+.review-content h4 span{
+	width:100%;
+	margin:5px 0;}
+.head-top ul li a{
+	font-size:12px;
+	padding:0 5px;}
+}
+@media (max-width:386px){
+.menu ul li a{
+	margin:0 1vw;
+	font-size:15px;}
+}
+@media (max-width:325px){
+.head-top ul li a{
+	font-size:12px;
+	padding:0 4px;}
+}

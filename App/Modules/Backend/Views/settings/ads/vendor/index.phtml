@@ -1,0 +1,50 @@
+<?php $this->partial('settings/menu'); ?>
+<div class="col-md-9">
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <i class="glyphicon glyphicon-film"></i> Vendor Home ad banners <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+        </div>
+        <div class="panel-body">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Banner Image & Link</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $banner) { ?>
+                            <tr>
+                                <td>
+                                    <?php
+                                    echo $this->tag->image(array(
+                                        $banner->getBannerUri(),
+                                        'class' => 'img-thumbnail',
+                                        'width' => 600
+                                    ));
+                                    ?>
+                                    <?php if (!empty($banner->bannerLink)) { ?>
+                                        <br />
+                                        Link: <?php echo $this->tag->linkTo(array($banner->bannerLink, $banner->bannerLink, 'local' => false, 'target' => '_blank')); ?>
+                                    <?php } ?>
+                                    <br />Vendor: <?php echo $banner->vendor->firstName . ' ' . $banner->vendor->lastName; ?>
+                                    <br />Store Front: <?php echo $this->tag->linkTo(array($banner->vendor->getStorFrontUri(), $banner->vendor->businessName, 'local' => false, 'target' => '_blank')); ?>
+                                </td>
+                                <td><?php echo $banner->getStatus(); ?></td>
+                                <td>
+                                    <a title="" class="btn btn-primary btn-xs tooltips" href="<?php echo $this->url->get('/admin/settings/banner/ads/editvendor/' . $banner->bannerId); ?>" data-original-title="Edit Banner"><span class="glyphicon glyphicon-pencil"></span></a>
+                                    <a title="" class="btn btn-primary btn-xs tooltips" href="<?php echo $this->url->get('/admin/settings/banner/ads/removevendor/' . $banner->bannerId); ?>" data-original-title="Remove Banner" onclick="if(!confirm('Are you sure?')) {return false;}"><span class="glyphicon glyphicon-remove"></span></a>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <nav>
+        <?php echo $pager->getLinks(); ?>
+    </nav>
+</div>

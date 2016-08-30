@@ -1,0 +1,81 @@
+<?php $this->partial('account/common/reviews_sidebar'); ?>
+<div class="layout contents">
+    <h2>
+        <?php if ($reviewType == 'pending') { ?>
+            <i class="glyphicon glyphicon-pencil"></i> Pending review <span>(<?php echo $pager->getTotalItems(); ?>)</span>
+        <?php } ?>
+        <?php if ($reviewType == 'confirmed') { ?>
+            <i class="glyphicon glyphicon-sunglasses"></i> Confirmed review <span>(<?php echo $pager->getTotalItems(); ?>)</span>
+        <?php } ?>
+    </h2>
+    <div class="account column1">
+        <?php if ($pager->getTotalItems() > 0) { ?>
+            <?php foreach ($pager->getItems() as $review) { ?>
+                <div class="item">
+					<div class="image thumbnail">
+                    
+                    <?php if ($review->tour->getDefaultImage()) { ?>
+						<a href="<?php echo $review->tour->getUri(); ?>">
+							<?php echo $this->tag->image(array($review->tour->getDefaultImage()->getImageUri('thumb'), "alt" => $review->tour->tourTitle), false); ?>
+						</a>
+					<?php } ?>
+					</div>
+                    <div class="info">
+                        <h1 style="margin-top: 0;"><?php echo $this->tag->linkTo(array($review->tour->getUri(), $review->tour->tourTitle, 'local' => false)); ?></h1>
+                        <div class="left">
+                            <div class="operator">
+                                <?php
+								$vendorAvator = $this->url->getStatic(FRONT_END_DIR . 'images/no_face.png');
+
+								$storeVendor = \Tourpage\Models\Vendors::findFirst(array('tourId'=>$review->tour->tourId));
+								/*if ($review->tour->tourVendor->vendor->getAvatarUri()) {*/
+								if ($storeVendor->getAvatarUri()) {
+									/*$vendorAvator = $review->tour->tourVendor->vendor->getAvatarUri();*/
+									$vendorAvator = $storeVendor->getAvatarUri();
+								}
+								echo $this->tag->image(array(
+									$vendorAvator,
+									"alt" => $storeVendor->firstName . $storeVendor->lastName,
+									"title" => $storeVendor->firstName . $storeVendor->lastName,
+									"width" => 55,
+									"height" => 64
+								));
+								?>
+                                <ul>
+                                    <li class="companyname"><?php echo $this->tag->linkTo(array($storeVendor->getStorFrontUri(), $storeVendor->businessName, 'local' => false)); ?></li>
+                                    <li class="additional">
+										<span><i class="glyphicon glyphicon-map-marker"></i> <?php echo ($storeVendor->state ? $storeVendor->state->name . ', ' : '') . ($storeVendor->country ? $storeVendor->country->name : ''); ?></span><br />
+										<?php if ($storeVendor->phone) { ?>
+											<span><i class="glyphicon glyphicon-phone-alt"></i> <?php echo $storeVendor->phone; ?></span><br />
+										<?php } ?>
+										<span><i class="glyphicon glyphicon-envelope"></i> <?php echo $storeVendor->emailAddress; ?></span>
+									</li>
+                                </ul>
+                            </div><!--//operator-->
+                            <?php /*<ul class="add_info">
+                                <li><?php echo \Tourpage\Helpers\Utils::formatDate($review->review->reviewOn, \Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM);?></li>
+                                <li>(Opening/Operating Hours:10:00AM - 5:45 PM)</li>
+                                <li>2XAdult (Age 13- 64)</li>
+                            </ul>*/ ?>
+                        </div><!--//left-->
+                        <div class="right reviewLayout">
+                            <div class="reviewInput">
+                                <p class="rating"> Rating: <span id="star_count_<?php echo $review->reviewId;?>"></span></p>
+                                <script>jQuery(function(){jQuery('#star_count_<?php echo $review->reviewId;?>').rateYo({rating: <?php echo $review->review->starCount;?>,starWidth: "20px",readOnly: true});});</script>
+                                <p><?php echo \Tourpage\Helpers\Utils::decodeString($review->review->reviewContent);?></p>
+                            </div><!--//reviewInput-->
+                        </div><!--//right-->
+                    </div><!--//info-->
+                    <br class="clearboth">
+                </div>
+            <?php } ?>
+        <?php } else { ?>
+            List is empty
+        <?php } ?>
+    </div>
+    <nav>
+        <?php echo $pager->getLinks(); ?>
+    </nav>
+</div>
+<style>.image a img{height:154px;}</style>
+

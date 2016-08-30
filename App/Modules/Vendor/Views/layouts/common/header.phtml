@@ -1,0 +1,20 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <?php /*if ($this->vendors->getVendorData()->getLogoUri()) { ?>
+            <a href="<?php echo $this->url->getBaseUri(); ?>/vendor" style="display: block;margin-top: 3px;"><img class="img-thumbnail" src="<?php echo $this->vendors->getVendorData()->getLogoUri(); ?>" alt="<?php echo $this->vendors->getFullName(); ?>" title="<?php echo $this->vendors->getFullName(); ?>" /></a>
+            <?php } else { ?>
+                <a class="navbar-brand" href="<?php echo $this->url->getBaseUri(); ?>/vendor"><?php echo $this->vendors->getFullName(); ?></a>
+            <?php }*/ ?>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <?php echo $this->elements->getMenu(); ?>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>

@@ -1,0 +1,42 @@
+<?php $this->partial('account/common/index_sidebar'); ?>
+<div class="layout contents">
+	<form id="settings" class="form-horizontal" method="post" enctype="multipart/form-data">
+		<h2><i class="glyphicon glyphicon-cog"></i> setting</h2>
+		<div class="account basicinfo">
+			<ul>
+				<li>
+					<label>Language</label>
+					<?php
+                    echo $this->tag->select(array(
+                        'language',
+                        \Tourpage\Models\Language::find('status = ' . \Tourpage\Models\Language::ACTIVE_STATUS_CODE),
+                        "using" => array("languageId", "language"),
+                        "useEmpty" => true,
+                        "emptyText" => "Please choose one..."
+                    ));
+                    ?>
+				</li>
+			</ul>
+			<ul>
+				<li>
+					<label>Currency</label>
+					<?php
+                    echo $this->tag->select(array(
+                        'currency',
+                        \Tourpage\Models\Currency::find('status = ' . \Tourpage\Models\Currency::ACTIVE_STATUS_CODE),
+                        "using" => array("currencyId", "currency"),
+                        "useEmpty" => true,
+                        "emptyText" => "Please choose one..."
+                    ));
+                    ?>
+				</li>
+			</ul>
+			<ul>
+				<li><?php echo $this->tag->checkField(array('newsletter', 'value' => 1, 'style' => 'width:12px;height:12px;position:relative;top:2px;')); ?> Subscribe newsletter from Tourpage</li>
+			</ul>
+		</div><!--//account.basicinfo step01-->
+		<div class="lastcontent thebuttonlayout001" style="float:none;padding-left:10px;margin-bottom:20px;">
+			<input type="submit" class="btn btn-primary" name="submit" value="Save">
+		</div>
+    </form>
+</div>

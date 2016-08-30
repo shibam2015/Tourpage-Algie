@@ -1,0 +1,190 @@
+<?php /*?><nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand" id="logo">
+                <a href="<?php echo $this->url->getBaseUri(); ?>"><img style="height: 50px;" src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'assets/images/logo.png'); ?>"/></a>
+            </div>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+            
+                
+				<?php if (!$this->member->isLoggedIn()) { ?>
+               
+					<li><a href="<?php echo $this->url->get('/auth/register'); ?>"><span class="glyphicon glyphicon-pencil"></a></li>
+					<li><a href="<?php echo $this->url->get('/auth/login'); ?>"><span class="glyphicon glyphicon-user"></span></a></li>
+                <?php } else { ?>
+					<li><a href="<?php echo $this->url->get('/account'); ?>"><span class="glyphicon glyphicon-user"></span></a></li>
+					<li><a href="<?php echo $this->url->get('/auth/logout'); ?>"><span class="glyphicon glyphicon-log-out"></span></a></li>
+                <?php } ?>
+                <li><a href="<?php echo $this->url->get('/account/favorites'); ?>"><span class="glyphicon glyphicon-heart"></span><?php echo $this->member->getTotalFavoriteItems() > 0 ? ' <span class="badge notify">' . $this->member->getTotalFavoriteItems() . '</span>' : ''; ?></a></li>
+                <li><a href="<?php echo $this->url->get('/cart'); ?>"><span class="glyphicon glyphicon-shopping-cart"></span><?php echo $this->cart->totalItem > 0 ? ' <span class="badge notify">' . $this->cart->totalItem . '</span>' : ''; ?></a></li>
+                <li><a href="<?php echo $this->url->get('/vendor/auth/login'); ?>"><span class="glyphicon glyphicon-lock"></span></a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+<?php
+$element = new Multiple\Frontend\Plugins\Elements();
+$banners = $element->getBanner();
+if ($banners && $banners->count() > 0) {
+    ?>
+    <div id="banner" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ul class="carousel-indicators">
+            <?php for ($b = 0; $b < $banners->count(); $b++) { ?>
+                <li data-target="#banner" data-slide-to="<?php echo $b; ?>"<?php echo $b == 0 ? ' class="active"' : ''; ?>></li>
+            <?php } ?>
+        </ul>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+            <?php $c = 1;
+            foreach ($banners as $banner) {
+                ?>
+                <div class="item<?php echo $c == 1 ? ' active' : ''; ?>">
+                        <?php if (!empty($banner->bannerLink)) { ?>
+                        <a href="<?php echo $banner->bannerLink; ?>" target="_blank">
+                        <?php } ?>
+                        <img src="<?php echo $banner->getBannerUri(); ?>" alt="Home ad banner" style="width: 3000px; height: 370px;">
+                    <?php if (!empty($banner->bannerLink)) { ?>
+                        </a>
+                <?php } ?>
+                </div>
+                <?php $c++;
+            }
+            ?>
+        </div>
+        <!-- Controls -->
+        <a class="left carousel-control" href="#banner" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#banner" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+<?php } ?>
+<div class="container" style="margin-top: 10px;">
+    <?php $this->flash->output(); ?>
+</div><?php */?>
+
+<?php //-------------------------------------------------------------------------------------------------------- ?>
+<?php /*<header id="Header" class="PointBorderColor">
+    <div class="container" >
+        <h1 <?php /*id="Logo"*\/?> style="float: left;">
+            <a href="<?php echo $this->url->getBaseUri(); ?>"><img style="height: 68px;max-width: 217px;" src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/logo_home.jpg'); ?>"/></a>
+        </h1>
+
+        <nav>
+            <ul id="MainNav">
+                <?php if (!$this->member->isLoggedIn()) { ?>
+                    <li>
+                        <a href="<?php echo $this->url->get('/auth/register'); ?>">
+                            <h2>Sign up</h2>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url->get('/auth/login'); ?>">
+                            <h2>Login</h2>
+                        </a>
+                    </li>
+                <?php } else { ?>
+                    <?php /* ---------------<li><?php echo $this->tag->linkTo('#', "<h2> " . $this->member->getFullName() . "</h2>");?></li> *\/ ?>
+                    <li><?php echo $this->tag->linkTo('/account', "<h2> " . $this->member->getNickname() . "</h2>");?></li>
+                    <?php /* <li><h2><?php echo $this->member->getNickname(); ?></h2></li> *\/ ?>
+                    <li><?php echo $this->tag->linkTo('/auth/logout', "<h2> Logout</h2>"); ?></li>
+                <?php } ?>
+            </ul>
+        </nav>
+
+        <ul id="AccountMenu">
+            <li><a href="<?php echo $this->url->get('/account/favorites'); ?>"><span></span><h3 class="txt-color">Favorites<br> (<?php echo $this->member->getTotalFavoriteItems(); ?> item(s))</h3></a></li>
+            <li><a href="<?php echo $this->url->get('/cart'); ?>"><span></span><h3 class="txt-color">Cart<br> (<?php echo $this->cart->totalItem; ?> item(s))</h3></a></li>
+            <li><a href="<?php echo $this->url->get('/vendor/auth/login'); ?>"><span><img alt="" src="<?php echo $this->url->getStatic('/frontend/images/icon0.jpg'); ?>"></span><h3 class="txt-color">supplier<br> Login</h3></a></li>
+        </ul>
+    </div>
+</header>
+<div class="container" style="margin-top: 90px;">
+    <?php $this->flash->output(); ?>
+</div>
+<?php */?>
+<?php //----------------------------------------------------------------------------------------------------------- ?>
+
+<header>
+ <div class="container">
+        	<div class="col-sm-3">
+            	<div class="logo">
+                    <a href="<?php echo $this->url->get('/'); ?>">
+                	<img src="/public/elements/frontend/assets/images/logo.png" class="img-responsive">
+                    </a>
+                </div>
+             </div>
+        <div class="col-sm-9">
+            	<div class="head-top">
+                	<ul class="pull-right navbar-nav">
+                    	<li><a href="#"><i class="fa fa-bell"></i><span></span></a></li>
+                    	<li class="dropdown">
+                            <?php 
+                             if(!$this->member->isLoggedIn()){?>
+                            Account<?php }else{?>
+                          <a class="anchor-supplier" href="<?php echo $this->url->get('/account'); ?>">Account</a> <?php } ?>
+                        	<a href="#" class="dropdown-toggle" id="drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">                            	
+                            	<span class="caret"></span>
+                            </a>
+                        	<ul class="dropdown-menu" aria-labelledby="drop1">
+                                <li><a href="<?php 
+                                            if(!$this->member->isLoggedIn()){
+                                             echo $this->url->get('/auth/login');
+                                            }else{
+                                                echo $this->url->get('/auth/logout');
+                                            }
+                                             ?>"><?php if(!$this->member->isLoggedIn()){?>Users<?php }else{?>Logout<?php }  ?></a></li>
+                                <?php if(!$this->member->isLoggedIn()){?>
+                             <li><a href="<?php echo $this->url->get('/vendor'); ?>">Vendor</a></li>
+                             <?php }?>
+                                <!--<li><a href="#">Something else here</a></li>-->
+  							</ul>
+                        </li>
+                    	<li><a href="#">Favorites</a></li>
+                    	<li><a href="#">My Tours</a></li>
+                    	<li class="dropdown">
+                        	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            	Support
+                            	<span class="caret"></span>
+                            </a>
+                        	<ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+  							</ul>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                
+                <div class="clearfix"></div>
+                
+                <div class="menu">
+                	<ul class="pull-right navbar-nav">
+                    	<li><a href="<?php //echo $this->url->get(''); ?>">About</a></li>
+                    	<li><a href="<?php //echo $this->url->get(''); ?>">Our Tours</a></li>
+                    	<li><a href="#">Blog</a></li>
+                    	<li><a href="#">Gallery</a></li>
+                    	<li><a href="/App/Modules/Frontend/Views/store/contacts.phtml">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </header>
+        <main>
+        <div class="banner">
+        	<img src="/public/elements/frontend/assets/images/banner-img2.png" class="scale" data-scale="best-fill" data-align="center" >
+        </div>
+        <div class="clearfix"></div>

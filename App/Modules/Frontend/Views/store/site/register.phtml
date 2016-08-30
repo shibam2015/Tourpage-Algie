@@ -1,0 +1,50 @@
+<section id="bodysectionpdp">
+    <div id="subWrap">
+        <h1 class="tit wrap">Sign up</h1>         
+        <form class="signupFormm" id="member_register" method="post">
+            <ol class="signupForm">
+                <li><label>First Name</label><?php echo $form->renderElement('first_name'); ?></li>
+                <li><label>Last Name</label><?php echo $form->renderElement('last_name'); ?></li>
+                <li><label>Nickname</label><?php echo $form->renderElement('nick_name'); ?></li>
+                <?php /*<li><label>Address 1</label><?php echo $form->render('address_1'); ?></li>
+                <li><label>Address 2</label><?php echo $form->render('address_2'); ?> (Optional)</li>*/ ?>
+                <li><label>Email Address</label><?php echo $form->renderElement('email_address'); ?></li>
+                <?php /*<li><label>Phone</label><?php echo $form->render('phone'); ?></li>*/ ?>
+                <li><label>Country</label><?php echo $form->renderElement('country'); ?></li>
+                <?php /*<li><label>State / County</label><?php echo $form->render('state'); ?></li>
+                <li><label>City</label><?php echo $form->render('city'); ?></li>
+                <li><label>ZIP</label><?php echo $form->render('zip_code'); ?></li>*/ ?>
+                <li><label>Password</label><?php echo $form->renderElement('password'); ?></li>
+                <li><label>Confirm Password</label><?php echo $form->renderElement('re_password'); ?></li>
+                <?php /*?><li><input type="checkbox"> Join the 9,806,151 Tourpage+ members with instant rewards.</li>
+                <li><input type="checkbox">I have read and agree to the Terms of Use and the Privacy Policy.</li><?php */?>
+                <li><label> Are you an "<em>AGENT</em>"?.</label><input id="is_agent" name="is_agent" value="1" type="checkbox"></li>
+            </ol>
+            <div class="form-group">
+                <?php \Tourpage\Helpers\Captcha::RenderImage(); ?>
+                <?php echo $form->renderElement('captcha'); ?>
+            </div>
+            <?php //echo \Tourpage\Library\Recaptcha::get(); ?>
+            <a class="btn btn-primary" onclick="jQuery('#member_register').submit(); return false;" style="cursor: pointer;">Create account</a>
+        </form>
+    </div><!--//subWrap-->
+    <style>.signupForm{list-style:none; margin-left: 10px;}.signupForm li label{display:inline-block;width:155px;}.signupForm li{text-align:left}</style>
+</section>
+<?php /*<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>-- Select State --</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+</script>*/ ?>

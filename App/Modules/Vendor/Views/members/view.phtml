@@ -1,0 +1,73 @@
+<div class="panel panel-primary">
+    <div class="panel-heading"><span class="glyphicon glyphicon-user"></span> Users Details</div>
+    <div class="panel-body">
+        <div class="col-sm-6">
+            <div class="col-sm-3 no-pad">
+                <?php
+                echo $this->tag->image(array(
+                    $member->getAvatarUri(),
+                    "alt" => $member->firstName,
+                    "title" => $member->firstName,
+                    "class" => "img-thumbnail",
+                ));
+                ?>
+            </div>
+            <div class="col-sm-9 no-pad">
+                <dl class="dl-horizontal">
+                    <dt>Name :</dt><dd><?php echo $member->firstName . ' ' . $member->lastName; ?></dd>
+                    <dt>Nickname :</dt><dd><?php echo $member->nickName; ?></dd>
+                    <dt>Address 1 :</dt><dd><?php echo $member->addressOne; ?></dd>
+                    <dt>Address 2 :</dt><dd><?php echo $member->addressTwo; ?></dd>
+                    <dt>Email Address :</dt><dd><?php echo $member->emailAddress; ?></dd>
+                    <dt>Phone Number :</dt><dd><?php echo $member->phone; ?></dd>
+                    <dt>City :</dt><dd><?php echo $member->city; ?></dd>
+                    <dt>State :</dt><dd><?php echo $member->state ? $member->state->name : ''; ?></dd>
+                    <dt>Country :</dt><dd><?php echo $member->country ? $member->country->name : ''; ?></dd>
+                    <dt>ZIP :</dt><dd><?php echo $member->zipCode; ?></dd>
+                    <dt>Status :</dt><dd><?php echo $member->getStatus(TRUE); ?></dd>
+                    <dt>Member From :</dt><dd><?php echo \Tourpage\Helpers\Utils::formatDate($member->createdOn, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="col-sm-6 panel panel-default"><div id="customer_booking_graph"></div></div>
+        <div class="col-sm-12">
+            <?php echo $this->tag->linkTo(array('/vendor/members', 'Back', 'class' => 'btn btn-success')); ?>
+        </div>
+    </div>
+</div>
+<?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/highcharts/highcharts.js")); ?>
+<?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/highcharts/modules/exporting.js")); ?>
+<script type="text/javascript">
+    var bookingSeries = [<?php echo implode(',', $bookings->monthsQueue); ?>];
+    var bookingChart = new Highcharts.Chart({
+        chart: {renderTo: 'customer_booking_graph'},
+        credits: {enabled: 0},
+        title: {text: 'Booking Graph for <?php echo \Tourpage\Helpers\Utils::__getCurrentYear(); ?>'},
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {text: 'Booking Amount (USD)'}
+        },
+        tooltip: {
+            valuePrefix: 'USD '
+        },
+        series: [{
+			name: 'Total Booking',
+			type: 'column',
+			data: bookingSeries
+        }]
+    });
+    
+	bookingChart.renderer.label('Total Booking: <?php echo $bookings->totalBooking;?> <br /> Total Booking Amount: <?php echo $bookings->totalAmount;?>', 300, 50)
+		.css({
+			color: '#FFFFFF'
+		})
+		.attr({
+			fill: 'rgba(0, 0, 0, 0.75)',
+			padding: 8,
+			r: 5,
+			zIndex: 6
+		})
+		.add();
+</script>

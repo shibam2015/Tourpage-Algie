@@ -1,0 +1,227 @@
+<div class="col-lg-9">
+    <?php if ($announcementContent != '') { ?>
+        <div id="notice" class="panel panel-primary">
+            <div class="panel-body">
+                <a class="close tooltips" title="Close Notice"><?php echo $this->tag->image(array(VENDOR_DIR . 'images/btn_close.jpg')); ?></a>
+                <?php echo $announcementContent; ?>
+            </div>
+        </div>
+    <?php } ?>
+    <?php if ($this->vendors->isAllowed('tours')) { ?>
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-th-list"></span> Tours
+                    <div class="pull-right">
+                        <?php if ($this->vendors->isAllowed('tours', 'add')) { ?>
+                            <a class="btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('tours|new_tours'); ?>" role="button" title="Add New Tours"><i class="fa fa-plus"></i> Add New</a>
+                        <?php } ?>
+                        <?php if ($this->vendors->isAllowed('tours', 'index')) { ?>
+                            <a class="btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('tours|manage_tours'); ?>" role="button" title="View All Tours"><i class="fa fa-search"></i> View all</a>
+                        <?php } ?>
+                    </div>
+                </h3>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Tour Title</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Booking</th>
+                        <?php if ($this->vendors->isAllowed('tours', 'edit') || $this->vendors->isAllowed('tours', 'remove') || $this->vendors->isAllowed('tours', 'report')) { ?>
+                            <th>Action</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($tours->count() > 0) { ?>
+                        <?php foreach ($tours as $item) { ?>
+                            <tr>
+                                <td><?php echo $this->tag->linkTo(array($item->tour->getUri(), $item->tour->tourTitle, 'local' => false, 'target' => '_blank')); ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->tour->tourPrice->getPrice()); ?></td>
+                                <td><?php echo $item->tour->tourPrice->hasDiscount(TRUE) ? ($item->tour->tourPrice->discountHasExpired() ? '<span class="text-danger"><s>' . $item->tour->tourPrice->data->discount->price . '%</s></span>' : $item->tour->tourPrice->data->discount->price . '%') : 0 . '%'; ?></td>
+                                <td><?php echo $item->tour->isBookingActive() ? '<span class="label label-success">Available</span>' : '<span class="label label-warning">Close</span>'; ?></td>
+                                <td>
+                                    <?php if ($this->vendors->isAllowed('tours', 'edit')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
+                                    <?php } ?>
+                                    <?php if ($this->vendors->isAllowed('tours', 'remove')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/tours/remove/' . $item->tourId, '<span class="glyphicon glyphicon-remove"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Remove Tour')); ?>
+                                    <?php } ?>
+                                    <?php if ($this->vendors->isAllowed('tours', 'report')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/tours/report/' . $item->tourId, '<span class="glyphicon glyphicon-list-alt"></span>', 'class' => 'btn btn-warning btn-xs tooltips', 'title' => 'Booking Report')); ?>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="5" class="text-center">No tours</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    <?php } ?>
+    <?php if ($this->vendors->isAllowed('booking')) { ?>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-th-list"></span> Bookings
+                    <div class="pull-right">
+                        <a class="btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('booking'); ?>" role="button" title="View All Bookings"><i class="fa fa-search"></i> View all</a>
+                    </div>
+                </h3>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#Invoice No.</th>
+                        <th>Booked On</th>
+                        <th>Amount</th>
+                        <th>Booking</th>
+                        <th>Payment</th>
+                        <?php if ($this->vendors->isAllowed('booking', 'details')) { ?>
+                            <th>Action</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($bookings->count() > 0) { ?>
+                        <?php foreach ($bookings as $item) { ?>
+                            <tr>
+                                <td>#<?php echo $item->booking->invoiceNumber; ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatDate($item->booking->bookedOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->booking->getTotalAmountByVendor($item->vendorId)); ?></td>
+                                <td><?php echo $item->booking->getBookingStatusText(FALSE); ?></td>
+                                <td><?php echo $item->booking->getPaymentStatusText(FALSE); ?></td>
+                                <?php if ($this->vendors->isAllowed('booking', 'details')) { ?>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/vendor/booking/details/' . $item->bookingId, '<span class="glyphicon glyphicon-eye-open"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View booking details')); ?>
+                                    </td>
+                                <?php } ?>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="6" class="text-center">No current booking</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    <?php } ?>
+</div>
+<div class="col-lg-3">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="widget" style="float: left">
+                <div id="calender" style="float: left"></div>
+                <span id="dop" style="float: left; padding-left: 5px;">[</span>
+                <div id="clock" style="float: left; padding: 0 5px;"></div>
+                <span id="dcl" style="float: left">]</span>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Message Center</h3>
+        </div>
+        <table class="table table-hover table-condensed">
+            <tbody>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Customer Enquiry</td>
+                    <td class="text-center">Response</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title">Message Center</h3>
+        </div>
+        <table class="table table-hover table-condensed">
+            <tbody>
+                <tr>
+                    <td class="text-center">Name</td>
+                    <td class="text-center">Check-in</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Name</td>
+                    <td class="text-center">Check-in</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Name</td>
+                    <td class="text-center">Check-in</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Name</td>
+                    <td class="text-center">Check-in</td>
+                </tr>
+                <tr>
+                    <td class="text-center">Name</td>
+                    <td class="text-center">Check-in</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php if($vendorMessages){ ?>
+<div class="modal fade" id="welcome_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+            <?php echo $this->tag->linkTo(array('/vendor/index/message/', '<span>X</span>', 'class' => 'btn btn-primary btn-xs tooltips close', 'title' => 'Close', 'data-dismiss' => 'modal', 'aria-label' => 'Close')); ?>
+                <div class="col-md-12"><h4><?php echo $vendorMessages->message->messageText;?></h4></div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php }?>
+<?php if($vendorMessages && $vendorMessages->vendorMessageStatus == \Tourpage\Models\VendorsMessages::UNREAD_STATUS_CODE){ ?>
+<script type="text/javascript">
+    jQuery(function () {
+		jQuery('#welcome_modal').modal('show');
+	});
+</script>
+<?php } ?>
+<style>
+	button.close{background-color: #337ab7;border-radius: 50%;padding: 2px 6px;text-shadow: none;color: #ffffff;opacity: 1;}
+</style>
+<script type="text/javascript">
+    window.onload = function () {
+        Clock.displayCalender('#calender');
+        Clock.displayClock('#clock');
+    };
+    jQuery(function () {
+        jQuery('a.close').click(function (e) {
+            jQuery('#notice').slideUp(1000);
+        });
+    });
+</script>

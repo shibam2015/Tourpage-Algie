@@ -1,0 +1,129 @@
+<div class="main-contain">
+    <div class="cart-container">
+        <h3><span class="glyphicon glyphicon-shopping-cart"></span> Tour Busket <span class="small">(You currently have <?php echo $this->cart->totalItem;?> tour in your busket.)</span></h3>
+        <hr>
+        <div class="row">
+            <div class="col-box-8">
+                <div class="padding-box">
+                    <?php if ($this->cart->totalItem > 0) { ?>
+                    <?php foreach ($this->cart->getItems() as $cartItem) { ?>
+                    <?php $itemData = Tourpage\Models\Tours::findFirstByTourId($cartItem['tour_id']);?>
+                    <div class="tour-box">
+                        <?php if ($itemData->getDefaultImage()) { ?>
+                        <div class="tour-img">
+                            <?php echo $this->tag->image(array($itemData->getDefaultImage()->getImageUri('thumb'), "alt" => $itemData->tourTitle), false); ?>
+                        </div>
+                        <?php } ?>
+                        <div class="tour-details">
+                            <div class="col-box-9">
+                                <h4><?php echo $this->tag->linkTo(array($itemData->getUri(), $itemData->tourTitle, 'local' => false)); ?></h4>
+                                <p><strong>Operator:</strong> <?php echo $this->tag->linkTo(array($itemData->tourVendor->vendor->getStorFrontUri(), $itemData->tourVendor->vendor->businessName, 'local' => false)); ?></p>
+                            </div>
+                            <div class="col-box-3 text-right">
+                                <h3><?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['final_amount']); ?></h3>
+                            </div>
+                            <div class="col-box-12">
+                                <p><strong>Date & Time:</strong> 
+                                    <?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($cartItem['departure_on']); ?>
+                                    <?php if (isset($cartItem['arival_on'])) { ?>
+                                     to <?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($cartItem['arival_on']); ?>
+                                    <?php } ?>
+                                </p>
+                                <?php if (isset($cartItem['time_slot'])) { ?>
+                                <p>
+                                    <strong>Preferable Time:</strong> 
+                                    <?php echo \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->start->hours) . ':' . \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->start->minutes) . ' ' . ($cartItem['time_slot']->start->hours >= 12 ? 'PM' : 'AM');?> 
+                                    To <?php echo \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->end->hours) . ':' . \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->end->minutes) . ' ' . ($cartItem['time_slot']->end->hours >= 12 ? 'PM' : 'AM');?> 
+                                </p>
+                                <?php } ?>
+                                <?php if (isset($cartItem['head_count']) && count($cartItem['head_count']) > 0) { ?>
+                                <p>
+                                    <span class="pplbl"><strong>Participants:</strong></span>
+                                    <span class="pplst">
+                                        <?php $c = 1; 
+                                        $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                                        foreach ($cartItem['head_count'] as $ag => $hc) { ?>
+                                        <?php echo $hc['count'];?> <?php echo $ageGroupVar[$ag];?> ( Age <?php echo $itemData->tourPrice->data->priceGroup[$ag]['age_type'] . ' ' . $itemData->tourPrice->data->priceGroup[$ag]['age'];?> ) x US<?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['unit_price']);?> = US<?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['amount']);?>
+                                        <?php if ($c < count($cartItem['head_count'])) { ?>
+                                        <br>
+                                        <?php } $c++; ?>
+                                        <?php } ?>
+                                    </span>
+                                    <div class="clear-fixed"></div>
+                                </p>
+                                <?php } ?>
+                                <?php if (isset($cartItem['group_head_count'])) { ?>
+                                <p>
+                                    <span class="pplbl"><strong>Participants:</strong> <?php echo $cartItem['group_head_count'];?> Group(s)</span>
+                                    <div class="clear-fixed"></div>
+                                </p>
+                                <?php } ?>
+                                <?php if (isset($cartItem['tour_opt']) && count($cartItem['tour_opt']) > 0) { ?>
+                                <p>
+                                    <span class="pplbl"><strong>Options:</strong></span>
+                                    <span class="pplst">
+                                        <?php $opt = 1; 
+                                        $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                                        foreach ($cartItem['tour_opt'] as $optId => $optVal) { 
+                                            $optMdl = \Tourpage\Models\ToursOptions::findFirst($optId);
+                                            if ($optMdl) {?>
+                                                <?php echo $optMdl->optionName;?> <?php echo \Tourpage\Helpers\Utils::formatCurrency($optVal['unit_price']);?> ( <?php echo $optVal['type'];?> )<?php echo isset($optVal['head_count']) ? ' x ' . $optVal['head_count'] : '';?> = <?php echo \Tourpage\Helpers\Utils::formatCurrency($optVal['amount']);?>
+                                                <?php if ($opt < count($cartItem['tour_opt'])) { ?>
+                                                <br>
+                                                <?php } $opt++; ?>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </span>
+                                    <div class="clear-fixed"></div>
+                                </p>
+                                <?php } ?>
+                                <?php if (isset($cartItem['discount'])) { ?>
+                                <p>
+                                    <span class="pplbl"><strong>Discount:</strong> <?php echo $cartItem['discount'];?>%</span>
+                                    <span style="float: right;"><strong>Your Save:</strong> <?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['save_amount']);?></span>
+                                    <div class="clear-fixed"></div>
+                                </p>
+                                <?php } ?>
+                                <?php if (isset($cartItem['multi_purches_discount'])) { ?>
+                                <p>
+                                    <span class="pplbl"><strong>Multi purches discount:</strong> <?php echo $cartItem['multi_purches_discount'];?>%</span>
+                                    <span style="float: right;"><strong>Your Save:</strong> <?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['multi_purches_save_amount']);?></span>
+                                    <div class="clear-fixed"></div>
+                                </p>
+                                <?php } ?>
+                                <br>
+                                <?php /*<button type="button" class="btn btn-green">Add to Wishlist</button>*/?>
+                                <button type="button" class="btn btn-primary" onclick="confirmRedirect('<?php echo $this->url->get('/cart/remove/' . $cartItem['key']);?>')">Remove</button>
+                            </div>
+                            <div class="clear-fixed"></div>
+                        </div>
+                        <div class="clear-fixed"></div>
+                    </div>
+                    <?php } ?>
+                    <h2 class="text-right">Total: <?php echo \Tourpage\Helpers\Utils::formatCurrency($this->cart->totalAmount); ?></h2>
+                    <?php } else { ?>
+                    <h2 class="text-left">You currently don't have any item in your cart.</h2>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="col-box-4">
+                <div class="padding-box">
+                    <div class="padding-box border-style-green">
+                        <h2 style="margin: 0 0 10px;"><div class="label label-default"><?php echo \Tourpage\Helpers\Utils::formatCurrency($this->cart->totalAmount); ?> (<?php echo $this->cart->totalItem;?> Tours(s))</div></h2>
+                        <div>
+                        <?php if ($this->cart->totalItem > 0) { ?>
+                        <a href="<?php echo $this->url->get('/cart/customerinfo');?>" class="btn btn-success">Checkout</a>
+                        <?php } ?>
+                        <a href="<?php echo $this->url->getBaseUri();?>" class="btn btn-primary">Continue Booking</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear-fixed"></div>
+        </div>
+    </div>
+</div>
+<style>
+    .pplbl{float: left;padding-right: 10px;}
+    .pplst{float: left;}
+</style>

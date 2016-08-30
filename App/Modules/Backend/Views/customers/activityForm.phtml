@@ -1,0 +1,53 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title"><?php echo ucfirst($formType);?> Type of Activity</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" method="post">
+            <div class="col-xs-8">
+				<?php $form->renderBootstrap('country'); ?>
+				<?php $form->renderBootstrap('state'); ?>
+				<?php $form->renderBootstrap('city'); ?>
+				<?php $form->renderBootstrap('activity_name'); ?>
+				<?php $form->renderBootstrap('activity_status'); ?>
+			</div>
+            <div class="col-lg-12 no-pad">
+                <?php echo $form->render('submit'); ?>
+                <?php echo $this->tag->linkTo(array('/admin/customers/activities', 'Back', 'class' => 'btn btn-default')); ?>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>-- Select State --</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+        jQuery("#state").change(function () {
+            var stateId = jQuery(this).val();
+            var countryId = jQuery("#country").val();
+            var url = "<?php echo $this->url->get('/ajax/rendercity/'); ?>";
+            var cityElement = jQuery("#city");
+            jQuery.get(url + stateId + '/' + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.cities != 'undefined' && response.cities.length > 0) {
+                    cityElement.html("<option value=''>-- Select City --</option>");
+                    for (var s in response.cities) {
+                        cityElement.append("<option value='" + response.cities[s].cityId + "'>" + response.cities[s].cityName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+</script>

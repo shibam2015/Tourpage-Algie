@@ -1,0 +1,25 @@
+<?php $this->partial('account/common/travelpreference_sidebar'); ?>
+<div class="layout contents">
+    <h2><i class="glyphicon glyphicon-plane"></i> Favorite Destination</h2>
+    <form id="fav-destination" class="form-horizontal" method="post" enctype="multipart/form-data">
+		<div class="account wideinfo">
+			<ul class="checkList">
+				<?php if ($attractions && $attractions->count() > 0) { ?>
+					<?php foreach ($attractions as $attraction) { ?>
+						<li>
+							<span><input name="dest[]" value="<?php echo $attraction->attractionId;?>" type="checkbox"<?php echo in_array($attraction->attractionId, $memberAttractions) ? ' checked' : '';?>></span>
+							<label><?php echo $attraction->attractionName;?></label>
+						</li>
+					<?php } ?>
+				<?php } else { ?>
+					<li>No Favorite Destination list here</li>
+				<?php } ?>
+			</ul>
+		</div>
+		<?php if ($attractions && $attractions->count() > 0) { ?>
+		<div class="lastcontent thebuttonlayout001">
+			<input type="submit" class="btn btn-info" name="submit" value="Save">
+		</div>
+		<?php } ?>
+    </form>
+</div>

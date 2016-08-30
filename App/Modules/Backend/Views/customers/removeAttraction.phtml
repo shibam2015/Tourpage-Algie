@@ -1,0 +1,32 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-remove"></span> Remove Place of Attraction
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="page-header">
+            <h2>Are you sure! you want to remove <small><i>"<?php echo $attraction->attractionName; ?>"</i></small> ?</h2>
+        </div>
+        <div class="col-lg-4">
+			<dl class="dl-horizontal">
+				<dt>Country</dt>
+				<dd><?php echo $attraction->country->name; ?></dd>
+				<dt>State</dt>
+				<dd><?php echo $attraction->state->name; ?></dd>
+				<dt>City</dt>
+				<dd><?php echo $attraction->city->name; ?></dd>
+				<dt>Name of Attraction</dt>
+				<dd><?php echo $attraction->attractionName; ?></dd>
+				<dt>Status</dt>
+				<dd><?php echo $attraction->getStatus(); ?></dd>
+			</dl>
+            <form method="post">
+                <input type="hidden" name="key" value="<?php echo md5('confirm'); ?>" />
+                <input type="hidden" name="attraction_id" value="<?php echo $attraction->attractionId; ?>" />
+                <input type="submit" name="submit" class="btn btn-danger" value="Remove" />
+                <?php echo $this->tag->linkTo(array('/admin/customers/attractions', 'Back', 'class' => 'btn btn-primary')); ?>
+            </form>
+        </div>
+    </div>
+</div>

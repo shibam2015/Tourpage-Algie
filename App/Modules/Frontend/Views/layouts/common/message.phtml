@@ -1,0 +1,21 @@
+<?php
+$messageTypeCss = array(
+    'error' => 'danger',
+    'success' => 'success',
+    'notice' => 'info',
+    'warning' => 'warning',
+);
+$messages = $this->flash->getMessages();
+if (count($messages) > 0) {
+    foreach ($messages as $messageType => $messageArray) {
+        foreach ($messageArray as $message) {
+            ?>
+            <div class="alert alert-<?php echo $messageTypeCss[$messageType]; ?> alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <?php echo $message; ?>
+            </div>
+            <?php
+        }
+    }
+}
+?>

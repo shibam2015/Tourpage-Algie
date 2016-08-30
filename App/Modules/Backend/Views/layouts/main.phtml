@@ -1,0 +1,12 @@
+<?php $this->partial('layouts/common/header');?>
+<div class="container-fluid">
+    <div class="starter-template row">
+        <div class="col-md-12">
+            <div class="container">
+                <?php $this->flash->output(); ?>
+                <?php echo $this->getContent(); ?>
+            </div>
+        </div>
+    </div>
+</div><!-- /.container -->
+<?php $this->partial('layouts/common/footer');?>

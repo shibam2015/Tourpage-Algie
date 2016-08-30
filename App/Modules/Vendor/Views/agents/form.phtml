@@ -1,0 +1,70 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><?php echo ucfirst($formType); ?> Local Agents</h3>
+    </div>
+    <form id="form-local-agent" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="panel-body">
+            <fieldset>
+                <legend><h3>About Local Agent</h3></legend>
+                <div class="col-sm-7">
+                    <?php $form->renderBootstrap('first_name'); ?>
+                    <?php $form->renderBootstrap('last_name'); ?>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend><h3>Location Detail</h3></legend>
+                <div class="col-sm-7">
+                    <?php $form->renderBootstrap('address_1'); ?>
+                    <?php $form->renderBootstrap('address_2'); ?>
+                    <?php $form->renderBootstrap('country'); ?>
+                    <?php $form->renderBootstrap('state'); ?>
+                    <?php $form->renderBootstrap('city'); ?>
+                    <?php $form->renderBootstrap('zip_code'); ?>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend><h3>Contact Detail</h3></legend>
+                <div class="col-sm-7">
+                    <?php $form->renderBootstrap('email_address'); ?>
+                    <?php $form->renderBootstrap('phone'); ?>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend><h3>Additional Details</h3></legend>
+                <div class="col-sm-7">
+                    <?php $form->renderBootstrap('commission'); ?>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend><h3>Account Detail</h3></legend>
+                <div class="col-sm-7">
+                    <?php $form->renderBootstrap('password'); ?>
+                    <?php $form->renderBootstrap('re_password'); ?>
+                    <?php $form->renderBootstrap('status'); ?>
+                </div>
+            </fieldset>
+        </div>
+        <div class="panel-footer">
+            <?php echo $form->render('submit'); ?>
+            <?php echo $this->tag->linkTo(array('/vendor/agents', 'Back', 'class' => 'btn btn-success')); ?>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>Please, choose one...</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+</script>

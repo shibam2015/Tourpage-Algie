@@ -1,0 +1,30 @@
+<?php $this->partial('settings/menu'); ?>
+<div class="col-md-9">
+    <div class="panel panel-danger">
+        <div class="panel-heading"><i class="glyphicon glyphicon-film"></i> <?php echo $pageHeading; ?></div>
+        <div class="panel-body">
+            <?php echo $this->tag->form(array('enctype' => 'multipart/form-data')) ?>
+            <?php
+            echo $this->tag->hiddenField(array(
+                "bnr_type",
+                "value" => $type
+            ))
+            ?>
+            <?php
+            if ($formType == 'edit') {
+                echo $this->tag->image(array(
+                    $banner->getBannerUri(),
+                    'class' => 'img-thumbnail',
+                ));
+            }
+            ?>
+            <?php $formFile->renderHorizental('banner_img'); ?>
+            <?php $form->renderHorizental('banner_link'); ?>
+            <?php $form->renderHorizental('banner_status'); ?>
+            <?php echo $form->render('submit'); ?>
+            <?php echo $this->tag->linkTo(array('/admin/settings/banner/ads/index/' . $type, 'Cancel', 'class' => 'btn btn-primary'));?>
+            <?php echo $this->tag->endForm() ?>
+        </div>
+    </div>
+</div>
+

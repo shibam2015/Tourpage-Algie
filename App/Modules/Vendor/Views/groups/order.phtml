@@ -1,0 +1,106 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Group Order <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+        </h3>
+    </div>
+    <div class="panel-body">
+    <div style="width:49%;float:left;border: 1px solid #337ab7;height:250px;min-height: 250px;">
+    <h4 style="padding: 0px 3px;">Group List</h3>
+    <hr style="margin: 0px;"/>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                    <ul id="sortable1" class="connectedSortable">
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                        <?php if($item->groupVendorsDisplay=='N') { ?>
+                            <li id="items_<?php echo $item->group->groupId; ?>"><?php echo $item->group->groupName; ?></li>
+                           <?php } ?>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <li>No Data</li>
+                    <?php } ?>
+                    </ul>
+    </div>
+    <div style="width:49%;float:right;border: 1px solid #337ab7;height:250px;min-height: 250px;">
+    <h4 style="padding: 0px 3px;">Sortable List</h3>
+    <hr style="margin: 0px;"/>
+		<?php if ($pager->getTotalItems() > 0) { ?>
+   <ul id="sortable2" class="connectedSortable">
+                        <?php foreach ($pager->getItems() as $item) {?>
+                            
+                        <?php if($item->groupVendorsDisplay=='Y') { ?>
+                            <li id="items_<?php echo $item->group->groupId; ?>"><?php echo $item->group->groupName; ?>--<?php echo $item->group->groupId;?></li>
+                    <?php }?>
+                    <?php } ?>
+                    </ul>
+                    <?php } else { ?>
+                        No Data
+                    <?php } ?>
+    </div>
+    <div class="clearfix"></div>
+    <div style="padding:10px;">
+    <input type="submit" class="btn btn-primary" value="Update" name="submit" id="submit">
+    </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<style>
+    .jq-ry-container {padding: 0;}
+      #sortable1, #sortable2{
+    width: 100%;
+	height:81%;
+	min-height:81%;
+    list-style-type: none;
+    margin: 0;
+    padding: 5px 0 0 0;
+    float: left;
+    margin-right: 10px;
+  
+ }
+ #sortable1,#sortable2{
+	 overflow-y:scroll;
+ }
+  #sortable1 li, #sortable2 li {
+    margin: 0 5px 5px 5px;
+    padding: 5px;
+    font-size: 1.2em;
+    width: 90%;
+	background:#eee;
+	border: solid 1px #cccccc;
+  }
+</style>
+<script>
+jQuery(function() {
+	jQuery("#sortable1").sortable({
+		connectWith: ".connectedSortable"
+   }).disableSelection();
+    jQuery("#sortable2").sortable({
+		connectWith: ".connectedSortable",
+		receive: function(event, ui) {
+			if(jQuery(this).children().length > 5){
+				jQuery(ui.sender).sortable('cancel');
+				 alert('Maximum 5 groups are allowed for display on store front.');
+			}
+		}
+   }).disableSelection(); 
+   jQuery("#submit").click( function(){
+	   var sdata = jQuery("#sortable2").sortable("toArray").toString();
+	   var usdata = jQuery("#sortable1").sortable("toArray").toString();
+		jQuery.ajax({
+			type:'POST',
+			data: 'sdata='+sdata+'&usdata='+usdata,
+			url:'<?php echo $this->url->get("/vendor/groups/order");?>',
+			success:function(result) {
+				alert(result);
+				setTimeout(function(){
+					location.reload(); 
+				}, 1000);
+			}
+		});
+		return false;
+   });
+  });
+</script>
+
+

@@ -1,0 +1,93 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-list-alt"></span> Report</h3>
+    </div>
+    <div class="panel-body">
+		<fieldset>
+			<legend><h3><?php echo $registeredAgent->member->firstName . ' ' . $registeredAgent->member->lastName; ?></h3></legend>
+			
+			<div class="col-sm-2">
+				<div class="thumbnail">
+					<?php
+					echo $this->tag->image(array(
+						$registeredAgent->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_THUMB),
+						"alt" => $registeredAgent->member->firstName . ' ' . $registeredAgent->member->lastName,
+						"title" => $registeredAgent->member->firstName . ' ' . $registeredAgent->member->lastName
+					));
+					?>
+				</div>
+			</div>
+			<div class="col-sm-5">
+				<dl class="dl-horizontal">
+					<dt>Email Address :</dt><dd><?php echo $registeredAgent->member->emailAddress; ?></dd>
+					<dt>Phone Number :</dt><dd><?php echo $registeredAgent->member->phone; ?></dd>
+					<dt>Address 1 :</dt><dd><?php echo $registeredAgent->member->addressOne; ?></dd>
+					<dt>Address 2 :</dt><dd><?php echo $registeredAgent->member->addressTwo; ?></dd>
+					<dt>City :</dt><dd><?php echo $registeredAgent->member->city; ?></dd>
+					<dt>State :</dt><dd><?php echo $registeredAgent->member->state ? $registeredAgent->member->state->name : ''; ?></dd>
+					<dt>Country :</dt><dd><?php echo $registeredAgent->member->country ? $registeredAgent->member->country->name : ''; ?></dd>
+					<dt>ZIP :</dt><dd><?php echo $registeredAgent->member->zipCode; ?></dd>
+				</dl>
+			</div>
+			<div class="col-sm-5">
+				<dl class="dl-horizontal">
+					<dt>Commission (%) :</dt><dd><?php echo $registeredAgent->commission; ?>%</dd>
+					<dt>Total Booking :</dt><dd><?php echo $bookings->getTotalItems(); ?></dd>
+					<dt>Total Earning :</dt><dd><?php echo \Tourpage\Helpers\Utils::formatCurrency($earningAmount); ?></dd>
+				</dl>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend><h3>Bookings</h3></legend>
+			<div class="col-sm-12">
+				<div class="table-responsive">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>#Booking No.</th>
+								<th>#Invoice No.</th>
+								<th>Booked On</th>
+								<th>Booked By</th>
+								<th>Amount</th>
+								<th>Booking</th>
+								<?php if ($this->vendors->isAllowed('booking', 'details')) { ?>
+									<th>Action</th>
+								<?php } ?>
+							</tr>
+						</thead>
+						<tbody>
+							<?php if ($bookings->getTotalItems() > 0) { ?>
+								<?php foreach ($bookings->getItems() as $item) { ?>
+									<tr>
+										<td>#<?php echo $item->bookingId; ?></td>
+										<td>#<?php echo $item->booking->invoiceNumber; ?></td>
+										<td><?php echo \Tourpage\Helpers\Utils::formatDate($item->booking->bookedOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?></td>
+										<td><?php echo $item->booking->member->firstName . ' ' . $item->booking->member->lastName; ?></td>
+										<td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->booking->getTotalAmountByVendor($item->vendorId)); ?></td>
+										<td><?php echo $item->booking->getBookingStatusText(FALSE); ?></td>
+										<?php if ($this->vendors->isAllowed('booking', 'details')) { ?>
+											<td>
+												<?php echo $this->tag->linkTo(array('/vendor/booking/details/' . $item->bookingId, '<span class="glyphicon glyphicon-eye-open"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View booking details')); ?>
+											</td>
+										<?php } ?>
+									</tr>
+								<?php } ?>
+							<?php } else { ?>
+								<tr>
+									<td colspan="7" class="text-center">No booking is here</td>
+								</tr>
+							<?php } ?>
+						</tbody>
+					</table>
+				</div>
+				<nav>
+					<?php echo $bookings->getLinks(); ?>
+				</nav>
+			</div>
+		</fieldset>
+	</div>
+	<div class="panel-footer">
+		<?php echo $this->tag->linkTo(array('/vendor/agents/registered', 'Back', 'class' => 'btn btn-success')); ?>
+	</div>
+</div>
+

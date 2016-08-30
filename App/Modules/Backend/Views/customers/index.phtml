@@ -1,0 +1,137 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Customers</h4>
+    <form class="form-inline" method="post">
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::textField(array(
+                    "mn",
+                    "class" => "form-control input-sm",
+                    "placeholder" => "By Customer Real Name",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::textField(array(
+                    "ct",
+                    "class" => "form-control input-sm",
+                    "placeholder" => "By City",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "p",
+                    \Tourpage\Models\State::find(array('order' => 'name ASC')),
+                    "useEmpty" => true,
+                    "emptyText" => "By State",
+                    'emptyValue' => "[all]",
+                    "using" => array("stateId", "name"),
+                    "class" => "form-control input-sm",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "c",
+                    \Tourpage\Models\Country::find(),
+                    "useEmpty" => true,
+                    "emptyText" => "By Country",
+                    'emptyValue' => "[all]",
+                    "using" => array("countryId", "name"),
+                    "class" => "form-control input-sm",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-1 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::selectStatic(array(
+                    "s",
+                    "useEmpty" => true,
+                    "emptyText" => "All Status",
+                    'emptyValue' => "[all]",
+                    array(
+                        \Tourpage\Models\Vendors::ACTIVE_STATUS_CODE => 'Active',
+                        \Tourpage\Models\Vendors::INACTIVE_STATUS_CODE => 'Inactive',
+                    ),
+                    "class" => "form-control input-sm"
+                ));
+                ?>
+            </div>
+        </div>
+        <input type="hidden" name="formtp" value="fltr" />
+        <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-search"></span> Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/admin/customers", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Customers <span class="badge"><?php echo $pager->getTotalItems();   ?></span>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="usrlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($pager->getTotalItems() > 0) { ?>
+                            <?php foreach ($pager->getItems() as $item) { ?>
+                                <tr>
+                                    <td><?php echo $item->firstName . ' ' . $item->lastName; ?></td>
+                                    <td><?php echo $item->emailAddress; ?></td>
+                                    <td><?php echo $item->phone; ?></td>
+                                    <td><?php echo $item->city; ?></td>
+                                    <td><?php echo $item->state ? $item->state->name : ''; ?></td>
+                                    <td><?php echo $item->country ? $item->country->name : ''; ?></td>
+                                    <td><?php echo $item->getStatus(); ?></td>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/admin/customers/view/' . $item->memberId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-default btn-xs tooltips', 'title' => 'View Customer Details')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/customers/edit/' . $item->memberId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Modify Customer Details')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/customers/remove/' . $item->memberId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Customer')); ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="8" class="text-center">No user is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>

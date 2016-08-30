@@ -1,0 +1,35 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-<?php echo $formType == 'add' ? 'plus' : 'pencil'; ?>"></span> <?php echo $formType == 'add' ? 'Add New Key Highlight' : 'Update Key Highlight'; ?>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-control-static" method="post" enctype="multipart/form-data">
+            <div class="tab-wrapper">
+                <div class="col-xs-6 no-pad-left">
+                    <?php $form->renderHorizental('key_highlight_title'); ?>
+                    <?php if ($formType == 'edit') { ?>
+						<div class="form-group">
+							<?php
+							if (!empty($keyHighlight->getIconUri())) {
+								echo $this->tag->image(array(
+									$keyHighlight->getIconUri(),
+									"alt" => $keyHighlight->keyhighlightTitle,
+									"title" => $keyHighlight->keyhighlightTitle
+								));
+							}
+							?>
+						</div>
+					<?php } ?>
+					<?php $icon->renderHorizental('key_icon'); ?>
+                    <?php $form->renderHorizental('key_status'); ?>
+                </div>
+            </div>
+            <div class="col-lg-12 no-pad">
+                <?php echo $form->render('submit'); ?>
+                <?php echo $this->tag->linkTo(array('/admin/tours/keyhighlight', 'Back', 'class' => 'btn btn-info')); ?>
+            </div>
+        </form>
+    </div>
+</div>

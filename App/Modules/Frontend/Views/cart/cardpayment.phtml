@@ -1,0 +1,250 @@
+<div class="main-contain">
+    <div class="container">
+        <div class="row">
+            <div class="col-box-9">
+                <div class="padding-box">
+                    <form id="cc_info_form" method="post">
+                        <div class="step-one ba">
+                            <div class="row">
+                                <div class="col-box-9"><h3><strong>Review billing address</strong></h3></div>
+                                <div class="col-box-3 text-right">
+                                    <button type="button" onclick="return redirectTo('<?php echo $this->url->get('/cart/customerinfo'); ?>');"><img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/edit.png'); ?>"></button>
+                                </div>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <hr>
+                            <?php $customerInfo = $this->cart->getCustomerInfo(); ?>
+                            <div class="form-box">
+                                <label class="label-180">First Name:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['first_name']) ? $customerInfo['first_name'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Last Name:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['last_name']) ? $customerInfo['last_name'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Address 1:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['address_1']) ? $customerInfo['address_1'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Address 2:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['address_2']) ? $customerInfo['address_2'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">City:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['city']) ? $customerInfo['city'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">State:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['state']) ? Tourpage\Models\State::findFirst($customerInfo['state'])->name : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Country:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['country']) ? \Tourpage\Models\Country::findFirst($customerInfo['country'])->name : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">ZIP:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['zip_code']) ? $customerInfo['zip_code'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Email:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['email_address']) ? $customerInfo['email_address'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <div class="form-box">
+                                <label class="label-180">Phone:</label>
+                                <p class="font-13"><?php echo isset($customerInfo['phone']) ? $customerInfo['phone'] : ''; ?></p>
+                                <div class="clear-fixed"></div>
+                            </div>
+                        </div>
+                        <div class="step-two">
+                            <div class="row">
+                                <div class="col-box-9"><h3><strong>Review your purchase</strong></h3></div>
+                                <div class="col-box-3 text-right">
+                                    <button type="button" onclick="return redirectTo('<?php echo $this->url->get('/cart'); ?>');"><img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/edit.png'); ?>"></button>
+                                </div>
+                                <div class="clear-fixed"></div>
+                            </div>
+                            <hr>
+                            <?php if ($this->cart->totalItem > 0) { ?>
+                                <?php foreach ($this->cart->getItems() as $cartItem) { ?>
+                                    <?php $itemData = Tourpage\Models\Tours::findFirstByTourId($cartItem['tour_id']); ?>
+                                    <div class="tour-box">
+                                        <?php if ($itemData->getDefaultImage()) { ?>
+                                            <div class="tour-img">
+                                                <?php echo $this->tag->image(array($itemData->getDefaultImage()->getImageUri('thumb'), "alt" => $itemData->tourTitle), false); ?>
+                                            </div>
+                                        <?php } ?>
+                                        <div class="tour-details">
+                                            <div class="col-box-9">
+                                                <h4><?php echo $this->tag->linkTo(array($itemData->getUri(), $itemData->tourTitle, 'local' => false)); ?></h4>
+                                            </div>
+                                            <div class="col-box-3 text-right">
+                                                <h3><?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['final_amount']); ?></h3>
+                                            </div>
+                                            <div class="col-box-12">
+                                                <p><strong>Date & Time:</strong> 
+                                                    <?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($cartItem['departure_on']); ?>
+                                                    <?php if (isset($cartItem['arival_on'])) { ?>
+                                                        to <?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($cartItem['arival_on']); ?>
+                                                    <?php } ?>
+                                                </p>
+                                                <?php if (isset($cartItem['time_slot'])) { ?>
+                                                    <p>
+                                                        <strong>Preferable Time:</strong> 
+                                                        <?php echo \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->start->hours) . ':' . \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->start->minutes) . ' ' . ($cartItem['time_slot']->start->hours >= 12 ? 'PM' : 'AM'); ?> 
+                                                        To <?php echo \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->end->hours) . ':' . \Tourpage\Helpers\Utils::padInt($cartItem['time_slot']->end->minutes) . ' ' . ($cartItem['time_slot']->end->hours >= 12 ? 'PM' : 'AM'); ?> 
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['head_count']) && count($cartItem['head_count']) > 0) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Participants:</strong></span>
+                                                        <span class="pplst">
+                                                            <?php
+                                                            $c = 1;
+                                                            $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                                                            foreach ($cartItem['head_count'] as $ag => $hc) {
+                                                                ?>
+                                                                <?php echo $hc['count']; ?> <?php echo $ageGroupVar[$ag]; ?> ( Age <?php echo $itemData->tourPrice->data->priceGroup[$ag]['age_type'] . ' ' . $itemData->tourPrice->data->priceGroup[$ag]['age']; ?> ) x <?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['unit_price']); ?> = <?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['amount']); ?>
+                                                                <?php if ($c < count($cartItem['head_count'])) { ?>
+                                                                    <br>
+                                                                <?php } $c++; ?>
+                                                            <?php } ?>
+                                                        </span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['group_head_count'])) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Participants:</strong> Group of <?php echo $cartItem['group_head_count']; ?> personal</span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['tour_opt']) && count($cartItem['tour_opt']) > 0) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Options:</strong></span>
+                                                        <span class="pplst">
+                                                            <?php
+                                                            $opt = 1;
+                                                            $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                                                            foreach ($cartItem['tour_opt'] as $optId => $optVal) {
+                                                                $optMdl = \Tourpage\Models\ToursOptions::findFirst($optId);
+                                                                if ($optMdl) {
+                                                                    ?>
+                                                                    <?php echo $optMdl->optionName; ?> <?php echo \Tourpage\Helpers\Utils::formatCurrency($optVal['unit_price']); ?> ( <?php echo $optVal['type']; ?> )<?php echo isset($optVal['head_count']) ? ' x ' . $optVal['head_count'] : ''; ?> = <?php echo \Tourpage\Helpers\Utils::formatCurrency($optVal['amount']); ?>
+                                                                    <?php if ($opt < count($cartItem['tour_opt'])) { ?>
+                                                                        <br>
+                                                                    <?php } $opt++; ?>
+                                                                <?php } ?>
+                                                            <?php } ?>
+                                                        </span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['discount'])) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Discount:</strong> <?php echo $cartItem['discount']; ?>%</span>
+                                                        <span style="float: right;"><strong>Your Save:</strong> US<?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['save_amount']); ?></span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <?php if (isset($cartItem['multi_purches_discount'])) { ?>
+                                                    <p>
+                                                        <span class="pplbl"><strong>Multi purches discount:</strong> <?php echo $cartItem['multi_purches_discount']; ?>%</span>
+                                                        <span style="float: right;"><strong>Your Save:</strong> US<?php echo \Tourpage\Helpers\Utils::formatCurrency($cartItem['multi_purches_save_amount']); ?></span>
+                                                    <div class="clear-fixed"></div>
+                                                    </p>
+                                                <?php } ?>
+                                                <br>
+                                            </div>
+                                            <div class="clear-fixed"></div>
+                                        </div>
+                                        <div class="clear-fixed"></div>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
+                        </div>
+                        <div class="step-one">
+                            <h3><strong>Enter your credit card details</strong></h3>
+                            <hr>
+                            <?php if (count($memberCards) > 0) { ?>
+                                <div class="form-box">
+                                    <label class="label-180">Save Cards</label>
+                                    <?php echo $this->tag->selectStatic(array('card', $memberCards, "class" => "form-input")); ?>
+                                    <div class="clear-fixed"></div>
+                                </div>
+                            <?php } ?>
+                            <div id="new-card" class="<?php echo count($memberCards) > 0 ? ($this->request->isPost() && $this->request->getPost('card') == 'o' ? 'show' : 'hidden') : 'show'; ?>">
+                                <div class="form-box">
+                                    <label class="label-180">Card type</label>
+                                    <?php echo $form->render('card_type'); ?>
+                                    <div class="clear-fixed"></div>
+                                </div>
+                                <div class="form-box">
+                                    <label class="label-180">Card Number</label>
+                                    <?php echo $form->renderElement('card_number'); ?>
+                                    <div class="clear-fixed"></div>
+                                </div>
+                                <div class="form-box">
+                                    <label class="label-180">CVV</label>
+                                    <?php echo $form->renderElement('card_cvv'); ?>
+                                    <div class="clear-fixed"></div>
+                                </div>
+                                <div class="form-box">
+                                    <label class="label-180">Expire on</label>
+                                    <?php echo $form->render('card_exp_month'); ?> / 
+                                    <?php echo $form->render('card_exp_year'); ?>
+                                    <div class="clear-fixed"></div>
+                                </div>
+                                <div class="form-box">
+                                    <label class="label-180">Name on Card</label>
+                                    <?php echo $form->renderElement('card_name'); ?>
+                                    <div class="clear-fixed"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-three">
+                            <h3><strong>Write your comment (if any)</strong></h3>
+                            <hr>
+                            <?php echo \Phalcon\Tag::textArea(array('comment', 'style' => 'width:100%')); ?>
+                        </div>
+                        <br><br>
+                        <div class="padding-box border-style-green">
+                            <h2 style="margin: 0 0 10px;"><div class="label label-default">Total (<?php echo $this->cart->totalItem; ?> item(s)): <?php echo \Tourpage\Helpers\Utils::formatCurrency($this->cart->totalAmount); ?></div></h2>
+                            <button type="button" class="btn btn-primary" onclick="jQuery('form#cc_info_form').submit();">Pay now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="clear-fixed"></div>
+        </div>
+    </div>
+</div>
+<style>
+    p.font-13{margin-bottom: 5px;}div.ba .form-box {margin-bottom: 0}
+    .pplbl{float: left;padding-right: 10px;}
+    .pplst{float: left;}
+</style>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#card").change(function () {
+            var value = jQuery(this).val();
+            var newCard = jQuery("#new-card");
+            if (value === 'o') {
+                if (newCard.hasClass('hidden')) {
+                    newCard.removeClass('hidden').addClass('show');
+                }
+            } else {
+                newCard.addClass('hidden').removeClass('show');
+            }
+        });
+    });
+</script>

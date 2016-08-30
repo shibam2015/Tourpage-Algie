@@ -1,0 +1,116 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Employees <span class="badge"><?php echo $pager->getTotalItems();?></span>
+            <div class="pull-right">
+                <a class="btn btn-default btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('employees|new_employees'); ?>" role="button" title="Add new employee">
+                    <span class="glyphicon glyphicon-plus"></span> New Employee
+                </a>
+            </div>
+        </h3>
+    </div>
+    <form id="employeelist" class="form-inline" method="post">
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th><input type="checkbox" name="s_all" id="s_all"></th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Phone</th>
+							<th>City</th>
+							<th>State</th>
+							<th>Country</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php if ($pager->getTotalItems() > 0) { ?>
+							<?php foreach ($pager->getItems() as $item) { ?>
+								<tr>
+									<td><input type="checkbox" name="emp[]" value="<?php echo $item->vendorId; ?>" class="emp"></td>
+									<td><?php echo $item->firstName . ' ' . $item->lastName; ?></td>
+									<td><?php echo $item->emailAddress; ?></td>
+									<td><?php echo $item->phone; ?></td>
+									<td><?php echo $item->city; ?></td>
+									<td><?php echo $item->state ? $item->state->name : ''; ?></td>
+									<td><?php echo $item->country ? $item->country->name : ''; ?></td>
+									<td><?php echo $item->getStatus(); ?></td>
+									<td>
+										<?php echo $this->tag->linkTo(array('/vendor/employees/view/' . $item->vendorId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-default btn-xs tooltips', 'title' => 'View Employee Details')); ?>
+										<?php echo $this->tag->linkTo(array('/vendor/employees/edit/' . $item->vendorId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Employee Details')); ?>
+										<a class="btn btn-warning btn-xs tooltips" onclick="return confirmRedirect('<?php echo $this->url->get('/vendor/employees/remove/' . $item->vendorId);?>');" title="Remove Employee"><span class="glyphicon glyphicon-trash"></span></a>
+									</td>
+								</tr>
+							<?php } ?>
+						<?php } else { ?>
+							<tr>
+								<td colspan="8" class="text-center">No employees is here</td>
+							</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<?php if ($pager->getTotalItems() > 0) { ?>
+			<div class="panel-footer">
+				<div class="form-group">
+					<select class="form-control" name="employee_action" id="employee_action">
+						<option value=""> -- Select Action -- </option>
+						<option value="active">Make Employees Active</option>
+						<option value="inactive">Make Employees Inactive</option>
+						<option value="remove">Remove Employees</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<input class="btn btn-success" type="submit" name="submit" value="Submit">
+				</div>
+			</div>
+		<?php } ?>
+	</form>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery('#s_all').click(function () {
+            if (jQuery(this).is(':checked')) {
+                jQuery('input[type="checkbox"].emp').prop('checked', true);
+            } else {
+                jQuery('input[type="checkbox"].emp').prop('checked', false);
+            }
+        });
+        jQuery('input[type="checkbox"].emp').click(function () {
+            var empCount = jQuery('input[type="checkbox"].emp').length, empCheckedCount = 0;
+            if (jQuery(this).is(':checked')) {
+                empCheckedCount = jQuery('input[type="checkbox"].emp:checked').length;
+            }
+            if (jQuery('#s_all').is(':checked')) {
+                jQuery('#s_all').prop('checked', false);
+            }
+            if (empCount === empCheckedCount) {
+                jQuery('#s_all').prop('checked', true);
+            }
+        });
+        jQuery("#employeelist").submit(function(){
+			var empCount = jQuery('input[type="checkbox"].emp:checked').length;
+			if (jQuery("#employee_action").val() == '') {
+				alert("Please select action.");
+				return false;
+			}
+			if (empCount == 0) {
+				alert("Please select employee to apply action.");
+				return false;
+			} else {
+				if (jQuery("#employee_action").val() == 'remove') {
+					if (!confirm("Selected employees will remove. This action cann't be undone. Are you sure?")) {
+						return false;
+					}
+				}
+			}
+		});
+    });
+</script>

@@ -1,0 +1,204 @@
+<div class="col-lg-12">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="booking"></div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Current Bookings
+                <div class="pull-right">
+                    <a class="btn-xs tooltips" href="<?php echo $this->url->get('/admin/booking'); ?>" role="button" title="View All Bookings"><i class="fa fa-search"></i> View all</a>
+                </div>
+            </h3>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#Invoice No.</th>
+                        <th>Booked By</th>
+                        <th>Booked On</th>
+                        <th>Amount</th>
+                        <th>Booking</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($recentActivity->Bookings->count() > 0) {
+                        foreach ($recentActivity->Bookings as $item) {
+                            ?>
+                            <tr>
+                                <td>#<?php echo $item->invoiceNumber; ?></td>
+                                <td><?php echo $item->member->firstName . ' ' . $item->member->lastName; ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatDate($item->bookedOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->bookingAmount); ?></td>
+                                <td><?php echo $item->getBookingStatusText(FALSE); ?></td>
+                                <td><?php echo $item->getPaymentStatusText(FALSE); ?></td>
+                                <td>
+                                    <?php echo $this->tag->linkTo(array('/admin/booking/details/' . $item->bookingId, '<span class="glyphicon glyphicon-eye-open"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View booking details')); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr><td colspan="7" class="text-center">No Current Bookings</td></tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Recent Added Tours
+                <div class="pull-right">
+                    <a class="btn-xs tooltips" href="<?php echo $this->url->get('/admin/tours'); ?>" role="button" title="View All Tours"><i class="fa fa-search"></i> View all</a>
+                </div>
+            </h3>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Tour Title</th>
+                        <th>Operated By</th>
+                        <th>Store Front</th>
+                        <th>Price</th>
+                        <th>Price For</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($recentActivity->Tours->count() > 0) {
+                        foreach ($recentActivity->Tours as $item) {
+                            ?>
+                            <tr>
+                                <td><?php echo $this->tag->linkTo(array($item->getUri(), $item->tourTitle, 'local' => false, 'target' => '_blank')); ?></td>
+                                <td><?php echo $item->tourVendor->vendor->firstName . ' ' . $item->tourVendor->vendor->lastName; ?></td>
+                                <td><?php echo $this->tag->linkTo(array($item->tourVendor->vendor->getStorFrontUri(), $item->tourVendor->vendor->businessName, 'local' => false, 'target' => '_blank')); ?></td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->tourPrice->getPrice()); ?></td>
+                                <td><?php echo $item->tourPrice->data->priceTypeText; ?></td>
+                                <td>
+                                    <?php echo $this->tag->linkTo(array('/admin/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr><td colspan="6" class="text-center">No Recent Added Tours</td></tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Recent Vendors
+                <div class="pull-right">
+                    <a class="btn-xs tooltips" href="<?php echo $this->url->get('/admin/vendors'); ?>" role="button" title="View All Vendors"><i class="fa fa-search"></i> View all</a>
+                </div>
+            </h3>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($recentActivity->Vendors->count() > 0) {
+                        foreach ($recentActivity->Vendors as $item) {
+                            ?>
+                            <tr>
+                                <td><?php echo $this->tag->linkTo(array($item->getStorFrontUri(), $item->firstName . ' ' . $item->lastName, 'local' => false, 'target' => '_blank')); ?></td>
+                                <td><?php echo $item->emailAddress; ?></td>
+                                <td><?php echo $item->getStatus(); ?></td>
+                                <td>
+                                    <?php echo $this->tag->linkTo(array('/admin/vendors/view/' . $item->vendorId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View')); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr><td colspan="4" class="text-center">No Recent Vendors</td></tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Recent Customers
+                <div class="pull-right">
+                    <a class="btn-xs tooltips" href="<?php echo $this->url->get('/admin/customers'); ?>" role="button" title="View All Customers"><i class="fa fa-search"></i> View all</a>
+                </div>
+            </h3>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($recentActivity->Members->count() > 0) {
+                        foreach ($recentActivity->Members as $item) {
+                            ?>
+                            <tr>
+                                <td><?php echo $item->firstName . ' ' . $item->lastName; ?></td>
+                                <td><?php echo $item->emailAddress; ?></td>
+                                <td><?php echo $item->getStatus(); ?></td>
+                                <td>
+                                    <?php echo $this->tag->linkTo(array('/admin/customers/view/' . $item->memberId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'View Details')); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr><td colspan="5" class="text-center">No Recent Customers</td></tr>
+                    <?php } ?>
+                </tbody>
+        </div>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery('#booking').highcharts({
+            credits: {enabled: 0},
+            title: {text: 'Booking Overview Graph for <?php echo \Tourpage\Helpers\Utils::__getCurrentYear(); ?>'},
+            subtitle: {text: 'Graph for bookingfor the year <?php echo \Tourpage\Helpers\Utils::__getCurrentYear(); ?> within January - December'},
+            xAxis: {categories: [<?php echo implode(',', $months['names']); ?>]},
+            yAxis: {title: {text: 'Booking Amount (USD)'}},
+            series: [
+                {
+                    name: 'Booking',
+                    type: 'column',
+                    tooltip: {valueSuffix: ' USD'},
+                    data: [<?php echo implode(',', $months['bookings']); ?>]
+                }
+            ]
+        });
+    });
+</script>

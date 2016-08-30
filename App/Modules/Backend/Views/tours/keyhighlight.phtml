@@ -1,0 +1,49 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Key highlights <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            <div class="pull-right">
+                <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/tours/managekeyhighlight/0/add'); ?>" role="button" title="Add New Key Highlight">
+                    <span class="glyphicon glyphicon-plus"></span> New Key Highlight
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Key highlights Icon</th>
+                        <th>Key highlights</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                            <tr>
+                                <td><?php echo $this->tag->image(array($item->getIconUri(), 'alt' => $item->keyhighlightTitle)); ?></td>
+                                <td><?php echo $item->keyhighlightTitle; ?></td>
+                                <td><?php echo $item->getStatus(); ?></td>
+                                <td>
+                                    <?php echo $this->tag->linkTo(array('/admin/tours/managekeyhighlight/' . $item->keyhighlightId . '/edit', '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Key Highlight')); ?>
+                                    <?php echo $this->tag->linkTo(array('/admin/tours/managekeyhighlight/' . $item->keyhighlightId . '/remove', '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Key Highlight', 'onClick' => 'if (!confirm("Are you sure?")){return false;}')); ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="4" class="text-center">No key highlight is here</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>

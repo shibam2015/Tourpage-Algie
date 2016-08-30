@@ -1,0 +1,207 @@
+/*
+ * Globals
+ */
+
+/* Links */
+a,
+a:focus,
+a:hover {
+    /*color: #fff;*/
+    outline: none;
+}
+
+/* Custom default button */
+.btn {
+    margin-right: 5px;
+}
+/*.btn-default,
+.btn-default:hover,
+.btn-default:focus {
+    color: #333;
+    text-shadow: none; /* Prevent inheritence from `body` *\/
+    background-color: #fff;
+    border: 1px solid #fff;
+}*/
+
+/*
+ * Base structure
+ */
+
+html,
+body {
+    height: 100%;
+    /*background-color: #333;*/
+}
+body {
+    /*color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);*/
+}
+
+.starter-template {
+    margin-top: 80px;
+    padding: 0px 15px;
+}
+a.notification {
+    padding: 14px 5px !important;
+}
+a.notification:hover {
+    text-decoration: none;
+    cursor: pointer;
+}
+a.notification span.label{
+    font-size: 50%;
+    margin-left: -2px;
+    top: -17px;
+    position: relative;
+}
+
+.no-pad {
+    padding: 0;
+}
+.no-pad-left {
+    padding-left: 0;
+}
+.no-pad-right {
+    padding-right: 0;
+}
+.no-pad-top {
+    padding-top: 0;
+}
+.no-pad-bottom {
+    padding-bottom: 0;
+}
+.tab-wrapper {
+    margin-bottom: 10px;
+    float: left;
+    width: 100%;
+}
+.tab-wrapper legend {
+    margin-bottom: 0;
+}
+.navbar-top-links .dropdown-messages, .navbar-top-links .dropdown-tasks, .navbar-top-links .dropdown-alerts {
+    width: 310px;
+    min-width: 0;
+}
+.dropdown-menu>li>a {
+    /*white-space: normal;*/
+}
+.navbar-primary{
+    background-color: #337ab7;
+    border-color: #337ab7;
+    color: #fff;
+}
+.right-corner-pad {
+    padding-top: 8px;
+    padding-right: 8px;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #f5f5f5;
+    border-top: 1px solid #e7e7e7;
+}
+.no-shadow{
+    webkit-box-shadow: none;
+    box-shadow: none;
+    margin-bottom: 5px;
+}
+.tab-content-border{
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 15px;
+}
+textarea.status-text {
+    display: inline;
+    resize: none;
+    height: 34px;
+    width: 73%;
+}
+.btn-group, .btn-group-vertical{
+    vertical-align: top;
+}
+.title-feed {
+    float: left;
+    border-bottom: 1px solid #e7e7e7;
+}
+.media-feed {
+    width: 96%;
+    float: left;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-bottom: 6px;
+}
+
+.btn-group.open .dropdown-toggle{
+    box-shadow: none;
+}
+
+ul.nav .fa {
+    margin-right: 5px;
+}
+
+select, select.form-control {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAAJ1BMVEVmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmaP/QSjAAAADHRSTlMAAgMJC0uWpKa6wMxMdjkoAAAANUlEQVR4AeXJyQEAERAAsNl7Hf3X6xt0QL6JpZWq30pdvdadme+0PMdzvHm8YThHcT1H7K0BtOMDniZhWOgAAAAASUVORK5CYII=");
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: 13px auto;
+    background-color: transparent;
+}
+
+.form-group:last-child {
+    /*margin-bottom: 0;*/
+}
+
+.form-sub-category {
+    margin-left: 40px;
+}
+
+img.thumb {
+    width: 140px;
+    height: 140px;
+    
+}
+.ui-datepicker td span, .ui-datepicker td a{
+    text-align: center;
+}
+
+.glyphicon{
+    top: 2px;
+}
+
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next{
+    cursor: pointer;
+}
+
+.close {
+    /*font-size: inherit;*/
+    opacity: 0.7;
+}
+
+.alert {
+    margin-bottom: 10px;
+    padding: 6px 10px;
+}
+
+.alert-dismissable .close, .alert-dismissible .close {
+    right: 0;
+}
+
+.dropdown-menu{
+    /*padding: 0;*/
+}
+
+.ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
+    border: 1px solid #DA8028;
+    margin: 0 2px;
+}
+
+.hints-block {
+	color: #9D9D9D;
+	font-size: 12px;
+}
+
+

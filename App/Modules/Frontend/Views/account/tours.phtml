@@ -1,0 +1,335 @@
+<?php $this->partial('account/common/tours_sidebar'); ?>
+<div class="layout contents">
+    <h2>
+		<?php if ($type == 'upcomming') { ?>
+            <i class="glyphicon glyphicon-eye-optn"></i> Upcomming Tours <span>(<?php echo $pager->getTotalItems(); ?>)</span>
+        <?php } ?>
+        <?php if ($type == 'past') { ?>
+            <i class="glyphicon glyphicon-eye-close"></i> Past Tours <span>(<?php echo $pager->getTotalItems(); ?>)</span>
+        <?php } ?>
+	</h2>
+    <div class="account column1">
+		<?php if ($pager->getTotalItems() > 0) { ?>
+			<?php foreach ($pager->getItems() as $booking) { ?>
+				<div class="item upcomming">
+					<div class="image thumbnail">
+					<?php if ($booking->tour->getDefaultImage()) { ?>
+						<?php /*<a href="<?php echo $booking->tour->getUri(); ?>">
+							<?php echo $this->tag->image(array($booking->tour->getDefaultImage()->getImageUri('thumb'), "alt" => $booking->tour->tourTitle), false); ?>
+						</a>*/ ?>
+						<?php echo $this->tag->image(array($booking->tour->getDefaultImage()->getImageUri('thumb'), "alt" => $booking->tour->tourTitle), false); ?>
+					<?php } ?>
+					</div>
+					<div class="info">
+						<?php /*<h1><?php echo $this->tag->linkTo(array($booking->tour->getUri(), $booking->tour->tourTitle, 'local' => false)); ?></h1>*/ ?>
+						<h1 style="margin-top: 0;"><?php echo $booking->tour->tourTitle; ?></h1>
+						<div class="left">
+							<div class="operator">
+								<?php
+								$vendorAvator = $this->url->getStatic(FRONT_END_DIR . 'images/no_face.png');
+								if ($booking->tour->tourVendor->vendor->getAvatarUri()) {
+									$vendorAvator = $booking->tour->tourVendor->vendor->getAvatarUri();
+								}
+								echo $this->tag->image(array(
+									$vendorAvator,
+									"alt" => $booking->tour->tourVendor->vendor->firstName . $booking->tour->tourVendor->vendor->lastName,
+									"title" => $booking->tour->tourVendor->vendor->firstName . $booking->tour->tourVendor->vendor->lastName,
+									"width" => 55,
+									"height" => 64
+								));
+								?>
+								<ul>
+									<li class="companyname"><?php echo $this->tag->linkTo(array($booking->tour->tourVendor->vendor->getStorFrontUri(), $booking->tour->tourVendor->vendor->businessName, 'local' => false)); ?></li>
+									<li class="additional">
+										<span class="tooltips" title="Operator's Name"><i class="glyphicon glyphicon-user"></i> <?php echo $booking->tour->tourVendor->vendor->getFirstName() . ' ' . $booking->tour->tourVendor->vendor->getLastName() ; ?></span><br />
+										<span class="tooltips" title="Operator's Location"><i class="glyphicon glyphicon-map-marker"></i> <?php echo ($booking->tour->tourVendor->vendor->state ? $booking->tour->tourVendor->vendor->state->name . ', ' : '') . ($booking->tour->tourVendor->vendor->country ? $booking->tour->tourVendor->vendor->country->name : ''); ?></span><br />
+										<?php if ($booking->tour->tourVendor->vendor->phone) { ?>
+											<span class="tooltips" title="Operator's Phone Number"><i class="glyphicon glyphicon-phone-alt"></i> <?php echo $booking->tour->tourVendor->vendor->phone; ?></span><br />
+										<?php } ?>
+										<span class="tooltips" title="Operator's Email Address"><i class="glyphicon glyphicon-envelope"></i> <?php echo $booking->tour->tourVendor->vendor->emailAddress; ?></span>
+									</li>
+								</ul>
+							</div><!--//operator-->
+							<div class="bt-btns" style="margin-top: 15px;">
+								<a class="btn btn-default"><i class="glyphicon glyphicon-print"></i> Print Voucher</a>
+								<a class="btn btn-info" data-toggle="modal" data-target="#model-tour-bd_<?php echo $booking->bookingId;?>"><i class="glyphicon glyphicon-book"></i> Booking Details</a>
+							</div>
+						</div><!--//left-->
+						<div class="right">
+							<ul class="add_info list-unstyled">
+								<li><h1 style="margin: 0;">Amount: <?php echo \Tourpage\Helpers\Utils::formatCurrency($booking->finalAmount); ?> <?php //echo $booking->tour->tourPrice->data->priceTypeText; ?></h1></li>
+								<?php if ($booking->discount > 0) { ?>
+									<li>Discount: <?php echo $booking->discount;?>%</li>
+								<?php } ?>
+								<?php if (isset($booking->data->multiPurches)) { ?>
+									<li>Multi purches discount: <?php echo $booking->data->multiPurches->discount;?>%</li>
+								<?php } ?>
+								<li>
+									Journey Date: <?php echo \Tourpage\Helpers\Utils::formatDate($booking->departureOn, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?>
+                                    <?php if (!empty($booking->arivalOn)) { ?>
+                                     to <?php echo \Tourpage\Helpers\Utils::formatDate($booking->arivalOn, Tourpage\Helpers\Utils::DATE_FORMAT_MEDIUM); ?>
+                                    <?php } ?>
+								</li>
+								<li>
+									Total Days: <?php echo !empty($booking->arivalOn) ? \Tourpage\Helpers\Utils::dateDiff($booking->departureOn, $booking->arivalOn) : "1 Day(s)";?>
+								</li>
+								<?php if (isset($booking->data->timeSlot)) { ?>
+									<li>
+										Time: <?php echo \Tourpage\Helpers\Utils::padInt($booking->data->timeSlot->start->hours) . ':' . \Tourpage\Helpers\Utils::padInt($booking->data->timeSlot->start->minutes) . ' ' . ($booking->data->timeSlot->start->hours >= 12 ? 'PM' : 'AM') . ' - ' . \Tourpage\Helpers\Utils::padInt($booking->data->timeSlot->end->hours) . ':' . \Tourpage\Helpers\Utils::padInt($booking->data->timeSlot->end->minutes) . ' ' . ($booking->data->timeSlot->end->hours >= 12 ? 'PM' : 'AM');?>
+									</li>
+								<?php } ?>
+								<li>
+									<?php
+									if (isset($booking->data->headCount)) { ?>
+										Participants: 
+										<ul>
+										<?php $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+										foreach ($booking->data->headCount as $ag => $hc) {
+											?>
+											<li>
+												<i class="glyphicon glyphicon-user"></i> <?php echo $hc['count']; ?> <?php echo $ageGroupVar[$ag]; ?> ( Age <?php echo $booking->tour->tourPrice->data->priceGroup[$ag]['age_type'] . ' ' . $booking->tour->tourPrice->data->priceGroup[$ag]['age']; ?> )
+											</li>
+										<?php } ?>
+										<li>Total: <?php echo $booking->headCount . ' ' . $booking->data->headCountUnit; ?></li>
+										</ul>
+									<?php } ?>
+									<?php if (isset($booking->data->groupHeadCount)) { ?>
+										Participants: <?php echo $booking->data->groupHeadCount . ' ' . $booking->data->headCountUnit; ?>
+									<?php } ?>
+								</li>
+								<?php if (isset($booking->data->tourOptions) && count($booking->data->tourOptions) > 0) { ?>
+									<li>
+										Options Taken: 
+										<ul>
+										<?php
+											$optionString = '';
+											foreach ($booking->data->tourOptions as $tourOpt) {
+												$optionString .= '<li>';
+												$optionString .= '<i class="glyphicon glyphicon-ok"></i> ';
+												$optionString .= $tourOpt['name'];
+												/*$optionString .= ' (';
+												if (isset($tourOpt['type'])) {
+													switch ($tourOpt['type']) {
+														case \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_CODE:
+															$optionString .= \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_TEXT;
+															break;
+														case \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_CODE:
+															$optionString .= \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_TEXT;
+															break;
+													}
+												}
+												$optionString .= ') ';*/
+												//$optionString .= ' ' . \Tourpage\Helpers\Utils::formatCurrency($tourOpt['unit_price']);
+												if (isset($tourOpt['head_count'])) {
+													//$optionString .= ' x ' . $tourOpt['head_count'];
+												}
+												//$optionString .= ' = ' . \Tourpage\Helpers\Utils::formatCurrency($tourOpt['amount']);
+												$optionString .= '</li>';
+											}
+											echo $optionString . '';
+										?>
+										</ul>
+									</li>
+								<?php } ?>
+							</ul>
+						</div><!--//right-->
+					</div><!--//info-->
+					<br class="clearboth">
+				</div>
+				<!-- Modal Booking Details -->
+                    <div class="modal fade" id="model-tour-bd_<?php echo $booking->bookingId;?>" tabindex="-1" role="dialog" aria-labelledby="model_bd_<?php echo $booking->bookingId;?>">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="model_bd_<?php echo $booking->bookingId;?>"><i class="glyphicon glyphicon-book"></i> Booking Details</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-lg-6"><h4>#Invoice Number <span class="label label-default"><?php echo $booking->booking->invoiceNumber; ?></span></h4></div>
+									<div class="col-lg-5 pull-right text-right"><h4>Booking Amount: <span class="label label-default"><?php echo \Tourpage\Helpers\Utils::formatCurrency($booking->booking->bookingAmount); ?></span></h4></div>
+									<div class="clearfix"></div>
+									<div class="col-lg-6">
+										<fieldset>
+											<legend><h4 class="text-info"><span class="glyphicon glyphicon-user"></span> Customer Information</h4></legend>
+											<dl class="dl-horizontal">
+												<dt>Name</dt><dd><?php echo $booking->booking->bookingAddress->billingFirstName . ' ' . $booking->booking->bookingAddress->billingLastName; ?></dd>
+												<dt>Address</dt>
+												<dd>
+													<?php if (!empty($booking->booking->member->addressOne)) { ?>
+														<?php echo $booking->booking->member->addressOne; ?><br>
+													<?php } ?>
+													<?php if (!empty($booking->booking->member->addressTwo)) { ?>
+														<?php echo $booking->booking->member->addressTwo; ?><br>
+													<?php } ?>
+													<?php echo (!empty($booking->booking->member->city) ? $booking->booking->member->city . ', ' : '') . ($booking->booking->member->state ? $booking->booking->member->state->name . ', ' : '') . ($booking->booking->member->country ? $booking->booking->member->country->name : ''); ?><br>
+													<?php if (!empty($booking->booking->member->zipCode)) { ?>
+														<?php echo $booking->booking->member->zipCode; ?><br>
+													<?php } ?>
+												</dd>
+												<dt>Email</dt><dd><?php echo $booking->booking->member->emailAddress; ?></dd>
+												<?php if (!empty($booking->booking->member->phone)) { ?>
+													<dt>Phone</dt><dd><?php echo $booking->booking->member->phone; ?></dd>
+												<?php } ?>
+											</dl>
+										</fieldset>
+									</div>
+									<div class="col-lg-6">
+										<fieldset>
+											<legend><h4 class="text-info"><span class="glyphicon glyphicon-home"></span> Billing Information</h4></legend>
+											<dl class="dl-horizontal">
+												<dt>Contact Person</dt><dd><?php echo $booking->booking->bookingAddress->billingFirstName . ' ' . $booking->booking->bookingAddress->billingLastName; ?></dd>
+												<dt>Address</dt>
+												<dd>
+													<?php echo $booking->booking->bookingAddress->billingAddressOne; ?><br>
+													<?php if (!empty($booking->booking->bookingAddress->billingAddressTwo)) { ?>
+														<?php echo $booking->booking->bookingAddress->billingAddressTwo; ?><br>
+													<?php } ?>
+													<?php echo $booking->booking->bookingAddress->billingCity . ', ' . $booking->booking->bookingAddress->state->name . ', ' . $booking->booking->bookingAddress->country->name; ?><br>
+													<?php if (!empty($booking->booking->bookingAddress->billingZipCode)) { ?>
+														<?php echo $booking->booking->bookingAddress->billingZipCode; ?><br>
+													<?php } ?>
+												</dd>
+												<dt>Email</dt><dd><?php echo $booking->booking->bookingAddress->billingEmailAddress; ?></dd>
+												<?php if (!empty($booking->booking->bookingAddress->billingPhone)) { ?>
+													<dt>Phone</dt><dd><?php echo $booking->booking->bookingAddress->billingPhone; ?></dd>
+												<?php } ?>
+											</dl>
+										</fieldset>
+									</div>
+									<div class="clearfix"></div>
+									<div class="col-lg-12">
+										<fieldset>
+											<legend><h4 class="text-info"><span class="glyphicon glyphicon-th-list"></span> Tours for this booking</h4></legend>
+											<span style="font-size:10px;">*MPD: Multi Purches Discount</span>
+											<div class="table-responsive">
+												<table class="table table-bordered">
+													<thead>
+														<tr>
+															<th colspan="2">Tour</th>
+															<th class="text-right">Amount</th>
+															<th class="text-left">Discount(%)</th>
+															<th>Choosen Date</th>
+															<th>Participants</th>
+															<th>Options</th>
+														</tr>
+													</thead>
+													<tbody>
+														<?php if (count($booking->booking->bookingTours) > 0) { ?>
+															<?php foreach ($booking->booking->bookingTours as $bookingTour) { ?>
+																<tr>
+																	<td>
+																		<?php if ($bookingTour->tour->getDefaultImage()) { ?>
+																			<?php echo $this->tag->image(array($bookingTour->tour->getDefaultImage()->getImageUri('thumb'), "alt" => $bookingTour->tour->tourTitle, "height" => 50, "width" => 50), false); ?>
+																		<?php } ?>
+																	</td>
+																	<td>
+																		<?php echo $bookingTour->tour->tourTitle; ?><hr />
+																		<span style="font-size:12px;">
+																			<?php echo $bookingTour->tour->tourDuration->lengthTypeText; ?> Tour<br/>
+																			Price for <?php echo $bookingTour->tour->tourPrice->data->priceTypeText; ?><br/>
+																			Operator: <?php echo $this->tag->linkTo(array($bookingTour->vendor->getStorFrontUri(), $bookingTour->vendor->businessName, 'local' => false, "target" => "_blank")); ?>
+																		</span>
+																	</td>
+																	<td class="text-right"><?php echo \Tourpage\Helpers\Utils::formatCurrency($bookingTour->finalAmount); ?></td>
+																	<td class="text-left">
+																		<?php echo $bookingTour->discount; ?>%
+																		<?php
+																		if (isset($bookingTour->data->multiPurches)) {
+																			echo '<hr>';
+																			echo 'MPD*: ' . $bookingTour->data->multiPurches->discount . '%';
+																		}
+																		?>
+																	</td>
+																	<td>
+																		<?php
+																		echo \Tourpage\Helpers\Utils::formatDate($bookingTour->departureOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT);
+																		if (!empty($bookingTour->arivalOn)) {
+																			echo ' - ' . \Tourpage\Helpers\Utils::formatDate($bookingTour->arivalOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT);
+																		}
+																		if (isset($bookingTour->data->timeSlot)) {
+																			echo '<hr>';
+																			echo 'Time: ';
+																			echo \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->start->hours) . ':' . \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->start->minutes) . ' ' . ($bookingTour->data->timeSlot->start->hours >= 12 ? 'PM' : 'AM');
+																			echo ' - ' . \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->end->hours) . ':' . \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->end->minutes) . ' ' . ($bookingTour->data->timeSlot->end->hours >= 12 ? 'PM' : 'AM');
+																		}
+																		?>
+																	</td>
+																	<td><?php //echo $bookingTour->headCount . ' ' . $bookingTour->data->headCountUnit;  ?>
+																		<?php
+																		if (isset($bookingTour->data->headCount)) {
+																			$c = 1;
+																			$ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+																			foreach ($bookingTour->data->headCount as $ag => $hc) {
+																				?>
+																				<?php echo $hc['count']; ?> <?php echo $ageGroupVar[$ag]; ?> ( Age <?php echo $bookingTour->tour->tourPrice->data->priceGroup[$ag]['age_type'] . ' ' . $bookingTour->tour->tourPrice->data->priceGroup[$ag]['age']; ?> ) x <?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['unit_price']); ?>
+																				<?php if ($c < count($bookingTour->data->headCount)) { ?>
+																					<br>
+																				<?php } $c++; ?>
+																			<?php } ?>
+																			<hr>Total: <?php echo $bookingTour->headCount . ' ' . $bookingTour->data->headCountUnit; ?>
+																		<?php } ?>
+																		<?php if (isset($bookingTour->data->groupHeadCount)) { ?>
+																			Total <?php echo $bookingTour->data->groupHeadCount . ' ' . $bookingTour->data->headCountUnit; ?>
+																		<?php } ?>
+																	</td>
+																	<td>
+																		<?php
+																		if (isset($bookingTour->data->tourOptions) && count($bookingTour->data->tourOptions) > 0) {
+																			foreach ($bookingTour->data->tourOptions as $tourOpt) {
+																				$optionString = $tourOpt['name'];
+																				$optionString .= ' (';
+																				if (isset($tourOpt['type'])) {
+																					switch ($tourOpt['type']) {
+																						case \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_CODE:
+																							$optionString .= \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_TEXT;
+																							break;
+																						case \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_CODE:
+																							$optionString .= \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_TEXT;
+																							break;
+																					}
+																				}
+																				$optionString .= ') ';
+																				$optionString .= ' ' . \Tourpage\Helpers\Utils::formatCurrency($tourOpt['unit_price']);
+																				if (isset($tourOpt['head_count'])) {
+																					$optionString .= ' x ' . $tourOpt['head_count'];
+																				}
+																				$optionString .= ' = ' . \Tourpage\Helpers\Utils::formatCurrency($tourOpt['amount']);
+																				echo $optionString . '<br />';
+																			}
+																		}
+																		?>
+																	</td>
+																</tr>
+															<?php } ?>
+														<?php } ?>
+													</tbody>
+												</table>
+											</div>
+										</fieldset>
+									</div>
+									<?php if (!empty($booking->booking->bookingComments)) { ?>
+										<div class="col-lg-12">
+											<fieldset>
+												<legend><h4 class="text-danger"><span class="glyphicon glyphicon-comment"></span> Customer Comment</h4></legend>
+												<div class="well well-sm"><?php echo $booking->booking->bookingComments; ?></div>
+											</fieldset>
+										</div>
+									<?php } ?>
+									<div class="clearfix"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+			<?php } ?>
+		<?php } else { ?>
+			List is empty
+		<?php } ?>
+    </div>
+    <nav>
+        <?php echo $pager->getLinks(); ?>
+    </nav>
+</div>
+<style>.image img{height:154px;}</style>

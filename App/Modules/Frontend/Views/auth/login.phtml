@@ -1,0 +1,202 @@
+<?php /*if ($banners && $banners->count() > 0) { ?>
+<div id="login-ad" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <?php for($b = 0; $b < $banners->count(); $b++) { ?>
+            <li data-target="#login-ad" data-slide-to="<?php echo $b;?>"<?php echo $b==0?' class="active"':'';?>></li>
+        <?php } ?>
+    </ol>
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        <?php $c = 1; foreach ($banners as $banner) { ?>
+            <div class="item<?php echo $c==1?' active':'';?>">
+                <?php if (!empty($banner->bannerLink)) { ?>
+                <a href="<?php echo $banner->bannerLink;?>" target="_blank">
+                <?php } ?>
+                <img src="<?php echo $banner->getBannerUri(); ?>" alt="Logn ad banner" style="width: 1405px; height: 400px;">
+                <?php if (!empty($banner->bannerLink)) { ?>
+                </a>
+                <?php } ?>
+            </div>
+        <?php $c++; } ?>
+    </div>
+    <!-- Controls -->
+    <a class="left carousel-control" href="#login-ad" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#login-ad" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<?php }*/ ?>
+
+
+    <div class="container">
+        <div class="login-content">
+        	<div class="col-lg-2 col-md-1"></div>
+            <div class="col-lg-4 col-md-5 col-sm-6">
+            	<form class="login-form" method="post">
+              
+              <h3>Log In</h3>
+                  <?php echo $form->render('useremail')."<br><br>"; ?>
+                     <?php echo $form->render('password');?>
+                        <div class="login-check pull-left">
+                        <?php echo $form->render('remember_me'); ?> Keep Me Logged In
+                        </div>
+                        <div class="pull-right">
+                        <a href="<?php echo $this->url->get('/auth/resetpassword'); ?>" class="forgot_password_btn"> Forgot your password?</a>
+                        </div>
+                        <div class="clearfix"></div>
+                        <input type="submit" value="Login" name="submit">
+                        <div class="clearfix"></div>
+                        <div>
+                        <p><span>Not a member yet?</span> <a href="<?php echo $this->url->get('/auth/register'); ?>" style="font-size: 14px;"> Sign up here!</a></p>
+                       <div class="clearfix"></div>
+                        </div>
+            	</form>
+        	</div>
+            <div class="col-lg-4 col-md-5 col-sm-6">
+            	<div class="support-login">
+                    <h3>Or sign up with</h3>
+                    <div class="social-login-btn">
+                        <a id="google_btn" onclick="checkLoginState();
+                    return false;">
+                            <i class="fa fa-google-plus"></i>
+                            <p>Google</p>
+                        </a>
+                        <a onclick="checkLoginState(); return false;">
+                         <i class="fa fa-facebook"></i>
+                         <p>Facebook</p>
+                        </a>
+                      </div>
+                      <div class="vacation-img">
+                           <img src="/public/elements/frontend/assets/images/vacation-img.jpg">
+                      </div>
+        	  	</div>
+              </div>
+              <div class="clearfix"></div>
+          </div>
+         </main>
+      
+<script src="https://apis.google.com/js/platform.js"></script>
+<script type="text/javascript">
+    var auth2;
+    function initGApi() {
+        gapi.load('auth2', function () {
+            auth2 = gapi.auth2.init({
+                client_id: "456240196979-0riuvevl5h5og9h2umrgbcqnr04lucbu.apps.googleusercontent.com"
+            });
+            auth2.attachClickHandler('google_btn', {}, onSuccess, onFailure);
+        });
+    }
+    function onSuccess(user) {
+        var basicProfile = { 
+            id: user.getBasicProfile().getId(),
+            name: user.getBasicProfile().getName(),
+            email: user.getBasicProfile().getEmail()
+        };
+        
+        jQuery.ajax({
+            url: "<?php echo $this->url->get('/ajax/socialLogin');?>",
+            method: "POST",
+            dataType: "json",
+            data: jQuery.extend({
+                <?php if (isset($_GET['_rt']) && !empty($_GET['_rt'])) { ?>
+                    <?php if ($targetUri = base64_decode($_GET['_rt'])) { ?>
+                        target_uri: "<?php echo $targetUri;?>",
+                    <?php } ?>
+                <?php } ?>
+                base_uri: "<?php echo $this->url->get('/');?>",
+                login_uri: "<?php echo $this->url->get('/auth/login');?>",
+                register_uri: "<?php echo $this->url->get('/auth/register');?>"
+            }, basicProfile),
+            beforeSend: function (jqXHR, settings) {
+                console.log('Searching for users');
+            },
+            success: function (data, textStatus, jqXHR) {
+                window.location.href = data.redirect_uri;
+            }
+        });
+    }
+    function onFailure(error) {
+        console.log(error);
+    }
+    initGApi();
+</script>
+<script type="text/javascript">
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '484302985080949',
+            xfbml: false,
+            status: true,
+            cookie: true,
+            version: 'v2.4'
+        });
+    };
+
+    // Load the SDK asynchronously
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id))
+            return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function checkLoginState() {
+        var status = null;
+        FB.getLoginStatus(function (response) {
+            status = response.status;
+            if (status !== 'connected') {
+                FB.login(function (response) {
+                    if (response.status === 'connected') {
+                        fetchProfile();
+                    }
+                }, {
+                    scope: 'publish_actions',
+                    return_scopes: true
+                });
+            }
+            
+            if (status === 'connected') {
+                fetchProfile();
+            }
+        });
+    }
+    
+    function fetchProfile() {
+        FB.api('/me', function (response) {
+            var basicProfile = { 
+                id: response.id,
+                name: response.name,
+                email: response.email
+            };
+
+            jQuery.ajax({
+                url: "<?php echo $this->url->get('/ajax/socialLogin');?>",
+                method: "POST",
+                dataType: "json",
+                data: jQuery.extend({
+                    <?php if (isset($_GET['_rt']) && !empty($_GET['_rt'])) { ?>
+                        <?php if ($targetUri = base64_decode($_GET['_rt'])) { ?>
+                            target_uri: "<?php echo $targetUri;?>",
+                        <?php } ?>
+                    <?php } ?>
+                    base_uri: "<?php echo $this->url->get('/');?>",
+                    login_uri: "<?php echo $this->url->get('/auth/login');?>",
+                    register_uri: "<?php echo $this->url->get('/auth/register');?>"
+                }, basicProfile),
+                beforeSend: function (jqXHR, settings) {
+                    console.log('Searching for users');
+                },
+                success: function (data, textStatus, jqXHR) {
+                    window.location.href = data.redirect_uri;
+                }
+            });
+        });
+    }
+</script>

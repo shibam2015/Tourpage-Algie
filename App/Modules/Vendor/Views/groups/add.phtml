@@ -1,0 +1,27 @@
+<div class="panel panel-primary">
+<div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-plus"></span> <?php echo $this->tag->getTitle(FALSE); ?></h3>
+    </div>
+    <div class="panel-body">
+     <form id="groupadd" name="groupadd" class="form-control-static" method="post">
+    
+    <?php echo $form->render('vendor'); ?>
+     <div class="tab-wrapper">
+                <div class="sec-left col-sm-12 no-pad">
+                    <div class="col-sm-12">
+                        <fieldset>
+                        <legend><h4>Group Overview</h4></legend>
+                            <div class="tab-content-border">
+                                <?php $form->renderHorizental('group_name'); ?>
+                                <?php $form->renderHorizental('submit'); ?>
+                            </div>
+                        </fieldset>          
+                    </div>
+          </div>
+         </div>
+         </form> 
+         </div>
+        </div>   
+        
+        
+        

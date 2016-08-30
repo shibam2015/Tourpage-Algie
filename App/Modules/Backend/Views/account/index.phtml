@@ -1,0 +1,13 @@
+<div class="panel-heading"><i class="fa fa-server"></i> Account Overview</div>
+<div class="panel-body">
+    <div class="col-sm-8">
+        <dl class="dl-horizontal">
+            <dt>Name :</dt><dd><?php echo $admin->getFullName(); ?></dd>
+            <dt>User Name :</dt><dd><?php echo $admin->getUserName(); ?></dd>
+            <dt>Role :</dt><dd><?php echo $admin->getRole(); ?></dd>
+            <dt>Email Address :</dt><dd><?php echo $admin->getEmail(); ?></dd>
+            <dt>Phone Number :</dt><dd><?php echo $admin->getAdminData()->phone; ?></dd>
+            <dt>Since :</dt><dd><?php echo \Tourpage\Helpers\Utils::formatDate($admin->getAdminData()->createdOn, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></dd>
+        </dl>
+    </div>
+</div>

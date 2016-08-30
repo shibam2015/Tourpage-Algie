@@ -1,0 +1,142 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Type of Activities</h4>
+    <form class="form-inline" method="post">
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::textField(array(
+                    "poan",
+                    "class" => "form-control input-sm",
+                    "placeholder" => "By Name",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "ct",
+                    \Tourpage\Models\City::find(array('order' => 'name ASC')),
+                    "useEmpty" => true,
+                    "emptyText" => "By City",
+                    'emptyValue' => "[all]",
+                    "using" => array("cityId", "name"),
+                    "class" => "form-control",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "p",
+                    \Tourpage\Models\State::find(array('order' => 'name ASC')),
+                    "useEmpty" => true,
+                    "emptyText" => "By State",
+                    'emptyValue' => "[all]",
+                    "using" => array("stateId", "name"),
+                    "class" => "form-control",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "c",
+                    \Tourpage\Models\Country::find(),
+                    "useEmpty" => true,
+                    "emptyText" => "By Country",
+                    'emptyValue' => "[all]",
+                    "using" => array("countryId", "name"),
+                    "class" => "form-control",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-1 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::selectStatic(array(
+                    "s",
+                    "useEmpty" => true,
+                    "emptyText" => "All Status",
+                    'emptyValue' => "[all]",
+                    array(
+                        \Tourpage\Models\PlaceOfActivities::ACTIVE_STATUS_CODE => 'Active',
+                        \Tourpage\Models\PlaceOfActivities::INACTIVE_STATUS_CODE => 'Inactive',
+                    ),
+                    "class" => "form-control",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <input type="hidden" name="formtp" value="fltr" />
+        <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-search"></span> Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/admin/customers/activities", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Type of Activities <span class="badge"><?php echo $pager->getTotalItems();?></span>
+            <div class="pull-right">
+                <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/customers/activities/create');?>" role="button" title="" data-original-title="Add new type of activity">
+                    <span class="glyphicon glyphicon-plus"></span> New Type of Activity
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="usrlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Place</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($pager->getTotalItems() > 0) { ?>
+                            <?php foreach ($pager->getItems() as $item) { ?>
+                                <tr>
+                                    <td><?php echo $item->activityName; ?></td>
+                                    <td><?php echo $item->city ? $item->city->name : ''; ?></td>
+                                    <td><?php echo $item->state ? $item->state->name : ''; ?></td>
+                                    <td><?php echo $item->country ? $item->country->name : ''; ?></td>
+                                    <td><?php echo $item->getStatus(); ?></td>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/admin/customers/activities/edit/1/' . $item->activityId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Modify Place of Activity')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/customers/activities/remove/1/' . $item->activityId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Place of Activity')); ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="6" class="text-center">No place of activities is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>

@@ -1,0 +1,49 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Edit Registered Agents</h3>
+    </div>
+    <form id="form-registered-agent" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="panel-body">
+            <fieldset>
+                <legend><h3>About Registered Agent</h3></legend>
+                <div class="col-sm-8">
+                    <dl class="dl-horizontal">
+                        <dt>Name :</dt><dd><?php echo $registeredAgent->member->firstName . ' ' . $registeredAgent->member->lastName; ?></dd>
+                        <dt>Email Address :</dt><dd><?php echo $registeredAgent->member->emailAddress; ?></dd>
+                        <dt>Phone Number :</dt><dd><?php echo $registeredAgent->member->phone; ?></dd>
+                        <dt>Address 1 :</dt><dd><?php echo $registeredAgent->member->addressOne; ?></dd>
+                        <dt>Address 2 :</dt><dd><?php echo $registeredAgent->member->addressTwo; ?></dd>
+                        <dt>City :</dt><dd><?php echo $registeredAgent->member->city; ?></dd>
+                        <dt>State :</dt><dd><?php echo $registeredAgent->member->state ? $registeredAgent->member->state->name : ''; ?></dd>
+                        <dt>Country :</dt><dd><?php echo $registeredAgent->member->country ? $registeredAgent->member->country->name : ''; ?></dd>
+                        <dt>ZIP :</dt><dd><?php echo $registeredAgent->member->zipCode; ?></dd>
+                    </dl>
+                </div>
+                <div class="col-sm-4">
+                    <div class="thumbnail">
+                        <?php
+                        echo $this->tag->image(array(
+                            $registeredAgent->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_MEDIUM),
+                            "alt" => $registeredAgent->member->firstName . ' ' . $registeredAgent->member->lastName,
+                            "title" => $registeredAgent->member->firstName . ' ' . $registeredAgent->member->lastName
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend><h3>Additional Details</h3></legend>
+                <div class="col-sm-7">
+                    <?php $form->renderBootstrap('commission'); ?>
+                    <?php $form->renderBootstrap('status'); ?>
+                    <?php $form->renderBootstrap('request_status'); ?>
+                </div>
+            </fieldset>
+        </div>
+        <div class="panel-footer">
+            <?php echo $form->render('submit'); ?>
+            <?php echo $this->tag->linkTo(array('/vendor/agents/registered', 'Back', 'class' => 'btn btn-success')); ?>
+        </div>
+    </form>
+</div>
+

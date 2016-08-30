@@ -1,0 +1,163 @@
+<div class="col-lg-6">
+    <div style="margin-bottom: 10px;">
+        <h4>Filter Messages</h4>
+        <form class="form-inline" method="post">
+            <div class="col-lg-2 no-pad-left">
+                <div class="form-group">
+                    <?php
+                    echo Phalcon\Tag::selectStatic(array(
+                        "s",
+                        "useEmpty" => true,
+                        "emptyText" => "All",
+                        'emptyValue' => "[all]",
+                        array(
+                            \Tourpage\Models\MembersMessages::READ_STATUS_CODE => 'Read',
+                            \Tourpage\Models\MembersMessages::UNREAD_STATUS_CODE => 'Unread',
+                        ),
+                        "class" => "form-control",
+                        "style" => "width: 100%;"
+                    ));
+                    ?>
+                </div>
+            </div>
+            <input type="hidden" name="formtp" value="fltr" />
+            <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-search"></span> Filter</button>
+            <?php if (count($defaultValues) > 0) { ?>
+                <?php echo $this->tag->linkTo("/admin/message/index", "Clear"); ?>
+            <?php } ?>
+        </form>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Member Messages <span class="badge"><?php echo $pager->getTotalItems();?></span>
+                <div class="pull-right">
+                    <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/message/index/create/member');?>" role="button" title="" data-original-title="Post New Member Message">
+                        <span class="glyphicon glyphicon-plus"></span> Post New Member Message
+                    </a>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <form id="usrlist" method="post">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Sl.</th>
+                                <th>Message Text</th>
+                                <th>Sent To</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php $i =1; ?>
+                            <?php if ($pager->getTotalItems() > 0) { ?>
+                                <?php foreach ($pager->getItems() as $item) { ?>
+                                    <tr>
+                                        <td><?php echo $i; ?></td>
+                                        <td><?php echo $item->message->messageText; ?></td>
+                                        <td><?php echo $item->member->getName(); ?></td>
+                                        <td><?php echo $item->getMemberMessageStatus(true); ?></td>
+                                        <td>
+                                            <?php echo $this->tag->linkTo(array('/admin/message/index/remove/member/' . $item->messageId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Message')); ?>
+                                        </td>
+                                    </tr>
+                                    <?php $i++;?>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <tr>
+                                    <td colspan="6" class="text-center">No Message Available</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <div style="margin-bottom: 10px;">
+        <h4>Filter Messages</h4>
+        <form class="form-inline" method="post">
+            <div class="col-lg-2 no-pad-left">
+                <div class="form-group">
+                    <?php
+                    echo Phalcon\Tag::selectStatic(array(
+                        "st",
+                        "useEmpty" => true,
+                        "emptyText" => "All",
+                        'emptyValue' => "[all]",
+                        array(
+                            \Tourpage\Models\VendorsMessages::READ_STATUS_CODE => 'Read',
+                            \Tourpage\Models\VendorsMessages::UNREAD_STATUS_CODE => 'Unread',
+                        ),
+                        "class" => "form-control",
+                        "style" => "width: 100%;"
+                    ));
+                    ?>
+                </div>
+            </div>
+            <input type="hidden" name="formtp" value="fltr" />
+            <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-search"></span> Filter</button>
+            <?php if (count($defaultValues2) > 0) { ?>
+                <?php echo $this->tag->linkTo("/admin/message/index", "Clear"); ?>
+            <?php } ?>
+        </form>
+    </div>
+    <div class="panel panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Vendor Messages <span class="badge"><?php echo $pager2->getTotalItems();?></span>
+                <div class="pull-right">
+                    <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/message/index/create/vendor');?>" role="button" title="" data-original-title="Post New Vendor Message">
+                        <span class="glyphicon glyphicon-plus"></span> Post New Vendor Message
+                    </a>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <form id="vdrlist" method="post">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Sl.</th>
+                                <th>Message Text</th>
+                                <th>Sent To</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php $j =1; ?>
+                            <?php if ($pager2->getTotalItems() > 0) { ?>
+                                <?php foreach ($pager2->getItems() as $item2) { ?>
+                                    <tr>
+                                        <td><?php echo $i; ?></td>
+                                        <td><?php echo $item2->message->messageText; ?></td>
+                                        <td><?php echo $item2->vendor->getName(); ?></td>
+                                        <td><?php echo $item2->getVendorMessageStatus(true); ?></td>
+                                        <td>
+                                            <?php echo $this->tag->linkTo(array('/admin/message/index/remove/vendor/' . $item2->messageId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Message')); ?>
+                                        </td>
+                                    </tr>
+                                    <?php $j++;?>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <tr>
+                                    <td colspan="6" class="text-center">No Message Available</td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>

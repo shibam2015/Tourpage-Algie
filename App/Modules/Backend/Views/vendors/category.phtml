@@ -1,0 +1,41 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Vendors Category <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            <div class="pull-right">
+                <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/vendors/addcategory'); ?>" role="button" title="Add new vendor category">
+                    <span class="glyphicon glyphicon-plus"></span> New Category
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($pager->getTotalItems() > 0) { ?>
+                    <?php foreach ($pager->getItems() as $item) { ?>
+                        <tr>
+                            <td><?php echo $item->getListTitle(); ?></td>
+                            <td><?php echo $item->getStatus(); ?></td>
+                            <td>
+                                <?php echo $this->tag->linkTo(array('/admin/vendors/editcategory/' . $item->categoryId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Category')); ?>
+                                <?php echo $this->tag->linkTo(array('/admin/vendors/removecategory/' . $item->categoryId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Category')); ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                <?php } else { ?>
+                    <tr>
+                        <td colspan="2" class="text-center">No category is here</td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+</div>

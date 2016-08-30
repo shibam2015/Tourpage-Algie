@@ -1,0 +1,185 @@
+<section class="bodysectionpdp">
+	<div class="pdp" style=" margin: 0 auto;max-width: 1085px; min-height: 600px;">
+		<div style="float:left;width:70%">
+			<h2><span class="glyphicon glyphicon-th-list"></span> Reviews for "<em><?php echo $tour->tourTitle; ?></em>": </h2>
+			<hr />
+			<?php if ($pager->getTotalItems() > 0) { ?>
+				<div class="review-container pull-left">
+					<?php foreach ($pager->getItems() as $review) { ?>
+						<div class="review-wrapper pull-left">
+							<div class="col-sm-1" style="padding:0;">
+								<?php
+								$reviewerAvator = $this->url->getStatic(FRONT_END_DIR . 'images/reviewer_avatar_default.png');
+								if ($review->isMember()) {
+									if ($review->memberTourReview && $review->memberTourReview->count() > 0) {
+										$reviewerAvator = $review->memberTourReview->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_ICON);
+									}
+								}
+								echo $this->tag->image(array(
+									$reviewerAvator,
+									"width" => 45,
+									"height" => 45
+								));
+								?>
+							</div>
+							<div class="col-sm-11">
+								<span id="star_count_<?php echo $review->reviewId;?>"></span>
+								<small><?php echo \Tourpage\Helpers\Utils::formatDate($review->reviewOn, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG);?></small>
+								<p><?php echo \Tourpage\Helpers\Utils::decodeString($review->reviewContent);?></p>
+								<p class="text-left">- <small><em><?php echo \Tourpage\Helpers\Utils::decodeString($review->reviewByName);?></em></small></p>
+								<script>jQuery(function(){jQuery('#star_count_<?php echo $review->reviewId;?>').rateYo({rating: <?php echo $review->starCount;?>,starWidth: "20px",readOnly: true});});</script>
+							</div>
+							<div class="clear"></div>
+						</div>
+					<?php } ?>
+				</div>
+				<nav>
+					<?php echo $pager->getLinks(); ?>
+				</nav>
+			<?php } else { ?>
+				<p>No one has given review for "<em><?php echo $tour->tourTitle; ?></em>"</p>
+			<?php } ?>
+		</div>
+		<div style="float: left;width: 29%;margin-left: 10px;">
+			<div class="booking-section pull-left">
+				<div class="info">
+					<?php if ($tour->tourImages->count() > 0) { ?>
+						<div id="store-ad" class="carousel slide" data-ride="carousel">
+							<!-- Indicators -->
+							<ol class="carousel-indicators">
+								<?php for ($b = 0; $b < $tour->tourImages->count(); $b++) { ?>
+									<li data-target="#store-ad" data-slide-to="<?php echo $b; ?>"<?php echo $b == 0 ? ' class="active"' : ''; ?>></li>
+								<?php } ?>
+							</ol>
+							<!-- Wrapper for slides -->
+							<div class="carousel-inner" role="listbox">
+								<?php
+								$c = 1;
+								foreach ($tour->tourImages as $tourImage) {
+									?>
+									<div class="item<?php echo $c == 1 ? ' active' : ''; ?>">
+										<img src="<?php echo $tourImage->getImageUri('thumb'); ?>" style="width:300px;height:200px;">
+									</div>
+									<?php
+									$c++;
+								}
+								?>
+							</div>
+							<!-- Controls -->
+							<a class="left carousel-control" href="#store-ad" role="button" data-slide="prev">
+								<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+								<span class="sr-only">Previous</span>
+							</a>
+							<a class="right carousel-control" href="#store-ad" role="button" data-slide="next">
+								<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+								<span class="sr-only">Next</span>
+							</a>
+						</div>
+					<?php } ?>
+				</div>
+				<div class="col-box-12">
+					<ul>
+						<li><a href="<?php echo $tour->getUri(); ?>"><?php echo $tour->tourTitle; ?></a></li>
+						<li>
+							<div class="pull-left" id="star-rate-<?php echo $tour->tourId;?>"></div>
+							<div  class="pull-right"><?php echo $pager->getTotalItems();?> Reviews</div>
+							<script>jQuery(function(){jQuery('#star-rate-<?php echo $tour->tourId;?>').rateYo({rating: <?php echo $tour->tourRating ? $tour->tourRating->getStar() : 0;?>,starWidth: "20px",readOnly: true});});</script>
+						</li>
+					</ul>
+					<br />
+				</div>
+				<div class="clear"></div>
+				<div class="rightbox">
+					<div class="info">
+						<h2>Operator of this tour:</h2>
+						<?php //if ($tour->tourVendor->vendor->getAvatarUri()) { ?>
+						<figure class="line-color">
+							<?php
+							$vendorAvator = $this->url->getStatic(FRONT_END_DIR . 'images/no_face.png');
+							if ($tour->tourVendor->vendor->getAvatarUri()) {
+								$vendorAvator = $tour->tourVendor->vendor->getAvatarUri();
+							}
+							echo $this->tag->image(array(
+								$vendorAvator,
+								"alt" => $tour->tourVendor->vendor->firstName,
+								"title" => $tour->tourVendor->vendor->firstName,
+								"width" => 55,
+								"height" => 64
+							));
+							?>
+						</figure>
+						<?php //}    ?>
+						<ul class="info">
+							<li class="name"><?php echo $this->tag->linkTo(array($tour->tourVendor->vendor->getStorFrontUri(), $tour->tourVendor->vendor->businessName, 'local' => false)); ?></li>
+							<?php if ($tour->tourVendor->vendor->estd) { ?>
+								<li class="since">Established since <?php echo $tour->tourVendor->vendor->estd; ?></li>
+							<?php } ?>
+							<li class="name">Operator: <?php echo $tour->tourVendor->vendor->firstName . ' ' . $tour->tourVendor->vendor->lastName; ?></li>
+							<li class="location">Location: <?php echo $tour->tourVendor->vendor->state->name . ', ' . $tour->tourVendor->vendor->country->name; ?></li>
+							<li class="name">Email: <?php echo $tour->tourVendor->vendor->emailAddress; ?></li>
+							<?php if ($tour->tourVendor->vendor->phone) { ?>
+								<li class="name">Phone: <?php echo $tour->tourVendor->vendor->phone; ?></li>
+							<?php } ?>
+						</ul>
+						
+					</div>
+				</div>
+				<div class="clear"></div>
+				<div class="rightbox">
+					<div class="jumbotron">
+					<h3>Detail Ratings</h3>
+					<dl class="star-dtls dl-horizontal">
+						<?php for ($s = 5; $s >= 1; $s--) { ?>
+							<dt>
+								<div id="star-dtls-<?php echo $tour->tourId;?>-<?php echo $s;?>"></div>
+								<script>jQuery(function(){jQuery('#star-dtls-<?php echo $tour->tourId;?>-<?php echo $s;?>').rateYo({rating: <?php echo $s;?>,starWidth: "20px",readOnly: true});});</script>
+							</dt>
+							<dd><?php echo $tour->tourRating ? $tour->tourRating->getRating($s) : 0; ?></dd>
+						<?php } ?>
+					</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<style>
+    .pdp {font-size:14px;line-height:24px;}
+    .pdp h2{padding:10px;font-size:15px;font-weight:bold}
+    .pdp ul{list-style:none}
+    .pdp h3{margin-top:20px;}
+    .pdp h4{margin-top:20px;}
+    h4.modal-title{margin:0}
+    .tour-price{display: inline;font-size: 24px;font-weight: bold;}
+    .booking-section, .desc-section{border: 1px solid #9e9e9e;padding: 10px;margin-top: 7px;width: 100%;}
+    .hasDatepicker{margin-bottom: 10px;}
+    a.ui-datepicker-selected-bg, .ui-state-active{border-color: #ff0000 !important;color: #ff0000 !important;}
+    .ui-datepicker td span, .ui-datepicker td a{text-align: center;}
+    span.ui-state-default{cursor: not-allowed;}
+    span.ui-spinner{height: 25px;margin-bottom: 10px;width: 70px;}
+    input[type="text"].spiner{height: 30px;margin: 0;padding: 0 0 0 30px;width: 100%;}
+    a.ui-spinner-down{left: 0;}
+    .ui-spinner a.ui-spinner-button{border: none;top: 6px;cursor: pointer;}
+    .btn-pad{padding: 6px 12px 6px 40px;}
+    div.total{font-size: 24px;font-weight: bold;margin-bottom: 10px;}
+    div.availibility p{margin-bottom: 0px;}
+    .ui-widget-content{width: 100%;}
+    .link_tc{cursor:pointer;}.modal-dialog{margin-top:100px;}
+    form#tour_booking_form{padding:10px}
+    .rightbox{width: 100%;}
+    .rightbox .info{background: none; padding-top: 0;}
+    .from-vendor, .from-category{width: 100%;margin-top: 7px;/*padding: 10px;*/}
+    .from-vendor .from-vendor-item, .from-category .from-category-item{/*border: 1px solid #e8e8e8;padding: 5px;margin-right:15px;*/}
+    .from-vendor .from-vendor-item ol li, .from-category .from-category-item ol li{list-style: none;}
+    .more-item{padding-left:0; padding-right:0;}
+    .reivewForm{list-style:none;float:left;width:100%}
+    .reivewForm li label{display:inline-block;width:100px}
+    .reivewForm li{text-align:left}
+    .review-form{padding:10px;width: 100%;}
+    .review-section{width: 100%;}
+    .left-box-control {margin-top:-70px !important}
+    .jumbotron {padding: 20px 30px;margin-bottom: 0;}
+    .jumbotron h3 {margin-top: 0;}
+    .star-dtls dt{text-align:left;width: 110px;}
+    .star-dtls dd{margin-left: 120px;}
+</style>

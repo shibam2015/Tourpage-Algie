@@ -1,0 +1,45 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Tour & Activities <span class="badge"><?php echo $tourTypes->count(); ?></span>
+            <div class="pull-right">
+                <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/vendors/addtouractivities'); ?>" role="button" title="Add new vendor tour & activities">
+                    <span class="glyphicon glyphicon-plus"></span> New Tour & Activities
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="vlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($tourTypes->count() > 0) { ?>
+                            <?php foreach ($tourTypes as $tourType) { ?>
+                                <tr>
+                                    <td><?php echo $tourType->tourTypesTitle; ?></td>
+                                    <td><?php echo $tourType->getStatus(); ?></td>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/admin/vendors/edittouractivities/' . $tourType->tourTypesId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour & Activity')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/vendors/removetouractivities/' . $tourType->tourTypesId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour & Activity')); ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="3" class="text-center">No tour & activity is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>

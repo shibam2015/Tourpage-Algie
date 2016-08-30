@@ -1,0 +1,180 @@
+<form class="form-inline" id="pdt_form" method="post">
+    <div style="margin-bottom: 10px;">
+        <h4>Promotional Discount (%)</h4>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "discount_start",
+                "class" => "form-control",
+                "placeholder" => "Discount start from",
+            ));
+            ?>
+        </div>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "discount_end",
+                "class" => "form-control",
+                "placeholder" => "Discount end to",
+            ));
+            ?>
+        </div>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "discount_percentage",
+                "class" => "form-control",
+                "placeholder" => "Percentage(%) of discount",
+            ));
+            ?>
+        </div>
+        <button type="submit" class="btn btn-primary">Apply Discount</button>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Tours <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" name="s_all" id="s_all"></th>
+                            <th>Tour Title</th>
+                            <th>Price</th>
+                            <th>Price For</th>
+                            <th class="text-right">Discount</th>
+                            <th class="text-right">Special Offer</th>
+                            <th class="text-center">Booking</th>
+                            <th>Status</th>
+                            <?php if ($this->vendors->isAllowed('tours', 'managetour')) { ?>
+                                <th>Action</th>
+                            <?php } ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($pager->getTotalItems() > 0) { ?>
+                            <?php foreach ($pager->getItems() as $item) { ?>
+                                <tr>
+                                    <td><input type="checkbox" name="pdt[]" value="<?php echo $item->tourId; ?>" class="pd_t"></td>
+                                    <td><?php echo $this->tag->linkTo(array($item->tour->getUri(), $item->tour->tourTitle, 'local' => false, 'target' => '_blank')); ?></td>
+                                    <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->tour->tourPrice->getPrice()); ?></td>
+                                    <td><?php echo $item->tour->tourPrice->data->priceTypeText; ?></td>
+                                    <td class="text-right"><?php echo $item->tour->tourPrice->hasDiscount(TRUE) ? ($item->tour->tourPrice->discountHasExpired() ? '<span class="text-danger"><s>' . $item->tour->tourPrice->data->discount->price . '%</s></span>' : $item->tour->tourPrice->data->discount->price . '%') : 0; ?></td>
+                                    <td class="text-right"><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->tour->tourPrice->getPrice()); ?></td>
+                                    <td class="text-center"><?php echo $item->tour->getBookingStatus(); ?></td>
+                                    <td><?php echo $item->tour->getStatus(); ?></td>
+                                    <?php if ($this->vendors->isAllowed('tours', 'managetour')) { ?>
+                                        <td>
+                                            <?php echo $this->tag->linkTo(array('/vendor/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
+                                            <?php echo $this->tag->linkTo(array('/vendor/tours/remove/' . $item->tourId, '<span class="glyphicon glyphicon-remove"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Remove Tour')); ?>
+                                        </td>
+                                    <?php } ?>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="9" class="text-center">No tours is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</form>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery(document).on('keypress', '.hasDatepicker, .seasonal_datepicker', function (e) {
+            return false;
+        });
+
+        jQuery('#discount_start').datepicker({
+            minDate: new Date(),
+            numberOfMonths: 2,
+            beforeShow: function (element, inst) {
+                setTimeout(function () {
+                    inst.dpDiv.css({"z-index": 100});
+                }, 0);
+            },
+            onClose: function (selectedDate) {
+                jQuery("#discount_end").datepicker("option", "minDate", selectedDate);
+                jQuery("#discount_end").datepicker("show");
+            },
+            onSelect: function (selectedDate) {
+                jQuery("#discount_end").val('');
+            }
+        });
+        jQuery('#discount_end').datepicker({
+            numberOfMonths: 2,
+            beforeShow: function (element, inst) {
+                setTimeout(function () {
+                    inst.dpDiv.css({"z-index": 100});
+                }, 0);
+                if (jQuery('#discount_start').val() == '') {
+                    jQuery('#discount_start').datepicker("show");
+                    return false;
+                }
+            }
+        });
+
+        jQuery('#s_all').click(function () {
+            if (jQuery(this).is(':checked')) {
+                jQuery('input[type="checkbox"].pd_t').prop('checked', true);
+            } else {
+                jQuery('input[type="checkbox"].pd_t').prop('checked', false);
+            }
+        });
+        jQuery('input[type="checkbox"].pd_t').click(function () {
+            var pdtCount = jQuery('input[type="checkbox"].pd_t').length, pdtCheckedCount = 0;
+            if (jQuery(this).is(':checked')) {
+                pdtCheckedCount = jQuery('input[type="checkbox"].pd_t:checked').length;
+            }
+            if (jQuery('#s_all').is(':checked')) {
+                jQuery('#s_all').prop('checked', false);
+            }
+            if (pdtCount === pdtCheckedCount) {
+                jQuery('#s_all').prop('checked', true);
+            }
+        });
+
+        jQuery("#pdt_form").submit(function () {
+            var error = [];
+            if (jQuery("#discount_start").val() === '') {
+                error.push("Please select discount start date.");
+            }
+            if (jQuery("#discount_end").val() === '') {
+                error.push("Please select discount end date.");
+            }
+            if (jQuery("#discount_percentage").val() === '') {
+                error.push("Please provide discount percentage.");
+            } else {
+                var discount_percentage = jQuery("#discount_percentage").val();
+                if (!/^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(discount_percentage)) {
+                    error.push("Invalid discount percentage.");
+                }
+            }
+            var pdtCheckedCount = jQuery('input[type="checkbox"].pd_t:checked').length;
+            if (pdtCheckedCount <= 0) {
+                error.push("Please select tour to apply discount.");
+            }
+
+            if (error.length > 0) {
+                var errorString = '';
+                for (var e in error) {
+                    errorString += (parseInt(e) + 1) + ". " + error[e] + "\n";
+                }
+                alert(errorString);
+                return false;
+            }
+            return true;
+        });
+    });
+</script>

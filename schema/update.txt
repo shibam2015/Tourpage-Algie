@@ -1,0 +1,538 @@
+/* Date Dec 20 2015 Amit */
+
+INSERT INTO `variable` (`variableKey`, `variableData`) VALUES
+('paypal_mode', 's:7:"sandbox";'),
+('paypal_sandbox_account', 's:22:"am.bargad@bargadss.com";'),
+('paypal_sandbox_client_id', 's:80:"AZzzToSH9IBnEOUqerwcB9mZPujMfVm_RrMtpuwG7AidsHuumBaeEQQSyEFOrtd90t3yLBqaccFL6SHe";'),
+('paypal_sandbox_client_secret', 's:80:"EJTPngmw1o6lMKv3z4-Pz9mZyUUe8GM6HYchv2YHCLVag-VZSSfWxDaq8RaoIHF5W-UdYrQepNZNmOOr";'),
+('paypal_live_account', 's:20:"asrc_s07@yahoo.co.in";'),
+('paypal_live_client_id', 's:80:"AWzaCql3CwRxNXG6YK4kyEkDhOieSEcitzplOpAE-ltBFVWoz1D3mYdXLyJGkB4sgMHIfD_L0vzuy4bG";'),
+('paypal_live_client_secret', 's:80:"EOmwMKHpCO4Vw_9uTMG6-0AzOTV56DwuijdbG-pBwobLPzrsEaCOTbJ1y7jAVhFfadLJBrdT2JsX8TXh";');
+
+/* Date Dec 21 2015 Amit */
+ALTER TABLE `booking` ADD `paymentId` VARCHAR(256) NULL AFTER `transactionId`, ADD `token` VARCHAR(256) NULL AFTER `paymentId`, ADD `payerId` VARCHAR(256) NULL AFTER `token`;
+ALTER TABLE `booking` ADD `paymentOption` VARCHAR(50) NULL AFTER `payerId`;
+
+/* Date Dec 29 2015 Amit */
+ALTER TABLE `members` CHANGE `createdOn` `createdOn` DATE NOT NULL;
+ALTER TABLE `vendors` CHANGE `estd` `estd` DATE NULL DEFAULT NULL, CHANGE `createdOn` `createdOn` DATE NOT NULL;
+ALTER TABLE `tours` CHANGE `tourCreatedOn` `tourCreatedOn` DATE NOT NULL;
+ALTER TABLE `banners` CHANGE `imageUploadedOn` `imageUploadedOn` DATE NOT NULL;
+ALTER TABLE `vendors_banner` CHANGE `imageUploadedOn` `imageUploadedOn` DATE NULL DEFAULT NULL;
+ALTER TABLE `admins` CHANGE `createdOn` `createdOn` DATE NOT NULL;
+ALTER TABLE `category_tour` CHANGE `categoryCreatedOn` `categoryCreatedOn` DATE NOT NULL;
+ALTER TABLE `category_vendor` CHANGE `categoryCreatedOn` `categoryCreatedOn` DATE NOT NULL;
+ALTER TABLE `tours_images` CHANGE `imageUploadedOn` `imageUploadedOn` DATE NOT NULL;
+ALTER TABLE `vendors` CHANGE `estd` `estd` INT(11) NULL DEFAULT NULL;
+
+/* Date Jan 05 2016 Amit */
+CREATE TABLE IF NOT EXISTS `tours_rating` (
+  `ratingId` int(11) NOT NULL,
+  `tourId` varchar(100) NOT NULL,
+  `star_1` int(11) NOT NULL DEFAULT '0',
+  `star_2` int(11) NOT NULL DEFAULT '0',
+  `star_3` int(11) NOT NULL DEFAULT '0',
+  `star_4` int(11) NOT NULL DEFAULT '0',
+  `star_5` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `tours_rating` ADD PRIMARY KEY (`ratingId`), ADD KEY `INDEX_TOURS_RATING_TOUR_ID` (`tourId`) USING BTREE;
+ALTER TABLE `tours_rating` MODIFY `ratingId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `tours_rating` ADD CONSTRAINT `FK_TOURS_RATING_TOUR_ID` FOREIGN KEY (`tourId`) REFERENCES `tours` (`tourId`) ON UPDATE NO ACTION;
+CREATE TABLE IF NOT EXISTS `tours_review` (
+  `reviewId` int(11) NOT NULL,
+  `tourId` varchar(100) NOT NULL,
+  `reviewByName` varchar(256) NOT NULL,
+  `reviewByEmail` varchar(256) NOT NULL,
+  `reviewContent` varchar(500) NOT NULL,
+  `isMember` tinyint(1) NOT NULL,
+  `reviewStatus` tinyint(1) NOT NULL,
+  `reviewOn` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `tours_review` ADD PRIMARY KEY (`reviewId`), ADD KEY `INDEX_TOURS_REVIEW_TOUR_ID` (`tourId`) USING BTREE;
+ALTER TABLE `tours_review` MODIFY `reviewId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `tours_review` ADD CONSTRAINT `FK_TOURS_REVIEW_TOUR_ID` FOREIGN KEY (`tourId`) REFERENCES `tours` (`tourId`) ON UPDATE NO ACTION;
+ALTER TABLE `tours_review` ADD `starCount` TINYINT(1) NOT NULL AFTER `isMember`;
+
+CREATE TABLE IF NOT EXISTS `members_tour_review` (
+  `memberTourReviewId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `tourId` varchar(100) NOT NULL,
+  `reviewId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `members_tour_review`
+  ADD PRIMARY KEY (`memberTourReviewId`),
+  ADD KEY `INDEX_MEMBERS_TOUR_REVIEW_MEMBER_ID` (`memberId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_TOUR_REIVEW_TOUR_ID` (`tourId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_TOUR_REVIEW_REVIEW_ID` (`reviewId`) USING BTREE;
+
+
+ALTER TABLE `members_tour_review`
+  MODIFY `memberTourReviewId` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `members_tour_review`
+  ADD CONSTRAINT `FK_MEMBERS_TOUR_REVIEW_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_TOUR_REVIEW_REVIEW_ID` FOREIGN KEY (`reviewId`) REFERENCES `tours_review` (`reviewId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_TOUR_REVIEW_TOUR_ID` FOREIGN KEY (`tourId`) REFERENCES `tours` (`tourId`) ON UPDATE NO ACTION;
+
+/* Date 11 Jan 2016 Amit */
+ALTER TABLE `members` ADD `avatar` VARCHAR(256) NULL AFTER `zipCode`;
+CREATE TABLE IF NOT EXISTS `key_highlight` (
+  `keyhighlightId` int(11) NOT NULL,
+  `keyhighlightIcon` varchar(256) NOT NULL,
+  `keyhighlightTitle` varchar(256) NOT NULL,
+  `keyhighlightStatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `key_highlight` ADD PRIMARY KEY (`keyhighlightId`);
+ALTER TABLE `key_highlight` MODIFY `keyhighlightId` int(11) NOT NULL AUTO_INCREMENT;
+CREATE TABLE IF NOT EXISTS `tours_key_highlight` (
+  `tourKeyhighlightId` int(11) NOT NULL,
+  `tourId` varchar(100) NOT NULL,
+  `keyhighlightId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `tours_key_highlight`
+  ADD PRIMARY KEY (`tourKeyhighlightId`),
+  ADD KEY `INDEX_TOURS_KEY_HIGHLIGHT_TOUR_ID` (`tourId`) USING BTREE,
+  ADD KEY `INDEX_TOURS_KEY_HIGHLIGHT_KEY_HIGHLIGHT_ID` (`keyhighlightId`) USING BTREE;
+ALTER TABLE `tours_key_highlight`
+  MODIFY `tourKeyhighlightId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `tours_key_highlight`
+  ADD CONSTRAINT `FK_TOURS_KEY_HIGHLIGHT_KEY_HIGHLIGHT_ID` FOREIGN KEY (`keyhighlightId`) REFERENCES `key_highlight` (`keyhighlightId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_TOURS_KEY_HIGHLIGHT_TOUR_ID` FOREIGN KEY (`tourId`) REFERENCES `tours` (`tourId`) ON UPDATE NO ACTION;
+
+/* Date 13 Jan 2016 Amit */
+ALTER TABLE `tours_review` ADD `vendorId` INT NOT NULL AFTER `tourId`;
+ALTER TABLE `tours_review` ADD INDEX(`vendorId`);
+ALTER TABLE `tours_review` DROP INDEX `vendorId`, ADD INDEX `INDEX_TOURS_REVIEW_VENDOR_ID` (`vendorId`) USING BTREE;
+ALTER TABLE `tours_review` ADD CONSTRAINT `FK_TOURS_REVIEW_VENDOR_ID` FOREIGN KEY (`vendorId`) REFERENCES `tourpage`.`vendors`(`vendorId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+/* Date 15 Jan 2016 Amit */
+CREATE TABLE IF NOT EXISTS `members_to_vendor` (
+  `memberstovendorId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `vendorId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `members_to_vendor`
+  ADD PRIMARY KEY (`memberstovendorId`),
+  ADD KEY `INDEX_MEMBERS_TO_VENDOR_MEMBER_ID` (`memberId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_TO_VENDOR_VENDOR_ID` (`vendorId`) USING BTREE;
+ALTER TABLE `members_to_vendor` MODIFY `memberstovendorId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `members_to_vendor`
+  ADD CONSTRAINT `FK_MEMBERS_TO_VENDOR_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_TO_VENDOR_VENDOR_ID` FOREIGN KEY (`vendorId`) REFERENCES `vendors` (`vendorId`) ON UPDATE NO ACTION;
+
+/* Date 19 Jan 2016 Amit */
+CREATE TABLE IF NOT EXISTS `city` (
+  `cityId` int(11) NOT NULL,
+  `stateId` int(11) NOT NULL,
+  `countryId` int(11) NOT NULL,
+  `name` varchar(256) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=2350 DEFAULT CHARSET=latin1;
+
+ALTER TABLE `city`
+  ADD PRIMARY KEY (`cityId`),
+  ADD KEY `INDEX_CITY_STATE_ID` (`stateId`) USING BTREE,
+  ADD KEY `INDEX_CITY_COUNTRY_ID` (`countryId`) USING BTREE;
+
+ALTER TABLE `city` MODIFY `cityId` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2350;
+
+ALTER TABLE `city`
+  ADD CONSTRAINT `FK_CITY_COUNTRY_ID` FOREIGN KEY (`countryId`) REFERENCES `country` (`countryId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_CITY_STATE_ID` FOREIGN KEY (`stateId`) REFERENCES `state` (`stateId`) ON UPDATE NO ACTION;
+
+CREATE TABLE IF NOT EXISTS `place_of_attractions` (
+  `attractionId` int(11) NOT NULL,
+  `attractionName` varchar(256) NOT NULL,
+  `cityId` int(11) NOT NULL,
+  `stateId` int(11) NOT NULL,
+  `countryId` int(11) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+ALTER TABLE `place_of_attractions`
+  ADD PRIMARY KEY (`attractionId`),
+  ADD KEY `INDEX_PLACE_OF_ATTRACTIONS_CITY_ID` (`cityId`) USING BTREE,
+  ADD KEY `INDEX_PLACE_OF_ATTRACTIONS_STATE_ID` (`stateId`) USING BTREE,
+  ADD KEY `INDEX_PLACE_OF_ATTRACTIONS_COUNTRY_ID` (`countryId`) USING BTREE;
+ALTER TABLE `place_of_attractions` MODIFY `attractionId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `place_of_attractions`
+  ADD CONSTRAINT `FK_PLACE_OF_ATTRACTIONS_CITY_ID` FOREIGN KEY (`cityId`) REFERENCES `city` (`cityId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_PLACE_OF_ATTRACTIONS_COUNTRY_ID` FOREIGN KEY (`countryId`) REFERENCES `country` (`countryId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_PLACE_OF_ATTRACTIONS_STATE_ID` FOREIGN KEY (`stateId`) REFERENCES `state` (`stateId`) ON UPDATE NO ACTION;
+
+/* Date 20 Jan 2016 Amit */
+ALTER TABLE `members` ADD `isAgent` TINYINT(1) NOT NULL DEFAULT '0' AFTER `status`;
+CREATE TABLE IF NOT EXISTS `vendors_registered_agents` (
+  `vragentId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `vendorId` int(11) NOT NULL,
+  `commission` float(10,2) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '2',
+  `requestStatus` tinyint(1) NOT NULL DEFAULT '3',
+  `requestOn` date NOT NULL,
+  `approveOn` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `vendors_registered_agents`
+  ADD PRIMARY KEY (`vragentId`),
+  ADD KEY `INDEX_VENDORS_REGISTERED_AGENTS_MEMBER_ID` (`memberId`) USING BTREE,
+  ADD KEY `INDEX_VENDORS_REGISTERED_AGENTS_VENDOR_ID` (`vendorId`) USING BTREE;
+
+ALTER TABLE `vendors_registered_agents` MODIFY `vragentId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `vendors_registered_agents`
+  ADD CONSTRAINT `FK_VENDORS_REGISTERED_AGENTS_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_VENDORS_REGISTERED_AGENTS_VENDOR_ID` FOREIGN KEY (`vendorId`) REFERENCES `vendors` (`vendorId`);
+
+CREATE TABLE IF NOT EXISTS `vendors_local_agents` (
+  `vlagentId` int(11) NOT NULL,
+  `vendorId` int(11) NOT NULL,
+  `commission` float(10,2) NOT NULL,
+  `firstName` varchar(256) NOT NULL,
+  `lastName` varchar(256) NOT NULL,
+  `passWord` varchar(512) NOT NULL,
+  `emailAddress` varchar(256) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `addressOne` varchar(500) NOT NULL,
+  `addressTwo` varchar(256) DEFAULT NULL,
+  `city` varchar(256) NOT NULL,
+  `stateId` int(11) NOT NULL,
+  `countryId` int(11) NOT NULL,
+  `zipCode` int(11) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `createdOn` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `vendors_local_agents`
+  ADD PRIMARY KEY (`vlagentId`),
+  ADD KEY `INDEX_VENDORS_LOCAL_AGENTS_VENDOR_ID` (`vendorId`) USING BTREE,
+  ADD KEY `INDEX_VENDORS_LOCAL_AGENTS_STATE_ID` (`stateId`) USING BTREE,
+  ADD KEY `INDEX_VENDORS_LOCAL_AGENTS_COUNTRY_ID` (`countryId`) USING BTREE;
+
+ALTER TABLE `vendors_local_agents` MODIFY `vlagentId` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `vendors_local_agents`
+  ADD CONSTRAINT `FK_VENDORS_LOCAL_AGENTS_COUNTRY_ID` FOREIGN KEY (`countryId`) REFERENCES `country` (`countryId`),
+  ADD CONSTRAINT `FK_VENDORS_LOCAL_AGENTS_STATE_ID` FOREIGN KEY (`stateId`) REFERENCES `state` (`stateId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_VENDORS_LOCAL_AGENTS_VENDOR_ID` FOREIGN KEY (`vendorId`) REFERENCES `vendors` (`vendorId`) ON UPDATE NO ACTION;
+ALTER TABLE `vendors_registered_agents` CHANGE `approveOn` `approveOn` DATE NULL;
+ALTER TABLE `vendors_registered_agents` CHANGE `commission` `commission` FLOAT( 10, 2 ) NOT NULL DEFAULT '0';
+ALTER TABLE `vendors_local_agents` CHANGE `commission` `commission` FLOAT(10,2) NOT NULL DEFAULT '0';
+
+/* Date 22 Jan 2016 Amit */
+ALTER TABLE `vendors` ADD `default_commission` FLOAT(10,2) NOT NULL DEFAULT '0' AFTER `estd`;
+ALTER TABLE `vendors` CHANGE `default_commission` `default_commission` FLOAT( 10, 2 ) NOT NULL DEFAULT '0.00' COMMENT 'Default commission for all registered agents';
+
+/* Date 27 Jan 2016 Amit */
+ALTER TABLE `vendors` ADD `parentId` INT NOT NULL DEFAULT '0' AFTER `vendorId`;
+ALTER TABLE `vendors` CHANGE `jobTitle` `jobTitle` VARCHAR(256) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, CHANGE `businessName` `businessName` VARCHAR(256) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, CHANGE `vendorCategory` `vendorCategory` INT(11) NULL, CHANGE `isTripAdv` `isTripAdv` TINYTEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;
+
+/* Date 02 Feb 2016 Amit */
+CREATE TABLE IF NOT EXISTS `vendors_acl` (
+  `aclId` int(11) NOT NULL,
+  `vendorId` int(11) NOT NULL,
+  `aclData` blob
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `vendors_acl` ADD PRIMARY KEY (`aclId`), ADD KEY `INDEX_VENDORS_ACL_VENDOR_ID` (`vendorId`) USING BTREE;
+ALTER TABLE `vendors_acl` MODIFY `aclId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `vendors_acl` ADD CONSTRAINT `FK_VENDORS_ACL_VENDOR_ID` FOREIGN KEY (`vendorId`) REFERENCES `vendors` (`vendorId`) ON UPDATE NO ACTION;
+
+/* Date 04 Feb 2016 Amit */
+ALTER TABLE `vendors_tours` ADD `createBy` INT NOT NULL DEFAULT '0' AFTER `vendorId`;
+
+/* Date 06 Feb 2016 Amit */
+CREATE TABLE IF NOT EXISTS `members_cards` (
+  `cardId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `firstName` varchar(256) NOT NULL,
+  `lastName` varchar(256) NOT NULL,
+  `addressOne` varchar(512) NOT NULL,
+  `addressTwo` varchar(512) DEFAULT NULL,
+  `phone` int(11) DEFAULT NULL,
+  `countryId` int(11) NOT NULL,
+  `stateId` int(11) NOT NULL,
+  `city` varchar(256) NOT NULL,
+  `zipCode` int(11) DEFAULT NULL,
+  `cardNumber` bigint(20) NOT NULL,
+  `cardName` varchar(256) NOT NULL,
+  `expiryMonth` int(11) NOT NULL,
+  `expiryYear` int(11) NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT '1',
+  `addedOn` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `members_cards`
+  ADD PRIMARY KEY (`cardId`),
+  ADD KEY `INDEX_MEMBERS_CARDS_MEMBER_ID` (`memberId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_CARDS_COUNTRY_ID` (`countryId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_CARDS_STATE_ID` (`stateId`) USING BTREE;
+
+ALTER TABLE `members_cards` MODIFY `cardId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `members_cards`
+  ADD CONSTRAINT `FK_MEMBERS_CARDS_COUNTRY_ID` FOREIGN KEY (`countryId`) REFERENCES `country` (`countryId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_CARDS_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_CARDS_STATE_ID` FOREIGN KEY (`stateId`) REFERENCES `state` (`stateId`) ON UPDATE NO ACTION;
+ALTER TABLE `members_cards` CHANGE `phone` `phone` VARCHAR(20) NULL DEFAULT NULL;
+ALTER TABLE `members_cards` ADD `cardType` VARCHAR(10) NULL AFTER `zipCode`;
+
+/* Date 07 Feb 2016 Amit */
+ALTER TABLE `members_cards` ADD `cardCvv` INT NULL AFTER `cardName`;
+
+/* Date 09 Feb 2016 Amit */
+ALTER TABLE `members` DROP INDEX `stateId`, ADD INDEX `INDEX_MEMBERS_STATE_ID` (`stateId`) USING BTREE;
+ALTER TABLE `members` DROP INDEX `countryId`, ADD INDEX `INDEX_MEMBERS_COUNTRY_ID` (`countryId`) USING BTREE;
+ALTER TABLE `members` DROP FOREIGN KEY `members_ibfk_1`;
+ALTER TABLE `members` ADD CONSTRAINT `FK_MEMBERS_COUNTRY_ID` FOREIGN KEY (`countryId`) REFERENCES `country`(`countryId`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `members` DROP FOREIGN KEY `members_ibfk_2`;
+ALTER TABLE `members` ADD CONSTRAINT `FK_MEMBERS_STATE_ID` FOREIGN KEY (`stateId`) REFERENCES `state`(`stateId`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `members` DROP FOREIGN KEY `FK_MEMBERS_COUNTRY_ID`;
+ALTER TABLE `members` ADD CONSTRAINT `FK_MEMBERS_COUNTRY_ID` FOREIGN KEY (`countryId`) REFERENCES `country`(`countryId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+ALTER TABLE `members` DROP FOREIGN KEY `FK_MEMBERS_STATE_ID`;
+ALTER TABLE `members` ADD CONSTRAINT `FK_MEMBERS_STATE_ID` FOREIGN KEY (`stateId`) REFERENCES `state`(`stateId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+CREATE TABLE IF NOT EXISTS `currency` (
+  `currencyId` int(11) NOT NULL,
+  `currency` varchar(20) NOT NULL,
+  `code` varchar(4) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+
+INSERT INTO `currency` (`currencyId`, `currency`, `code`, `status`) VALUES
+(1, 'Australian Dollar', 'AUD', 1),
+(2, 'Canadian Dollar', 'CAD', 1),
+(3, 'Czech Koruna', 'CZK', 1),
+(4, 'Danish Krone', 'DKK', 1),
+(5, 'Euro', 'EUR', 1),
+(6, 'Hong Kong Dollar', 'HKD', 1),
+(7, 'Israeli New Sheqel', 'ILS', 1),
+(8, 'Mexican Peso', 'MXN', 1),
+(9, 'Norwegian Krone', 'NOK', 1),
+(10, 'New Zealand Dollar', 'NZD', 1),
+(11, 'Philippine Peso', 'PHP', 1),
+(12, 'Polish Zloty', 'PLN', 1),
+(13, 'Pound Sterling', 'GBP', 1),
+(14, 'Singapore Dollar', 'SGD', 1),
+(15, 'Swedish Krona', 'SEK', 1),
+(16, 'Swiss Franc', 'CHF', 1),
+(17, 'Thai Baht', 'THB', 1),
+(18, 'U.S. Dollar', 'USD', 1);
+
+ALTER TABLE `currency` ADD PRIMARY KEY (`currencyId`);
+ALTER TABLE `currency` MODIFY `currencyId` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=19;
+
+CREATE TABLE IF NOT EXISTS `language` (
+  `languageId` int(11) NOT NULL,
+  `language` varchar(20) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=latin1;
+
+INSERT INTO `language` (`languageId`, `language`, `status`) VALUES
+(1, 'Akan', 1),
+(2, 'Amharic', 1),
+(3, 'Arabic', 1),
+(4, 'Assamese', 1),
+(5, 'Awadhi', 1),
+(6, 'Azerbaijani', 1),
+(7, 'Balochi', 1),
+(8, 'Belarusian', 1),
+(9, 'Bengali', 1),
+(10, 'Bhojpuri', 1),
+(11, 'Burmese', 1),
+(12, 'Cebuano (Visayan)', 1),
+(13, 'Chewa', 1),
+(14, 'Chhattisgarhi', 1),
+(15, 'Chittagonian', 1),
+(16, 'Czech', 1),
+(17, 'Deccan', 1),
+(18, 'Dhundhari', 1),
+(19, 'Dutch', 1),
+(20, 'Eastern Min', 1),
+(21, 'English', 1),
+(22, 'French', 1),
+(23, 'Fula', 1),
+(24, 'Gan Chinese', 1),
+(25, 'German', 1),
+(26, 'Greek', 1),
+(27, 'Gujarati', 1),
+(28, 'Haitian Creole', 1),
+(29, 'Hakka', 1),
+(30, 'Haryanvi', 1),
+(31, 'Hausa', 1),
+(32, 'Hiligaynon', 1),
+(33, 'Hindi', 1),
+(34, 'Hmong', 1),
+(35, 'Hungarian', 1),
+(36, 'Igbo', 1),
+(37, 'Ilocano', 1),
+(38, 'Italian', 1),
+(39, 'Japanese', 1),
+(40, 'Javanese', 1),
+(41, 'Jin', 1),
+(42, 'Kannada', 1),
+(43, 'Kazakh', 1),
+(44, 'Khmer', 1),
+(45, 'Kinyarwanda', 1),
+(46, 'Kirundi', 1),
+(47, 'Konkani', 1),
+(48, 'Korean', 1),
+(49, 'Kurdish', 1),
+(50, 'Madurese', 1),
+(51, 'Magahi', 1),
+(52, 'Maithili', 1),
+(53, 'Malagasy', 1),
+(54, 'Malay/Indonesian', 1),
+(55, 'Malayalam', 1),
+(56, 'Mandarin', 1),
+(57, 'Marathi', 1),
+(58, 'Marwari', 1),
+(59, 'Mossi', 1),
+(60, 'Nepali', 1),
+(61, 'Northern Min', 1),
+(62, 'Odia (Oriya)', 1),
+(63, 'Oromo', 1),
+(64, 'Pashto', 1),
+(65, 'Persian', 1),
+(66, 'Polish', 1),
+(67, 'Portuguese', 1),
+(68, 'Punjabi', 1),
+(69, 'Quechua', 1),
+(70, 'Romanian', 1),
+(71, 'Russian', 1),
+(72, 'Saraiki', 1),
+(73, 'Serbo-Croatian', 1),
+(74, 'Shona', 1),
+(75, 'Sindhi', 1),
+(76, 'Sinhalese', 1),
+(77, 'Somali', 1),
+(78, 'Southern Min', 1),
+(79, 'Spanish', 1),
+(80, 'Sundanese', 1),
+(81, 'Swedish', 1),
+(82, 'Sylheti', 1),
+(83, 'Tagalog', 1),
+(84, 'Tamil', 1),
+(85, 'Telugu', 1),
+(86, 'Thai', 1),
+(87, 'Turkish', 1),
+(88, 'Turkmen', 1),
+(89, 'Ukrainian', 1),
+(90, 'Urdu', 1),
+(91, 'Uyghur', 1),
+(92, 'Uzbek', 1),
+(93, 'Vietnamese', 1),
+(94, 'Wu (Shanghainese)', 1),
+(95, 'Xhosa', 1),
+(96, 'Xiang (Hunnanese)', 1),
+(97, 'Yoruba', 1),
+(98, 'Yue (Cantonese)', 1),
+(99, 'Zhuang', 1),
+(100, 'Zulu', 1);
+
+ALTER TABLE `language` ADD PRIMARY KEY (`languageId`);
+ALTER TABLE `language` MODIFY `languageId` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=101;
+
+ALTER TABLE `members` ADD `currencyId` INT NULL AFTER `countryId`, ADD INDEX `INDEX_MEMBERS_CURRENCY_ID` (`currencyId`);
+ALTER TABLE `members` ADD CONSTRAINT `FK_MEMBERS_CURRENCY_ID` FOREIGN KEY (`currencyId`) REFERENCES `currency`(`currencyId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+ALTER TABLE `members` ADD `languageId` INT NULL AFTER `currencyId`, ADD INDEX `INDEX_MEMBERS_LANGUAGE_ID` (`languageId`);
+ALTER TABLE `members` ADD CONSTRAINT `FK_MEMBERS_LANGUAGE_ID` FOREIGN KEY (`languageId`) REFERENCES `language`(`languageId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+ALTER TABLE `members` ADD `newsletter` TINYINT(1) NOT NULL DEFAULT '1' AFTER `isAgent`;
+
+/* Date 10 Feb 2016 Amit */
+ALTER TABLE `members_cards` CHANGE `cardCvv` `cardCvv` VARCHAR(4) NULL DEFAULT NULL;
+CREATE TABLE IF NOT EXISTS `place_of_activities` (
+  `activityId` int(11) NOT NULL,
+  `activityName` varchar(256) NOT NULL,
+  `cityId` int(11) NOT NULL,
+  `stateId` int(11) NOT NULL,
+  `countryId` int(11) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `place_of_activities`
+  ADD PRIMARY KEY (`activityId`),
+  ADD KEY `INDEX_PLACE_OF_ACTIVITIES_CITY_ID` (`cityId`) USING BTREE,
+  ADD KEY `INDEX_PLACE_OF_ACTIVITIES_COUNTRY_ID` (`countryId`) USING BTREE,
+  ADD KEY `INDEX_PLACE_OF_ACTIVITIES_STATE_ID` (`stateId`) USING BTREE;
+
+ALTER TABLE `place_of_activities` MODIFY `activityId` int(11) NOT NULL AUTO_INCREMENT;
+
+CREATE TABLE IF NOT EXISTS `members_attractions` (
+  `membersAttractionId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `attractionId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `members_attractions`
+  ADD PRIMARY KEY (`membersAttractionId`),
+  ADD KEY `INDEX_MEMBERS_ATTRACTIONS_MEMBER_ID` (`memberId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_ATTRACTIONS_ATTRACTION_ID` (`attractionId`) USING BTREE;
+
+ALTER TABLE `members_attractions` MODIFY `membersAttractionId` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `members_attractions`
+  ADD CONSTRAINT `FK_MEMBERS_ATTRACTIONS_ATTRACTION_ID` FOREIGN KEY (`attractionId`) REFERENCES `place_of_attractions` (`attractionId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_ATTRACTIONS_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION;
+
+CREATE TABLE IF NOT EXISTS `members_activities` (
+  `membersActivityId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `activityId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `members_activities`
+  ADD PRIMARY KEY (`membersActivityId`),
+  ADD KEY `INDEX_MEMBERS_ACTIVITIES_MEMBER_ID` (`memberId`),
+  ADD KEY `INDEX_MEMBERS_ACTIVITIES_ACTIVITY_ID` (`activityId`);
+
+ALTER TABLE `members_activities` MODIFY `membersActivityId` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `members_activities`
+  ADD CONSTRAINT `FK_MEMBERS_ACTIVITIES_ACTIVITY_ID` FOREIGN KEY (`activityId`) REFERENCES `place_of_activities` (`activityId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_ACTIVITIES_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION;
+
+/* Date 24 Feb 2016 Amit */
+ALTER TABLE `booking` ADD `agentId` INT NULL DEFAULT '0' AFTER `memberId`;
+ALTER TABLE `booking` ADD INDEX(`agentId`);
+ALTER TABLE `booking` DROP INDEX `agentId`, ADD INDEX `INDEX_BOOKING_AGENT_ID` (`agentId`) USING BTREE;
+ALTER TABLE `booking_tours` ADD `employeeId` INT NULL DEFAULT '0' AFTER `vendorId`;
+ALTER TABLE `booking_tours` ADD INDEX(`employeeId`);
+ALTER TABLE `booking_tours` DROP INDEX `employeeId`, ADD INDEX `INDEX_BOOKING_TOURS_EMPLOYEE_ID` (`employeeId`) USING BTREE;
+
+/* Date 26 Feb 2016 Amit */
+ALTER TABLE `vendors_banner` CHANGE `bannerLink` `bannerLink` VARCHAR(256) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL;
+ALTER TABLE `booking` ADD `paymentStatus` TINYINT(2) NOT NULL DEFAULT '1' AFTER `bookingStatus`;
+
+/* Date 10 Mar 2016 Amit */
+ALTER TABLE `vendors` ADD `addressOne` VARCHAR(256) NULL AFTER `phone`, ADD `addressTwo` VARCHAR(256) NULL AFTER `addressOne`;
+ALTER TABLE `vendors` ADD `zipCode` INT NULL AFTER `countryId`;
+
+/* Date 11 Mar 2016 Amit */
+ALTER TABLE `tours` ADD `tourCountryId` INT NULL AFTER `socialMedia`, ADD `tourStateId` INT NULL AFTER `tourCountryId`, ADD `tourCity` VARCHAR(256) NULL AFTER `tourStateId`;
+ALTER TABLE `tours` ADD INDEX(`tourCountryId`);
+ALTER TABLE `tours` ADD INDEX(`tourStateId`);
+ALTER TABLE `tourpage`.`tours` DROP INDEX `tourCountryId`, ADD INDEX `INDEX_TOURS_TOUR_COUNTRY_ID` (`tourCountryId`) USING BTREE;
+ALTER TABLE `tourpage`.`tours` DROP INDEX `tourStateId`, ADD INDEX `INDEX_TOURS_TOUR_STATE_ID` (`tourStateId`) USING BTREE;
+ALTER TABLE `tours` ADD CONSTRAINT `FK_TOURS_TOUR_COUNTRY_ID` FOREIGN KEY (`tourCountryId`) REFERENCES `tourpage`.`country`(`countryId`) ON DELETE RESTRICT ON UPDATE NO ACTION; ALTER TABLE `tours` ADD CONSTRAINT `FK_TOURS_TOUR_STATE_ID` FOREIGN KEY (`tourStateId`) REFERENCES `tourpage`.`state`(`stateId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+
+/* Date 15 Mar 2016 Amit */
+ALTER TABLE `category_tour` ADD `categorySlug` VARCHAR(256) NULL AFTER `categoryTitle`;
+ALTER TABLE `category_vendor` ADD `categorySlug` VARCHAR(256) NULL AFTER `categoryTitle`;
+
+CREATE TABLE IF NOT EXISTS `members_favorite_tours` (
+  `favoriteToursId` int(11) NOT NULL,
+  `memberId` int(11) NOT NULL,
+  `tourId` varchar(100) NOT NULL,
+  `addedOn` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `members_favorite_tours`
+  ADD PRIMARY KEY (`favoriteToursId`),
+  ADD KEY `INDEX_MEMBERS_FAVORITE_TOURS_MEMBER_ID` (`memberId`) USING BTREE,
+  ADD KEY `INDEX_MEMBERS_FAVORITE_TOURS_TOUR_ID` (`tourId`) USING BTREE;
+
+ALTER TABLE `members_favorite_tours` MODIFY `favoriteToursId` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `members_favorite_tours`
+  ADD CONSTRAINT `FK_MEMBERS_FAVORITE_TOURS_MEMBER_ID` FOREIGN KEY (`memberId`) REFERENCES `members` (`memberId`) ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_MEMBERS_FAVORITE_TOURS_TOUR_ID` FOREIGN KEY (`tourId`) REFERENCES `tours` (`tourId`);

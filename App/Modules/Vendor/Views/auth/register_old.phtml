@@ -1,0 +1,105 @@
+<style>
+    .cover {
+        padding: 30px;
+    }
+</style>
+<h2 class="text-center">Vendor Registration</h2>
+<div class="container cover-container">
+    <div class="inner cover">
+		
+		<form id="register-form" class="form-horizontalll" method="post">
+			<input type="hidden" name="<?php echo $this->security->getTokenKey() ?>" value="<?php echo $this->security->getToken() ?>"/>
+			<div class="col-lg-6">
+				<fieldset>
+					<legend><h3>About Vendor</h3></legend>
+					<?php $form->renderBootstrap('vendor_business_name'); ?>
+					<?php $form->renderBootstrap('vendor_job_title'); ?>
+					<?php $form->renderBootstrap('vendor_email'); ?>
+					<?php $form->renderBootstrap('vendor_password'); ?>
+					<?php $form->renderBootstrap('vendor_re_password'); ?>
+					<?php $form->renderBootstrap('vendor_category'); ?>
+					<?php $form->renderBootstrap('vendor_tour_activity_type[]'); ?>
+				</fieldset>
+				<fieldset>
+					<legend><h3>Additional Details</h3></legend>
+					<div class="form-group">
+						<label for="vendor_is_trip_advisor" class="col-sm-4 control-label">Are you listed on Trip Advisor?</label>
+						<div class="col-sm-8">
+							<?php
+							foreach (array("y" => "Yes", "n" => "No", "ns" => "Not Sure") as $tadvKey => $tadv) {
+								$attribute = array("vendor_is_trip_advisor", "value" => $tadvKey);
+								$attribute["onclick"] = "disableAdvisorLink(this);";
+								?>
+								<div><?php echo \Phalcon\Tag::radioField($attribute); ?> <?php echo $tadv; ?></div>
+							<?php } ?>
+						</div>
+					</div>
+					<?php $form->renderBootstrap('vendor_trip_advisor_link'); ?>
+				</fieldset>
+			</div>
+			<div class="col-lg-6">
+				<fieldset>
+					<legend><h3>Contact Detail</h3></legend>
+					<?php $form->renderBootstrap('vendor_first_name'); ?>
+					<?php $form->renderBootstrap('vendor_last_name'); ?>
+					<?php $form->renderBootstrap('vendor_phone'); ?>
+					<?php $form->renderBootstrap('vendor_address_1'); ?>
+					<?php $form->renderBootstrap('vendor_address_2'); ?>
+					<?php $form->renderBootstrap('vendor_country'); ?>
+					<?php $form->renderBootstrap('vendor_state'); ?>
+					<?php $form->renderBootstrap('vendor_city'); ?>
+					<?php $form->renderBootstrap('vendor_zip'); ?>
+				</fieldset>
+				<fieldset>
+					<legend><h3>Security</h3></legend>
+					<div class="col-sm-12">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<?php \Tourpage\Helpers\Captcha::RenderImage(); ?>
+								<?php //echo \Tourpage\Library\Recaptcha::get(); ?>
+								<?php //if ($reCaptchaError != '') { ?>
+									<?php /*<span class="text-danger"><?php echo $reCaptchaError; ?></span>*/?>
+								<?php //} ?>
+							</div>
+						</div>
+						<div class="col-sm-6"><?php echo $form->renderHorizental('captcha'); ?></div>
+					</div>
+				</fieldset>
+			</div>
+			<div class="col-lg-12 text-center">
+				<div class="form-group">
+					<?php echo $form->render('submit'); ?>
+					<?php echo $this->tag->linkTo(array('/vendor', 'Cancel', 'class' => 'btn btn-info')); ?>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#vendor_country").change(function () {
+            var countryId = jQuery(this).val();
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#vendor_state");
+            jQuery.get(url + countryId, function (data) {
+                var response = jQuery.parseJSON(data);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>-- Select Your State --</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+    function disableAdvisorLink(element) {
+        var advisorLinkElement = jQuery("#vendor_trip_advisor_link");
+        if (element.value != 'y') {
+            if (!advisorLinkElement.is(":disabled")) {
+                advisorLinkElement.val("").prop("disabled", true);
+            }
+        } else {
+            advisorLinkElement.prop("disabled", false);
+        }
+    }
+</script>

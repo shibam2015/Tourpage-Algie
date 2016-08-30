@@ -1,0 +1,224 @@
+<header>
+    <div class="container">
+        
+                    <div class="col-sm-3">
+                    <div class="logo">
+                        <a href="<?php echo $storeVendor->getStorFrontUri(); ?>">
+                                <?php if ($storeVendor->getLogoUri()) { ?>
+                                    <img src="<?php echo $storeVendor->getLogoUri(); ?>" alt="<?php echo $storeVendor->businessName; ?>" title="<?php echo $storeVendor->businessName; ?>"/>
+                                    <?php } else { ?>
+                                    <h1 style="font-weight:bold;padding-left: 10px;">Your Company Logo</h1>
+                                    <?php } ?>
+                            </a>
+                            <div class="clearfix"></div>
+                      <a href="<?php echo $this->url->getBaseUri(); ?>"><img style="height: 30px;max-width: 200px; margin-left:20px;" src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/ourLogo.jpg'); ?>"/></a>
+                    </div>
+                </div>
+              
+                   
+                        <?php /*?><div class="pull-right" style="padding-right:20%;">
+                                    <a href="<?php echo $this->url->getBaseUri(); ?>"><img style="height: 30px;max-width: 100px;" src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/ourLogo.jpg'); ?>"/></a>
+                       
+                    </div>
+                </div>         
+            </div><?php */?>
+            <div class="col-sm-9">
+            	<div class="head-top">
+                	<ul class="pull-right navbar-nav">
+                    	<li><a href="#"><i class="fa fa-bell"></i><span></span></a></li>
+                         
+                          
+                                <!-- <li> -->
+                                 <?php
+//                                 if($storeVendor->vendorId){
+//				echo $this->tag->linkTo("/account/index/".$storeVendor->vendorId,"Account");
+//				}
+//                               else{
+//				echo $this->tag->linkTo("/auth/login/","Account");
+//				}
+				?>
+                            <!-- </li> -->
+                          <li class="dropdown">
+                        	<a href="#" class="dropdown-toggle" id="drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                             Account
+                             
+                            	<span class="caret"></span>
+                            </a>
+                        	<ul class="dropdown-menu" aria-labelledby="drop1">
+                                <li><a href="<?php 
+                                            if(!$this->member->isLoggedIn()){
+                                             echo $this->url->get('/auth/login');
+                                            }else{}
+                                             ?>">Users</a></li>
+                             <li>
+                                <a href="<?php echo $this->url->get('/vendor/login'); ?>">Vendor</a>
+                                  <?php
+//                                 if($storeVendor->vendorId){
+//				echo $this->tag->linkTo("/account/index/".$storeVendor->vendorId,"Vendor");
+//				}
+//                               else{
+//				echo $this->tag->linkTo("/auth/login/","Vendor");
+//				}
+				?>
+                             </li>
+                            
+  				</ul>
+                        </li>
+                            
+                            <li>
+				<?php
+                                 if($storeVendor->vendorId){
+				 echo $this->tag->linkTo("/../account/favorites/".$storeVendor->vendorId,"Favorites");
+				}
+                                   else{
+				echo $this->tag->linkTo("/auth/login/","Account");
+				}
+				?>
+                             </li>
+                           
+                           <li><a href="#">My Tours</a></li>
+                    	     <li class="dropdown">
+                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            	Support
+                            	<span class="caret"></span>
+                            </a>
+                        	  <ul class="dropdown-menu">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+  							</ul>
+                        </li>
+                      </ul>
+                    <div class="clearfix"></div>
+                </div>
+                
+                <div class="clearfix"></div>
+                
+                
+                 <div class="menu">
+                	<ul class="pull-right navbar-nav">
+                       <li><?php echo $this->tag->linkTo('/store/page/' . $storeVendor->vendorId . '/about-us', "About"); ?></li>
+                          <li><?php echo $this->tag->linkTo('/store/tours/' . $storeVendor->vendorId, "Our Tours"); ?></li>
+                            <li><a href="#">Blog</a></li>   
+                             <li><a href="#">Gallery</a></li>
+                           <li><?php echo $this->tag->linkTo('/store/contacts/' . $storeVendor->vendorId, "Contact"); ?></li>
+                         </ul>
+                    </div>
+                </div>
+            </div>
+            </header>
+            <main>
+      <!-- <div class="banner">
+        	<img src="../../public/elements/frontend/assets/images/banner-img2.png" class="scale" data-scale="best-fill" data-align="center" >
+        </div>
+        <div class="clearfix"></div>-->
+  
+<?php /*<header id="Header" class="PointBorderColor">
+    <div class="container" >
+    <a href="<?php echo $storeVendor->getStorFrontUri(); ?>">
+    <?php if ($storeVendor->getLogoUri()) { ?>
+    <h1 style="float: left;display: block;"><img style="height: 68px;max-width: 217px;" src="<?php echo $storeVendor->getLogoUri(); ?>"/></h1>
+    <?php } else { ?>
+    <h1 <?php /*id="Logo"*\/?> style="float: left;">
+    <a href="<?php echo $this->url->getBaseUri(); ?>"><img style="height: 68px;max-width: 217px;" src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/logo_home.jpg'); ?>"/></a>
+    <span class="slogan"><?php //echo $storeVendor->slogan;    ?></span>
+    </h1>
+    <?php } ?>
+    </a>
+    <nav>
+    <ul id="MainNav">
+    <li><?php echo $this->tag->linkTo(array($storeVendor->getStorFrontUri(), "<h2>Home</h2>", 'local' => FALSE)); ?></li>
+    <li><?php echo $this->tag->linkTo('/store/page/' . $storeVendor->vendorId . '/about-us', "<h2>About Us</h2>"); ?></li>
+    <li><?php echo $this->tag->linkTo('/store/page/' . $storeVendor->vendorId . '/terms-conditions', "<h2>Terms & Condition</h2>"); ?></li>
+    </ul>
+    </nav>
+    <ul id="AccountMenu">
+    <?php if (!$this->member->isLoggedIn()) { ?>
+    <?php /*<li><?php //echo $this->tag->linkTo('/store/site/' . $storeVendor->vendorId . '/login', "<h3 class=\"txt-color\"> Login</h3>"); ?></li>*\/?>
+    <li><?php echo $this->tag->linkTo('/auth/login', "<h3 class=\"txt-color\"> Login</h3>"); ?></li>
+    <li><?php echo $this->tag->linkTo('/store/site/' . $storeVendor->vendorId . '/register', "<h3 class=\"txt-color\"> Sign up</h3>"); ?>
+    <?php /*<li><?php echo $this->tag->linkTo('/auth/register', "<h3 class=\"txt-color\"> Sign up</h3>"); ?></li></li>*\/?>
+    <?php } else { ?>
+    <?php /* -----------------<li><?php echo $this->tag->linkTo('#', "<h3> " . $this->member->getFullName() . "</h3>");?></li> *\/ ?>
+    <li><?php echo $this->tag->linkTo('/account', "<h3> " . $this->member->getNickname() . "</h3>");?></li>
+    <?php /* <li><h3><?php echo $this->member->getNickname(); ?></h3></li> *\/ ?>
+    <li><?php echo $this->tag->linkTo('/store/site/' . $storeVendor->vendorId . '/logout', "<h3 class=\"txt-color\"> Logout</h3>"); ?></li>
+    <?php } ?>
+    <li><?php echo $this->tag->linkTo('/account/favorites', "<h3 class=\"txt-color\"> Favorites<br>(" . $this->member->getTotalFavoriteItems() . " item(s))</h3>"); ?></li>
+    <li><?php echo $this->tag->linkTo('/cart', "<h3 class=\"txt-color\"> Cart<br>(" . $this->cart->totalItem . " item(s))</h3>"); ?></li>
+    </ul>
+    </div>
+</header>*/ ?>
+<div class="container">
+    <?php //$this->flash->output(); ?>
+</div>
+<style>
+/*    .topmenu1, .topmenu2{
+        width:100%;
+    }
+    .topmenu2{
+        padding-top:8%;
+    }
+    .topmenu1 li, .topmenu2 li{
+        float:right;
+        line-height:30px;
+    }
+    .topmenu1 li a, .topmenu2 li a{
+        color:#1e769e;
+        font-family:Arial;
+        padding:10px;
+        text-align:center;
+        text-decoration:none;
+    }
+    .topmenu1 li a{
+        font-size:14px;
+        margin-top:0px;
+    }
+    .topmenu1 li.separator{
+        width:5%;
+        padding-left:20px;
+        padding-right:20px;
+    }
+    .topmenu2 li a{
+        font-size:20px;
+        margin-bottom:0px;
+    }
+    .topmenu2 li a:hover,.topmenu2 li a:active,.topmenu2 li a:focus{
+        color:#1f5f7a;
+    }
+    .topmenu1 li a:hover,.topmenu1 li a:active,.topmenu1 li a:focus{
+        background:#1e769e;
+        color:#ffffff;
+    }
+    .topmenu1 li ul{
+        display:none;
+        background:#09F;
+        color:#fff;
+        width:100%;
+    }
+    .topmenu1 .dropdown-menu {
+        left: auto;
+        right: 0;
+        background:#1e769e;
+        margin:0px;
+        padding:0px;
+        border:0px;
+    }
+    .topmenu1 li ul li{
+        background:#1e769e;
+        width:100%;
+    }
+    .topmenu1 li ul li a{
+        color:#ffffff;
+        text-align:left;
+    }
+    .topmenu1 li ul li a:hover{
+        color:#ffffff;
+        background:#6fa5bc;
+    }
+    .caret {
+        margin-left: 4px;
+        border-top: 8px dashed;
+		margin-right: 10px;
+    }*/
+</style>

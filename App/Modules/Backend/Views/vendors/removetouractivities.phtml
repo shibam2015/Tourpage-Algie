@@ -1,0 +1,18 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-remove"></span> Remove Tour & Activities
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="page-header">
+            <h2>Are you sure! you want to remove this category <small><i>"<?php echo $tourType->tourTypesTitle; ?>"</i></small> ?</h2>
+        </div>
+        <form method="post">
+            <input type="hidden" name="key" value="<?php echo md5('confirm'); ?>" />
+            <input type="hidden" name="cat_id" value="<?php echo $tourType->tourTypesId; ?>" />
+            <input type="submit" name="submit" class="btn btn-danger" value="Remove" />
+            <?php echo $this->tag->linkTo(array('/admin/vendors/touractivities', 'Back', 'class' => 'btn btn-primary')); ?>
+        </form>
+    </div>
+</div>

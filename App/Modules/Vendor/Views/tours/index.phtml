@@ -1,0 +1,140 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Tours</h4>
+    <form class="form-inline" method="post">
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::textField(array(
+                "tn",
+                "class" => "form-control",
+                "placeholder" => "By Tour Title",
+            ));
+            ?>
+        </div>
+        <?php /* <div class="form-group">
+          <?php
+          echo Phalcon\Tag::selectStatic(array(
+          "bs",
+          "useEmpty" => true,
+          "emptyText" => "All Booking Status",
+          'emptyValue' => "[all]",
+          array(
+          \Tourpage\Models\Tours::BOOKING_OPEN_STATUS_CODE => 'Open',
+          \Tourpage\Models\Tours::BOOKING_UPCOMMING_STATUS_CODE => 'Up Comming',
+          \Tourpage\Models\Tours::BOOKING_CLOSE_STATUS_CODE => 'Close',
+          ),
+          "class" => "form-control"
+          ));
+          ?>
+          </div> */ ?>
+        <div class="form-group">
+            <?php
+            echo Phalcon\Tag::selectStatic(array(
+                "s",
+                "useEmpty" => true,
+                "emptyText" => "All Status",
+                'emptyValue' => "[all]",
+                array(
+                    \Tourpage\Models\Tours::ACTIVE_STATUS_CODE => 'Active',
+                    \Tourpage\Models\Tours::INACTIVE_STATUS_CODE => 'Inactive',
+                ),
+                "class" => "form-control"
+            ));
+            ?>
+        </div>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/vendor/tours", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Tours <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            <?php if ($this->vendors->isAllowed('tours', 'add')) { ?>
+                <div class="pull-right">
+                    <a class="btn btn-default btn-xs tooltips" href="<?php echo $this->elements->getMainMenuItemUrl('tours|new_tours'); ?>" role="button" title="Add new tour">
+                        <span class="glyphicon glyphicon-plus"></span> New Tour
+                    </a>
+                </div>
+            <?php } ?>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Tour Title</th>
+                        <th>Reviews</th>
+                        <th>Rating</th>
+                        <th>Price</th>
+                        <?php if ($this->vendors->getVendorData()->isParent()) { ?>
+                            <th>Employee</th>
+                        <?php } ?>
+                        <th>Booking</th>
+                        <?php if ($this->vendors->isAllowed('tours', 'edit') || $this->vendors->isAllowed('tours', 'remove') || $this->vendors->isAllowed('tours', 'report')) { ?>
+                            <th>Action</th>
+                        <?php } ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($pager->getTotalItems() > 0) { ?>
+                        <?php foreach ($pager->getItems() as $item) { ?>
+                            <tr<?php echo!$item->tour->isBookingActive() ? ' class="danger"' : ''; ?>>
+                                <td><?php echo $this->tag->linkTo(array($item->tour->getUri(), $item->tour->tourTitle, 'local' => false, 'target' => '_blank')); ?></td>
+                                <td><a href="<?php echo $this->url->get('/vendor/tours/reviews/1/' . $item->tour->tourId); ?>"><?php echo $item->tour->tourReviews ? $item->tour->tourReviews->count() : 0; ?> Reviews</a></td>
+                                <td>
+                                    <div id="star-rate-<?php echo $item->tour->tourId; ?>"></div>
+                                    <script>jQuery(function () {
+                                                    jQuery('#star-rate-<?php echo $item->tour->tourId; ?>').rateYo({rating: <?php echo $item->tour->tourRating ? $item->tour->tourRating->getStar() : 0; ?>, starWidth: "20px", readOnly: true});
+                                                });</script>
+                                </td>
+                                <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->tour->tourPrice->getPrice()); ?></td>
+                                <?php if ($this->vendors->getVendorData()->isParent()) { ?>
+                                    <td><?php echo $item->employee ? $item->employee->getName() : '-'; ?></td>
+                                <?php } ?>
+                                <td>
+								<?php 
+								$bookingCode = $item->tour->isBookingActive();
+								if($bookingCode==3){
+									echo '<span class="label label-info">Up Comming</span>';
+								} else if ($bookingCode==1){
+									echo '<span class="label label-success">Open</span>';
+								} else {
+									echo '<span class="label label-warning">Close</span>';
+								};
+								?>
+                                </td>
+                                <td>
+                                    <?php if ($this->vendors->isAllowed('tours', 'edit')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
+                                    <?php } ?>
+                                    <?php if ($this->vendors->isAllowed('tours', 'remove')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/tours/remove/' . $item->tourId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour')); ?>
+                                    <?php } ?>
+                                    <?php if ($this->vendors->isAllowed('tours', 'report')) { ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/tours/report/' . $item->tourId, '<span class="glyphicon glyphicon-list-alt"></span>', 'class' => 'btn btn-warning btn-xs tooltips', 'title' => 'Booking Report')); ?>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    <?php } else { ?>
+                        <tr>
+                            <td colspan="9" class="text-center">No tours is here</td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<style>
+    .jq-ry-container {padding: 0;}
+</style>
+
+

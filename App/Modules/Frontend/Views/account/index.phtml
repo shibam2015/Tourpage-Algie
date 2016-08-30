@@ -1,0 +1,90 @@
+<?php $this->partial('account/common/index_sidebar'); ?>
+<div class="layout contents">
+    <form id="account-settings" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <h2><i class="glyphicon glyphicon-pencil"></i> Profile</h2>
+        <div class="accout pic">
+            <p><?php echo $this->tag->image(array($this->member->avatarUri(\Tourpage\Models\Members::AVATAR_THUMB), "alt" => $this->member->getFullName(), "title" => $this->member->getFullName(), 'width' => 150, 'height' > 150)); ?></p>
+            <div class="right_filebox">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Avatar</label>
+                    <div class="col-sm-8">
+                        <?php echo $avatar->renderElement('avtr', array('class' => 'form-control')); ?>
+                    </div>
+                </div>
+            </div>
+        </div><!--//accout.pic-->
+        <div class="account basicinfo">
+            <ul>
+              <!--  <li><label>Nick Name<i class="glyphicon glyphicon-asterisk import"></i></label><?php //echo $form->renderElement('nick_name', array('class' => 'form-control')); ?></li> -->
+                <li><label>First Name<i class="glyphicon glyphicon-asterisk import"></i></label><?php echo $form->renderElement('first_name', array('class' => 'form-control')); ?></li>
+                <li><label>Last Name<i class="glyphicon glyphicon-asterisk import"></i></label><?php echo $form->renderElement('last_name', array('class' => 'form-control')); ?></li>
+            </ul>
+            <ul>
+                <li><label>Email Address<i class="glyphicon glyphicon-asterisk import"></i></label><?php echo $form->renderElement('email_address', array('class' => 'form-control', 'readonly' => 'readonly')); ?></li>
+                <li><label>Phone</label><?php echo $form->renderElement('phone', array('class' => 'form-control')); ?></li>
+            </ul>
+        </div><!--//account.basicinfo-->
+        <h2><i class="glyphicon glyphicon-map-marker"></i> Address</h2>
+        <div class="account basicinfo">
+            <ul>
+                <li><label>Address (Line 1)</label><?php echo $form->renderElement('address_1', array('class' => 'form-control')); ?></li>
+                <li><label>Country</label><?php echo $form->renderElement('country', array('class' => 'form-control')); ?></li>
+                <li><label>City</label><?php echo $form->renderElement('city', array('class' => 'form-control')); ?></li>
+            </ul>
+            <ul>
+                <li><label>Address (Line 2)</label><?php echo $form->renderElement('address_2', array('class' => 'form-control')); ?></li>
+                <li><label>Province/State</label><?php echo $form->renderElement('state', array('class' => 'form-control')); ?></li>
+                <li><label>Postcode/ZIP</label><?php echo $form->renderElement('zip_code', array('class' => 'form-control')); ?></li>
+            </ul>
+        </div><!--//account.basicinfo-->
+        <div class="lastcontent thebuttonlayout001">
+            <input type="submit" class="btn btn-primary" name="submit" value="Save">
+        </div>
+    </form>
+</div>
+<?php if($memberMessages){ ?>
+<div class="modal fade" id="welcome_modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                <div class="col-md-12"><h4><?php echo $memberMessages->message->messageText;?></h4></div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php }?>
+<?php if($memberMessages && $memberMessages->memberMessageStatus == \Tourpage\Models\MembersMessages::UNREAD_STATUS_CODE){ ?>
+<script type="text/javascript">
+    jQuery(function () {
+		jQuery('#welcome_modal').modal('show');
+	});
+</script>
+<?php } ?>
+<style>
+    .form-input {width: 99%;}
+    input[type='file'].form-control {border-color: #fff !important;box-shadow: none;height: auto !important;padding: 0 !important;}
+	button.close{background-color: #337ab7;border-radius: 50%;padding: 2px 6px;text-shadow: none;color: #ffffff;opacity: 1;}
+</style>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#country").change(function () {                   
+            var countryId = jQuery(this).val();           
+            var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
+            var stateElement = jQuery("#state");
+             //alert(countryId);              
+            jQuery.get(url + countryId, function (data) {
+                //alert("kk");
+                var response = jQuery.parseJSON(data);                
+                 //alert(response.states.length);
+                if (typeof response.states != 'undefined' && response.states.length > 0) {
+                    stateElement.html("<option value=''>-- Select State --</option>");
+                    for (var s in response.states) {
+                        stateElement.append("<option value='" + response.states[s].stateId + "'>" + response.states[s].stateName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+</script>

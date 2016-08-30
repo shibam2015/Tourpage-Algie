@@ -1,0 +1,18 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title"><?php echo ucfirst($formType);?> Vendor Messages</h3>
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal" method="post">
+            <div class="col-xs-8">
+				<?php $form->renderBootstrap('message_text'); ?>
+                <?php $form->renderBootstrap('vendor'); ?>
+			</div>
+            <div class="col-lg-6 col-md-offset-3">
+                <?php echo $form->render('submit'); ?>
+                <?php echo $this->tag->linkTo(array('/admin/message/index', 'Back', 'class' => 'btn btn-default')); ?>
+            </div>
+        </form>
+    </div>
+</div>
+</script>

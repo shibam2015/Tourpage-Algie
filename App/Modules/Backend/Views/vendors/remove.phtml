@@ -1,0 +1,24 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-remove"></span> Remove Vendor
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="page-header">
+            <h2>Are you sure! you want to remove <small><i>"<?php echo $vendor->businessName; ?>"</i></small> ?</h2>
+        </div>
+        <div class="col-lg-4">
+            <ul class="list-group">
+                <li class="list-group-item list-group-item-info">Number of Tours Operated: <?php echo $vendor->vendorTours->count(); ?></li>
+                <li class="list-group-item list-group-item-warning">Number of Booking Allotted: 0</li>
+            </ul>
+            <form method="post">
+                <input type="hidden" name="key" value="<?php echo md5('confirm'); ?>" />
+                <input type="hidden" name="vendor_id" value="<?php echo $vendor->vendorId; ?>" />
+                <input type="submit" name="submit" class="btn btn-danger" value="Remove" />
+                <?php echo $this->tag->linkTo(array('/admin/vendors', 'Cancel', 'class' => 'btn btn-primary')); ?>
+            </form>
+        </div>
+    </div>
+</div>

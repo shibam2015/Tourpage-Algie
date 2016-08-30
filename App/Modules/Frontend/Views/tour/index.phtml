@@ -1,0 +1,880 @@
+<!--Main-->
+	<main>
+    	<div class="banner">
+        	<img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/banner-img.png'); ?>" class="scale" data-scale="best-fill" data-align="center" >
+        </div>
+<div class="clearfix"></div>
+        <div class="container">
+        <div class="row">
+<div class="col-sm-8">
+            	<div class="tour-details">
+	<h3><?php echo $tour->tourTitle; ?></h3>
+		<div class="rating">
+        <p><?php echo $tour->tourSubTitle; ?></p>
+        <div class="star">
+                        	<i class="fa fa-star"></i>
+                        	<i class="fa fa-star"></i>
+                        	<i class="fa fa-star"></i>
+                        	<i class="fa fa-star"></i>
+                        	<i class="fa fa-star no-rate"></i>
+                        </div>
+                        <span>(23) <a href="#">Read Reviews</a></span>
+                    </div>
+                    <div class="tour-details-img">
+                        <!--<img src="assets/images/tour-img.jpg" class="scale" data-scale="best-fill" data-align="center" >-->
+		<?php if ($tour->tourImages->count() > 0) { ?>
+			<div id="store-ad" class="carousel slide" data-ride="carousel">
+				<!-- Wrapper for slides -->
+				<div class="carousel-inner" role="listbox">
+					<?php
+					$c = 1;
+					foreach ($tour->tourImages as $tourImage) {
+						?>
+						<div class="item<?php echo $c == 1 ? ' active' : ''; ?>">
+							<img src="<?php echo $tourImage->getImageUri(); ?>" style="width: 1405px; height: 400px;">
+						</div>
+						<?php
+						$c++;
+					}
+					?>
+				</div>
+				<?php if ($tour->tourImages->count() > 1) { ?>
+					<!-- Controls -->
+					<a class="left carousel-control" href="#store-ad" role="button" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					</a>
+					<a class="right carousel-control" href="#store-ad" role="button" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					</a>
+				<?php } ?>
+			</div>
+		<?php } ?>
+        </div>
+      </div>
+      <div class="feature">
+      <?php if ($tour->tourKeyHighlights && $tour->tourKeyHighlights->count() > 0) { ?>
+                    <div class="key-feature">
+                		<h3>Key Feature</h3>
+                        <div class="key-content">
+                        <?php foreach ($tour->tourKeyHighlights as $tourKeyHighlight) { ?>
+                        <div class="single-key-content">
+                            	<img src="<?php echo $tourKeyHighlight->keyHighlight->getIconUri(); ?>">
+                                <p><?php echo $tourKeyHighlight->keyHighlight->keyhighlightTitle; ?></p>
+                            </div>
+                            <?php } ?>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                    <?php } ?>
+                    <?php if ($tour->tourAttributes->count() > 0) { ?>
+				<?php foreach ($tour->tourAttributes as $tourAttribute) { ?>
+                <div class="key-feature">
+					<?php if ($tourAttribute->attributeContent != '') { ?>
+						<h3><?php echo $tourAttribute->key->keyName; ?></h3>
+						<p><?php echo \Tourpage\Helpers\Utils::decodeString($tourAttribute->attributeContent); ?></p>
+					<?php } ?>
+                    </div>
+				<?php } ?>
+		<?php } ?>
+        </div>
+            </div>
+            <div class="col-sm-4">
+            	<div class="book-now">
+                <?php 
+                    $tourCriteria = array(
+                    'conditions' => 'tourId = :tour_id:',
+                    'bind' => array('tour_id' => $tour->tourId),
+                    );
+                    ?>
+                <?php $tourprice = \Tourpage\Models\ToursPrice::findFirst($tourCriteria);?>
+                <?php $vendortour = \Tourpage\Models\VendorsTours::findFirst($tourCriteria);?>
+                	<div class="book-top">
+                    	<div class="book-sale">
+                        <p>
+                        <strong><?php if ($tourprice->hasDiscount(true, true)) { ?></strong>
+                        <span>On Sale</span>
+                        <?php } ?>
+                        </p>
+                        <?php if ($tour->tourCapacity > 0) { ?>
+                        	<p>Only <?php echo $tour->tourCapacity;?> Left</p>
+                        <?php } ?>
+                            <div class="clearfix"></div>
+                            <h3><span>From</span> <?php echo \Tourpage\Helpers\Utils::formatCurrency($tourprice->getPrice()); ?></h3>
+                        </div>
+                    </div>
+			<p class="clearboth"></p>
+			<form id="tour_booking_form" method="post" class="book-form">
+				<input type="hidden" name="form_action" value="booking">
+					<?php if (isset($tour->tourDuration->totalDays)) { ?>
+						<p>(for <?php echo $tour->tourDuration->totalDays; ?>days <?php echo ($tour->tourDuration->totalDays - 1); ?>nights)</p>
+					<?php } ?>
+					<?php if ($tourprice->hasDiscount(true, true)) { ?>
+							<div class="alert alert-info"><strong><?php echo $tourprice->data->discount->price; ?>% Discount</strong> From 
+								<?php echo \Tourpage\Helpers\Utils::formatDate(strtotime($tourprice->data->discount->start), \Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?> To 
+								<?php echo \Tourpage\Helpers\Utils::formatDate(strtotime($tourprice->data->discount->end), \Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?></div>
+					<?php } ?>
+					<?php if ($tourprice->hasMultiPurchesDiscount()) { ?>
+						<?php
+						$headCountUnit = ' Person(s)';
+						if ($tourprice->data->priceType == \Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE) {
+							$headCountUnit = ' Group(s)';
+						}
+						?>
+							<div class="alert alert-info">
+								<strong><?php echo $tourprice->data->discount->multiplePurchase->percentage; ?>% Discount</strong> if booked for 
+								<?php echo $tourprice->data->discount->multiplePurchase->count; ?> <?php echo $headCountUnit; ?>
+							</div>
+					<?php } ?>
+						<div class="select-option">
+					<?php
+					switch ($tour->tourDuration->lengthType) {
+						case \Tourpage\Models\Tours::LENGTH_MULTIPLE_DAYS_CODE:
+							?>
+							<li>Choose your journey date <div id="bookingdatepicker"></div></li>
+							<li id="jdpanel" style="display: none;">
+								<hr />
+								<div class="departu">Departure: <date id="st">________</date></div>
+								<div class="departu">Arrival: <date id="ed">________</date></div>
+								<input type="hidden" id="jstd" name="jstd">
+								<input type="hidden" id="jedd" name="jedd">
+							</li>
+							<?php
+							break;
+						case \Tourpage\Models\Tours::LENGTH_FIXED_DAYS_CODE:
+							?>
+							<li id="jdpanel">
+								<div>Departure: <date id="st"><?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourStartFrom, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></date></div>
+								<div>Arrival: <date id="ed"><?php echo \Tourpage\Helpers\Utils::formatDate($tour->tourEndTo, \Tourpage\Helpers\Utils::DATE_FORMAT_LONG); ?></date></div>
+								<input type="hidden" id="jstd" name="jstd" value="<?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($tour->tourStartFrom); ?>">
+								<input type="hidden" id="jedd" name="jedd" value="<?php echo \Tourpage\Helpers\Utils::formatMySqlToDatepicker($tour->tourEndTo); ?>">
+							</li>
+							<?php
+							break;
+						case \Tourpage\Models\Tours::LENGTH_SINGLE_DAY_CODE:
+							?>
+							<li>Choose your journey date <div id="bookingdatepicker"></div></li>
+							<li id="jdpanel" style="display: none;">
+								<hr />
+								<div>Choosen Date: <date id="st">________</date></div>
+								<input type="hidden" id="jstd" name="jstd">
+							</li>
+							<?php
+							break;
+						case \Tourpage\Models\Tours::LENGTH_HOURLY:
+							?>
+							<li>Choose your journey date <div id="bookingdatepicker"></div></li>
+							<li id="jdpanel" style="display: none;">
+								<hr />
+								<div>Choosen Date: <date id="st">________</date></div>
+								<input type="hidden" id="jstd" name="jstd">
+							</li>
+							<?php /* <input type="hidden" id="jstd" name="jstd"> */ ?>
+							<?php /* <li>Choose your preferable time slot
+							  <?php if (count($tour->tourDuration->times) > 0) { $sl = 1; ?>
+							  <?php foreach ($tour->tourDuration->times as $timeSlot) { ?>
+							  <label style="width: 100%">
+							  <input type="radio" name="tour_time_slot" value="<?php echo base64_encode(serialize($timeSlot));?>"<?php echo $sl == 1 ? ' checked="checked"' : '';?>>
+							  <?php echo \Tourpage\Helpers\Utils::padInt($timeSlot->start->hours).':'.\Tourpage\Helpers\Utils::padInt($timeSlot->start->minutes).' '.($timeSlot->start->hours >= 12 ? 'PM' : 'AM');?>
+							  To <?php echo \Tourpage\Helpers\Utils::padInt($timeSlot->end->hours).':'.\Tourpage\Helpers\Utils::padInt($timeSlot->end->minutes).' '.($timeSlot->end->hours >= 12 ? 'PM' : 'AM');?>
+							  </label>
+							  <?php $sl++; } ?>
+							  <?php } ?>
+							  </li> */ ?>
+							<?php break; ?>
+					<?php } ?>
+                    </div>
+                    <div class="clearfix"></div>
+				<?php if ($tour->tourOptions->count() > 0) { ?>
+                    <div class="schedule">
+					<p>Other Options</p>
+					<div class="row">
+                        <?php foreach ($tour->tourOptions as $tourOption) { ?>
+                                <div class="col-lg-12 schedule-area">
+                              <input class="she-chec" name="tour_opt[<?php echo $tourOption->optionId; ?>]" type="checkbox" value="<?php echo $tourOption->optionPrice; ?>" onclick="addPrice<?php echo $tourOption->optionPriceType; ?>(this);" prtype="<?php echo $tourOption->optionPriceType; ?>"> 
+				<?php //echo $tourOption->optionName . ' ' . \Tourpage\Helpers\Utils::formatCurrency($tourOption->optionPrice) . ' ' . $tourOption->optionPriceTypeText;?>
+                               <span style="margin-left:6%;"><?php echo $tourOption->optionName ;?></span><span style="margin-left:15%"> <?php echo Tourpage\Helpers\Utils::formatCurrency($tourOption->optionPrice) . ' ' . $tourOption->optionPriceTypeText;?></span>
+                                </div>
+                               
+                                
+                                
+                                
+                        <?php } ?>
+					</div>
+                    </div>
+				<?php } ?>
+                    <hr>
+					<?php if ($tour->tourPrice->data->priceType == Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE) { ?>
+						<?php
+						foreach ($ageGroups as $groupKey => $groupTitle) {
+							if (isset($tour->tourPrice->data->priceGroup[$groupKey])) {
+								?>
+								<li><?php echo $groupTitle . ' ( ' . $tour->tourPrice->data->priceGroup[$groupKey]['age_type'] . ' ' . $tour->tourPrice->data->priceGroup[$groupKey]['age'] . ' )'; ?>
+									<input type="text" value="<?php echo $groupKey == 'a' ? 1 : 0; ?>" name="head_count[<?php echo $groupKey; ?>]" class="spiner hc <?php echo $groupKey; ?>">
+									<input type="hidden" id="sp_hid<?php echo $groupKey; ?>" value="<?php echo $groupKey == 'a' ? $tour->tourPrice->data->priceGroup[$groupKey]['price'] : 0; ?>">
+								</li>
+								<?php
+							}
+						}
+						?>
+					<?php } ?>
+					<?php if ($tour->tourPrice->data->priceType == Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE) { ?>
+						<li>
+							Number of Group(s) <input type="text" value="1" min="1" name="group_head_count" size="10" class="spiner ghc">
+							<input type="hidden" id="sp_hidghc" value="<?php echo $tour->tourPrice->getPrice(TRUE); ?>">
+						</li>
+					<?php } ?>
+				<?php ?><div class="total">
+					<input type="hidden" name="total_amount" id="total_amount" value="<?php echo $tourprice->getPrice(TRUE); ?>" org="<?php echo $tourprice->getPrice(); ?>">
+					Total: <span id="amount"><?php echo \Tourpage\Helpers\Utils::formatCurrency($tourprice->getPrice(TRUE)); ?></span>
+				</div><?php ?>
+				<div class="availibility hidden">
+					<p class="text-info text-right">Checking for availibility...</p>
+					<div class="progress">
+						<div class="progress-bar progress-bar-success progress-bar-striped active" style="width: 100%"></div>
+					</div>
+				</div>
+				<div id="availibility_content"></div>
+                                <hr />
+				<?php if ($tour->isBookingActive()) { ?>
+			<button data-loading-text="Wait..." id="tour_booking_submit" class="btn-lg btn-block btn-book-tour"><!--<i class="fa fa-book"></i>--> Book now</button>
+                <!--  <input data-loading-text="Wait..." id="tour_booking_submit" type="submit" value="Book Now">-->
+				<?php } else { ?>
+					<div class="alert alert-info text-center">Booking currently not available</div>
+				<?php } ?>
+			</form>
+			<?php if (!empty($tour->tourPolicy) || !empty($tour->tourVendor->vendor->policy)) { ?>
+				<h2><a class="link_tc" id="tour_tc">Please See Our Terms & Conditions Here</a></h2>
+				<!-- Modal -->
+				<div class="modal fade" id="model-tour-tc" tabindex="-1" role="dialog" aria-labelledby="model_tc">
+					<div class="modal-dialog modal-lg" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								<h4 class="modal-title" id="model_tc">Terms & Conditions</h4>
+							</div>
+							<div class="modal-body">
+								<?php echo !empty($tour->tourPolicy) ? \Tourpage\Helpers\Utils::decodeString($tour->tourPolicy) : (!empty($tour->tourVendor->vendor->policy) ? \Tourpage\Helpers\Utils::decodeString($tour->tourVendor->vendor->policy) : ''); ?>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
+                </div>
+                <div class="clearfix"></div>
+                <div class="watchlist">
+                <?php if (!$this->member->isFavoriteTour($tour->tourId)) { ?>
+					<button id="tour_add_to_fav" onclick="return addToFavTour('<?php echo $tour->tourId; ?>', '<?php echo $vendortour->vendor->vendorId; ?>');"><img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/heart-icon.png');?>"> <img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/heart-icon-hover.png');?>" class="hidden"> Add To Watchlist</a></button>
+				<?php } ?>
+                    <div class="social-watchlist">
+                    	<a href="#"><i class="fa fa-envelope"></i></a>
+                    	<a href="#"><i class="fa fa-facebook-square"></i></a>
+                    	<a href="#"><i class="fa fa-twitter"></i></a>
+                    	<a href="#"><i class="fa fa-vimeo"></i></a>
+                    	<a href="#"><i class="fa fa-share-alt"></i></a>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                
+                <div class="sujjestlist">
+                    <?php if ($otherTours->fromCategory->count() > 0) { ?>
+					<h3>You may also like</h3>
+							<?php foreach ($otherTours->fromCategory as $fromCategory) { ?>
+                                <div class="sujjest-tour">
+                    	<div class="sujjest-img"><img src="<?php echo $fromCategory->tour->getDefaultImage() ? $fromCategory->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" class="scale" data-scale="best-fill" data-align="center" ></div>
+                        <div class="sujjest-content">
+                        	<?php echo $this->tag->linkTo(array($fromCategory->tour->getUri(), '<h4>'.$fromCategory->tour->tourTitle.'</h4>', 'local' => false)); ?>
+                            <div class="star">
+                            	<i class="fa fa-star"></i>
+                            	<i class="fa fa-star"></i>
+                            	<i class="fa fa-star"></i>
+                            	<i class="fa fa-star"></i>
+                            	<i class="fa fa-star"></i>
+                                <span>(156)</span>
+                            </div>
+                            <?php echo $this->tag->linkTo(array($fromCategory->tour->tourVendor->vendor->getStorFrontUri(), '<p>By'.$fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName.'</p>', 'local' => false)); ?>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <?php } ?>
+                    <?php } else { ?>
+                    <h4>No Tour Available</h4>
+                    <?php } ?>
+                </div>
+        </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="container">
+        	<div class="col-sm-8">
+            	<div class="customer-reviews">
+                	<h3>Customers Reviews & Rating</h3>
+                    <?php if ($reviews->count() > 0) { ?>
+                    <?php foreach ($reviews as $review) { ?>
+                    <div class="single-review">
+                    	<div class="review-img">
+                        	<?php
+										$reviewerAvator = $this->url->getStatic(FRONT_END_DIR . 'images/reviewer_avatar_default.png');
+										if ($review->isMember()) {
+											if ($review->memberTourReview && $review->memberTourReview->count() > 0) {
+												$reviewerAvator = $review->memberTourReview->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_ICON);
+											}
+										}
+										echo $this->tag->image(array(
+											$reviewerAvator,
+											"width" => 45,
+											"height" => 45,
+											"class" => "scale",
+											"data-scale" => "best-fill",
+											"data-align" => "center"
+										));
+										?>
+                        </div>
+                        <div class="review-content">
+                        	<h4><?php echo \Tourpage\Helpers\Utils::decodeString($review->reviewByName); ?> <span>San Francisco, California</span></h4>
+                            <div class="star">
+                            <span id="star_count_<?php echo $review->reviewId; ?>"></span>
+                            	<script>jQuery(function () {
+												jQuery('#star_count_<?php echo $review->reviewId; ?>').rateYo({rating: <?php echo $review->starCount; ?>, starWidth: "20px", readOnly: true});
+											});</script>
+                            </div>
+                            <p><?php echo \Tourpage\Helpers\Utils::decodeString($review->reviewContent); ?></p>
+                            <a href="#">+ More</a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <?php } ?>
+                    <?php } else { ?>
+						<p>No one has given review for "<em><?php echo $tour->tourTitle; ?></em>"</p>
+					<?php } ?>
+                    
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+</main>
+<style>
+    .pdp {font-size:14px;line-height:24px;}
+    .pdp h2{padding:10px;font-size:15px;font-weight:bold}
+    .pdp ul{list-style:none}
+    .pdp h3{margin-top:20px;}
+    .pdp h4{margin-top:20px;}
+    h4.modal-title{margin:0}
+    .tour-price{display: inline;font-size: 24px;font-weight: bold;}
+    .booking-section, .desc-section{/*border: 1px solid #9e9e9e;*/padding: 10px;margin-top: 7px;width: 100%;}
+    .hasDatepicker{margin-bottom: 10px;}
+    a.ui-datepicker-selected-bg, .ui-state-active{border-color: #ff0000 !important;color: #ff0000 !important;}
+    .ui-datepicker td span, .ui-datepicker td a{text-align: center;}
+    span.ui-state-default{cursor: not-allowed;}
+    span.ui-spinner{height: 25px;margin-bottom: 10px;width: 70px;}
+    input[type="text"].spiner{height: 30px;margin: 0;padding: 0 0 0 30px;width: 100%;}
+    a.ui-spinner-down{left: 0;}
+    .ui-spinner a.ui-spinner-button{border: none;top: 6px;cursor: pointer;}
+    .btn-pad{padding: 6px 12px 6px 40px;}
+    div.total{font-size: 24px;font-weight: bold;margin-bottom: 10px;}
+    div.availibility p{margin-bottom: 0px;}
+    .ui-widget-content{width: 100%;}
+    .link_tc{cursor:pointer;}/*.modal-dialog{margin-top:100px;}*/
+    form#tour_booking_form{padding:10px}
+    .rightbox{width: 100%;}
+    .rightbox .info{background: none; padding-top: 0;}
+    .from-vendor, .from-category{width: 100%;margin-top: 7px;/*padding: 10px;*/}
+    .from-vendor .from-vendor-item, .from-category .from-category-item{/*border: 1px solid #e8e8e8;padding: 5px;margin-right:15px;*/}
+    .from-vendor .from-vendor-item ol li, .from-category .from-category-item ol li{list-style: none;}
+    .more-item{padding-left:0; padding-right:0;}
+    .reivewForm{list-style:none;float:left;width:100%}
+    .reivewForm li label{display:inline-block;width:100px}
+    .reivewForm li{text-align:left}
+    .review-form{padding:10px;width: 100%;}
+    .review-section{width: 100%;}
+    .left-box-control {margin-top:-70px !important}
+    .jumbotron {padding-left: 48px;padding-right: 48px;}
+</style>
+<script type="text/javascript">
+    var disableDates = [<?php echo count($disablDates) > 0 ? implode(',', $disablDates) : ''; ?>];
+    var accissableWeekDays = [<?php echo count($tour->tourDuration->weekDays) > 0 ? implode(',', $tour->tourDuration->weekDays) : ''; ?>];
+    var currentDate = new Date();
+    var startDate = new Date('<?php echo $tour->tourStartFrom ? \Tourpage\Helpers\Utils::formatMySqlToDatepicker($tour->tourStartFrom) : ''; ?>');
+    var endDate = new Date('<?php echo $tour->tourEndTo ? \Tourpage\Helpers\Utils::formatMySqlToDatepicker($tour->tourEndTo) : ''; ?>');
+    var checkAvailState = false;
+    var cacheData = {};
+    if (currentDate >= startDate) {
+        startDate = currentDate;
+    }
+<?php if ($tour->tourDuration->lengthType == \Tourpage\Models\Tours::LENGTH_MULTIPLE_DAYS_CODE) { ?>
+        var totalDays = <?php echo $tour->tourDuration->totalDays; ?>;
+<?php } ?>
+<?php if ($tour->tourPrice->hasDiscount()) { ?>
+        var discountPrecentage = <?php echo $tour->tourPrice->data->discount->price; ?>;
+<?php } ?>
+<?php if ($tour->tourPrice->hasMultiPurchesDiscount()) { ?>
+        var discountMultiplePurches = {
+            precentage: <?php echo $tour->tourPrice->data->discount->multiplePurchase->percentage; ?>,
+            count: <?php echo $tour->tourPrice->data->discount->multiplePurchase->count; ?>
+        };
+<?php } ?>
+<?php
+$groupKeys = array_keys($tour->tourPrice->data->priceGroup);
+$gks = '';
+if (count($groupKeys) > 0) {
+    foreach ($groupKeys as $gk) {
+        $gks .= '"' . $gk . '",';
+    }
+}
+$gks = (substr($gks, -1) == ',' ? substr($gks, 0, -1) : $gks);
+echo 'var groupKeys = [' . $gks . '];';
+?>
+    jQuery(function () {
+        var $rateYo = jQuery('#customer_rating').rateYo({
+            //rating: 1,
+            fullStar: true,
+            starWidth: "20px",
+            onSet: function (rating, rateYoInstance) {
+                jQuery('#rating_set').val(rating);
+            }
+        });
+
+        jQuery('form#form-rr').submit(function (evt) {
+            evt.preventDefault();
+            var errors = [],
+                    ratingSet = jQuery('#rating_set'),
+                    customerName = jQuery('#rrname'),
+                    customerEmail = jQuery('#rremail'),
+                    customerReview = jQuery('#rrtext');
+            jQuery('.error-field').removeClass('error-field');
+            jQuery('span.error-message').remove();
+            if (customerName.val().length <= 0) {
+                errors.push(customerName.attr('id') + ':Please Write Your Name');
+            }
+            if (customerEmail.val().length <= 0) {
+                errors.push(customerEmail.attr('id') + ':Please Write Your Email');
+
+            } else {
+                if (!isValidEmail(customerEmail.val())) {
+                    errors.push(customerEmail.attr('id') + ':Email Address is not valid');
+                }
+            }
+            if (customerReview.val().length <= 0) {
+                errors.push(customerReview.attr('id') + ':Please Write Your Review');
+            }
+            if (errors.length > 0) {
+                for (var e in errors) {
+                    var errorData = errors[e].split(':');
+                    if (typeof errorData[0] != 'undefined' && errorData[0].length > 0) {
+                        var element = jQuery('#' + errorData[0]);
+                        element.addClass('error-field');
+                        var message = jQuery('<span/>');
+                        message.html(errorData[1]);
+                        message.addClass('error-message');
+                        element.after(message);
+                    }
+                }
+            } else {
+                var reviewPost = jQuery.post('<?php echo $this->url->get('/ajax/customerReview'); ?>', {
+                    'customer_name': customerName.val(),
+                    'customer_email': customerEmail.val(),
+                    'customer_review': customerReview.val(),
+                    'rating_set': ratingSet.val(),
+                    'member_id': <?php echo $this->member->isLoggedIn() ? $this->member->getId() : 0; ?>,
+                    'review_on': {
+                        'type': 'tour',
+                        'id': '<?php echo $tour->tourId; ?>',
+                        'vid': '<?php echo $tour->tourVendor->vendorId; ?>'
+                    }
+                });
+                reviewPost.done(function (data) {
+                    var response = jQuery.parseJSON(data);
+                    if (response.success) {
+<?php if (!$this->member->isLoggedIn()) { ?>
+                            customerName.val('');
+                            customerEmail.val('');
+<?php } ?>
+                        customerReview.val('');
+                        $rateYo.rateYo("rating", 1);
+                        alert(response.message);
+                        window.location.reload();
+                    } else {
+                        alert('Error on sending message');
+                    }
+                });
+            }
+        });
+
+        jQuery('button#tour_booking_submit').on('click', function (event) {
+            event.preventDefault();
+            var error = [], headCount = 0, selectedDate = {}, tourPriceType = '<?php echo $tour->tourPrice->data->priceType; ?>';
+            var availibilityProgress = jQuery('.availibility');
+            var availibilityContent = jQuery('#availibility_content');
+<?php
+switch ($tour->tourDuration->lengthType) {
+    case \Tourpage\Models\Tours::LENGTH_MULTIPLE_DAYS_CODE:
+        ?>
+                    var std = jQuery('#jstd').val();
+                    var edd = jQuery('#jedd').val();
+                    if (std === '' || edd === '') {
+                        error.push('Please select your journey date');
+                    } else {
+                        selectedDate.std = std;
+                        selectedDate.edd = edd;
+                    }
+        <?php
+        break;
+    case \Tourpage\Models\Tours::LENGTH_FIXED_DAYS_CODE:
+        ?>
+                    var std = jQuery('#jstd').val();
+                    var edd = jQuery('#jedd').val();
+                    selectedDate.std = std;
+                    selectedDate.edd = edd;
+        <?php
+        break;
+    case \Tourpage\Models\Tours::LENGTH_SINGLE_DAY_CODE:
+    case \Tourpage\Models\Tours::LENGTH_HOURLY:
+        ?>
+                    var std = jQuery('#jstd').val();
+                    if (std === '') {
+                        error.push('Please select your journey date');
+                    } else {
+                        selectedDate.std = std;
+                    }
+        <?php break; ?>
+<?php } ?>
+            if (error.length === 0) {
+                switch (tourPriceType) {
+                    case '<?php echo Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE; ?>':
+                        for (var k in groupKeys) {
+                            var hc = jQuery('input[name="head_count[' + groupKeys[k] + ']"]').val();
+                            headCount = parseInt(headCount) + parseInt(hc);
+                        }
+                        break;
+                    case '<?php echo Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE; ?>':
+                        headCount = jQuery('input[name="group_head_count"]').val();
+                        break;
+                }
+                if (checkAvailState) {
+                    var cstd = new Date(cacheData.std);
+                    var sstd = new Date(selectedDate.std);
+                    if ((cstd.getTime() !== sstd.getTime()) || (cacheData.headCount != headCount)) {
+                        checkAvailState = false;
+                        availibilityContent.html('');
+                    }
+                }
+                if (!checkAvailState) {
+                    var $btn = jQuery(this).button('loading');
+                    availibilityProgress.removeClass('hidden');
+                    var availibilityPost = jQuery.post('<?php echo $this->url->get('/ajax/checkTourAvailibility/' . $tour->tourId); ?>', {
+                        'tour_length_type': '<?php echo $tour->tourDuration->lengthType; ?>',
+                        'tour_price_type': tourPriceType,
+                        'head_count': headCount,
+                        'selected_date': selectedDate,
+                    });
+                    availibilityPost.done(function (data) {
+                        var response = jQuery.parseJSON(data);
+                        if (response.availableForBooking) {
+                            if (typeof response.timeOptions !== 'undefined') {
+                                checkAvailState = true;
+                                cacheData.std = selectedDate.std;
+                                cacheData.headCount = headCount;
+                                setTimeout(function () {
+                                    $btn.button('reset').blur();
+                                    availibilityProgress.addClass('hidden');
+                                    var contentHtml = '<hr/>';
+                                    contentHtml += '<h2 style="padding-left:0;">Choose your preferable time slot</h2>';
+                                    contentHtml += response.timeOptions;
+                                    availibilityContent.html(contentHtml);
+                                }, 2000);
+                            } else {
+                                setTimeout(function () {
+                                    availibilityProgress.addClass('hidden');
+                                    jQuery('form#tour_booking_form').submit();
+                                }, 2000);
+                            }
+                        } else {
+                            if (response.message.length > 0) {
+                                setTimeout(function () {
+                                    $btn.button('reset').blur();
+                                    availibilityProgress.addClass('hidden');
+                                    availibilityContent.html("<div class=\"alert alert-info\">" + response.message + "</div>");
+                                }, 2000);
+                            }
+                        }
+                    });
+                } else {
+                    jQuery('form#tour_booking_form').submit();
+                }
+            } else {
+                var errorString = 'ERROR:\n';
+                for (var e in error) {
+                    errorString += (parseInt(e) + 1) + '. ' + error[e];
+                }
+                alert(errorString);
+            }
+        });
+        jQuery('#bookingdatepicker').datepicker({
+            //changeMonth: true,
+            //changeYear: true,
+            //showOtherMonths: true,
+            minDate: startDate,
+            maxDate: endDate,
+            beforeShowDay: function (d) {
+                var accissableDay = true;
+                var datePickerDateString = jQuery.datepicker.formatDate('mm/dd/yy', d);
+                if (jQuery.inArray(d.getDay(), accissableWeekDays) === -1) {
+                    accissableDay = false;
+                } else {
+					if (jQuery.inArray(datePickerDateString, disableDates) === 0) {
+						accissableDay = false;
+					}
+				}
+                <?php
+                switch ($tour->tourDuration->lengthType) {
+                    case \Tourpage\Models\Tours::LENGTH_MULTIPLE_DAYS_CODE:
+                    case \Tourpage\Models\Tours::LENGTH_FIXED_DAYS_CODE:
+                    case \Tourpage\Models\Tours::LENGTH_SINGLE_DAY_CODE:
+                        ?>
+                        if (d.getDate() === currentDate.getDate() && d.getMonth() === currentDate.getMonth()) {
+                            accissableDay = false;
+                        }
+                        <?php break; ?>
+                <?php } ?>
+                return [accissableDay];
+            },
+            onSelect: function (dateText, dp) {
+                setTimeout(function () {
+                    <?php
+                    switch ($tour->tourDuration->lengthType) {
+                        case \Tourpage\Models\Tours::LENGTH_MULTIPLE_DAYS_CODE:
+                            ?>
+                            var std = jQuery('#bookingdatepicker').datepicker("getDate");
+                            var totalDates = betweenDates(std, endDate);
+                            if (totalDates.length >= totalDays) {
+                                var edd = new Date(std.getFullYear(), std.getMonth(), std.getDate() + (totalDays - 1));
+                                if (!jQuery('#jdpanel').is(':visible')) {
+                                    jQuery('#jdpanel').show();
+                                }
+                                jQuery('#st').html(std.toLocaleDateString("en-US"));
+                                jQuery('#ed').html(edd.toLocaleDateString("en-US"));
+                                jQuery('#jstd').val(std.toLocaleDateString("en-US"));
+                                jQuery('#jedd').val(edd.toLocaleDateString("en-US"));
+                            } else {
+                                alert('Booking not available on ' + dateText);
+                            }
+                            <?php
+                            break;
+                        case \Tourpage\Models\Tours::LENGTH_SINGLE_DAY_CODE:
+                        case \Tourpage\Models\Tours::LENGTH_HOURLY:
+                            ?>
+                            var std = jQuery('#bookingdatepicker').datepicker("getDate");
+                            if (!jQuery('#jdpanel').is(':visible')) {
+                                jQuery('#jdpanel').show();
+                            }
+                            jQuery('#st').html(std.toLocaleDateString("en-US"));
+                            jQuery('#jstd').val(std.toLocaleDateString("en-US"));
+                            <?php break; ?>
+                    <?php } ?>
+                }, 5);
+            }
+        });
+<?php if ($tour->tourPrice->data->priceType == Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE) { ?>
+    <?php foreach ($ageGroups as $groupKey => $groupTitle) { ?>
+        <?php if (isset($tour->tourPrice->data->priceGroup[$groupKey])) { ?>
+                    jQuery('.<?php echo $groupKey; ?>').on('keypress', function () {
+                        return false;
+                    });
+                    jQuery('.<?php echo $groupKey; ?>').spinner({
+                        min: <?php echo $groupKey == 'a' ? 1 : 0; ?>,
+                        icons: {down: "ui-icon-minusthick", up: "ui-icon-plusthick"},
+                    });
+                    jQuery('.<?php echo $groupKey; ?>').on('spin', function (event, ui) {
+                        var amount = <?php echo $tour->tourPrice->data->priceGroup[$groupKey]['price']; ?>;
+                        jQuery('#sp_hid<?php echo $groupKey; ?>').val(ui.value * amount);
+                    });
+                    jQuery('.<?php echo $groupKey; ?>').on('spinstop', function (event, ui) {
+                        var totalAmount = 0;
+                        for (var k in groupKeys) {
+                            totalAmount = parseInt(totalAmount) + parseInt(jQuery('#sp_hid' + groupKeys[k]).val());
+                        }
+            <?php if ($tour->tourOptions->count() > 0) { ?>
+                            jQuery('input[name^="tour_opt"]').each(function (i, el) {
+                                if (jQuery(el).is(':checked')) {
+                                    var prType = jQuery(el).attr('prtype');
+                                    var prAmount = jQuery(el).val();
+                                    switch (prType) {
+                                        case '<?php echo \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_CODE; ?>':
+                                            var headCount = 0, headCountTotal = 0;
+                                            for (var k in groupKeys) {
+                                                var hc = jQuery('input[name="head_count[' + groupKeys[k] + ']"]').val();
+                                                headCount = parseInt(headCount) + parseInt(hc);
+                                            }
+                                            headCountTotal = headCount * prAmount;
+                                            totalAmount = parseInt(totalAmount) + parseInt(headCountTotal);
+                                            break;
+                                        case '<?php echo \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_CODE; ?>':
+                                            var headCountTotal = jQuery(el).val();
+                                            totalAmount = parseInt(totalAmount) + parseInt(headCountTotal);
+                                            break;
+                                    }
+                                }
+                            });
+            <?php } ?>
+                        jQuery('#total_amount').attr('org', totalAmount);
+                        if (typeof discountPrecentage !== 'undefined') {
+                            totalAmount = totalAmount - ((totalAmount * discountPrecentage) / 100);
+                        }
+                        if (typeof discountMultiplePurches !== 'undefined') {
+                            var headCount = 0;
+                            for (var k in groupKeys) {
+                                var hc = jQuery('input[name="head_count[' + groupKeys[k] + ']"]').val();
+                                headCount = parseInt(headCount) + parseInt(hc);
+                            }
+                            if (headCount >= discountMultiplePurches.count) {
+                                totalAmount = totalAmount - ((totalAmount * discountMultiplePurches.precentage) / 100);
+                            }
+                        }
+                        jQuery('span#amount').html(formatMoney(totalAmount))
+                        jQuery('#total_amount').val(totalAmount);
+                    });
+        <?php } ?>
+    <?php } ?>
+<?php } ?>
+<?php if ($tour->tourPrice->data->priceType == Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE) { ?>
+            jQuery('.ghc').on('keypress', function () {
+                return false;
+            });
+            jQuery('.ghc').spinner({
+                min: 1,
+                icons: {down: "ui-icon-minusthick", up: "ui-icon-plusthick"},
+            });
+            jQuery('.ghc').on('spin', function (event, ui) {
+                var amount = <?php echo $tour->tourPrice->getPrice(TRUE); ?>;
+                jQuery('#sp_hidghc').val(ui.value * amount);
+            });
+            jQuery('.ghc').on('spinstop', function (event, ui) {
+                var totalAmount = 0;
+                totalAmount = parseInt(totalAmount) + parseInt(jQuery('#sp_hidghc').val());
+    <?php if ($tour->tourOptions->count() > 0) { ?>
+                    jQuery('input[name^="tour_opt"]').each(function (i, el) {
+                        if (jQuery(el).is(':checked')) {
+                            var prType = jQuery(el).attr('prtype');
+                            var prAmount = jQuery(el).val();
+                            switch (prType) {
+                                case '<?php echo \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_CODE; ?>':
+                                    var headCount = 0, headCountTotal = 0;
+                                    var hc = jQuery('input[name="group_head_count"]').val();
+                                    headCount = parseInt(headCount) + parseInt(hc);
+                                    headCountTotal = headCount * prAmount;
+                                    totalAmount = parseInt(totalAmount) + parseInt(headCountTotal);
+                                    break;
+                                case '<?php echo \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_CODE; ?>':
+                                    var headCountTotal = jQuery(el).val();
+                                    totalAmount = parseInt(totalAmount) + parseInt(headCountTotal);
+                                    break;
+                            }
+                        }
+                    });
+    <?php } ?>
+                jQuery('#total_amount').attr('org', totalAmount);
+                if (typeof discountPrecentage !== 'undefined') {
+                    totalAmount = totalAmount - ((totalAmount * discountPrecentage) / 100);
+                }
+                if (typeof discountMultiplePurches !== 'undefined') {
+                    var headCount = 0;
+                    var hc = jQuery('input[name="group_head_count"]').val();
+                    headCount = parseInt(headCount) + parseInt(hc);
+                    if (headCount >= discountMultiplePurches.count) {
+                        totalAmount = totalAmount - ((totalAmount * discountMultiplePurches.precentage) / 100);
+                    }
+                }
+                jQuery('span#amount').html(formatMoney(totalAmount))
+                jQuery('#total_amount').val(totalAmount);
+            });
+
+<?php } ?>
+        jQuery('a#tour_tc').on('click', function (event) {
+            event.preventDefault();
+            jQuery('#model-tour-tc').modal();
+        });
+    });
+    function addPriceopp(el, gd) {
+        if (typeof gd === 'undefined') {
+            gd = false;
+        }
+        var headCount = 0, headCountTotal = 0;
+        var totalAmount = jQuery('#total_amount').attr('org');
+<?php if ($tour->tourPrice->data->priceType == Tourpage\Models\ToursPrice::PRICE_TYPE_PER_PERSON_CODE) { ?>
+            for (var k in groupKeys) {
+                var hc = jQuery('input[name="head_count[' + groupKeys[k] + ']"]').val();
+                headCount = parseInt(headCount) + parseInt(hc);
+            }
+<?php } ?>
+<?php if ($tour->tourPrice->data->priceType == Tourpage\Models\ToursPrice::PRICE_TYPE_PER_GROUP_CODE) { ?>
+            var hc = jQuery('input[name="group_head_count"]').val();
+            headCount = parseInt(headCount) + parseInt(hc);
+<?php } ?>
+        headCountTotal = headCount * el.value;
+        if (el.checked) {
+            totalAmount = parseInt(totalAmount) + parseInt(headCountTotal);
+        } else {
+            totalAmount = parseInt(totalAmount) - parseInt(headCountTotal);
+        }
+        if (!gd) {
+            jQuery('#total_amount').attr('org', totalAmount);
+            if (typeof discountPrecentage !== 'undefined') {
+                totalAmount = totalAmount - ((totalAmount * discountPrecentage) / 100);
+            }
+            if (typeof discountMultiplePurches !== 'undefined') {
+                var headCount = 0;
+                for (var k in groupKeys) {
+                    var hc = jQuery('input[name="head_count[' + groupKeys[k] + ']"]').val();
+                    headCount = parseInt(headCount) + parseInt(hc);
+                }
+                if (headCount >= discountMultiplePurches.count) {
+                    totalAmount = totalAmount - ((totalAmount * discountMultiplePurches.precentage) / 100);
+                }
+            }
+            jQuery('span#amount').html(formatMoney(totalAmount))
+            jQuery('#total_amount').val(totalAmount);
+        } else {
+            return totalAmount;
+        }
+    }
+    function addPriceopg(el) {
+        var totalAmount = jQuery('#total_amount').attr('org');
+        var headCountTotal = el.value;
+        if (el.checked) {
+            totalAmount = parseInt(totalAmount) + parseInt(headCountTotal);
+        } else {
+            totalAmount = parseInt(totalAmount) - parseInt(headCountTotal);
+        }
+        jQuery('#total_amount').attr('org', totalAmount);
+        if (typeof discountPrecentage !== 'undefined') {
+            totalAmount = totalAmount - ((totalAmount * discountPrecentage) / 100);
+        }
+        if (typeof discountMultiplePurches !== 'undefined') {
+            var headCount = 0;
+            for (var k in groupKeys) {
+                var hc = jQuery('input[name="head_count[' + groupKeys[k] + ']"]').val();
+                headCount = parseInt(headCount) + parseInt(hc);
+            }
+            if (headCount >= discountMultiplePurches.count) {
+                totalAmount = totalAmount - ((totalAmount * discountMultiplePurches.precentage) / 100);
+            }
+        }
+        jQuery('span#amount').html(formatMoney(totalAmount))
+        jQuery('#total_amount').val(totalAmount);
+    }
+
+<?php /* CKEDITOR.config.toolbarGroups = [
+  {"name": "basicstyles", "groups": ["basicstyles"]},
+  {"name": "paragraph", "groups": ["list"]},
+  {"name": "styles", "groups": ["styles"]},
+  ];
+  CKEDITOR.config.removeButtons = 'Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar';
+  CKEDITOR.replace('rrtext', {
+  "height": 150
+  }); */ ?>
+</script>

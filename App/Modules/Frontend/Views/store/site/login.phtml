@@ -1,0 +1,154 @@
+<section id="bodysectionpdp">
+    <div id="subWrap">
+        <h1 class="wrap tit" style="margin-top:20px;"> Login</h1>
+        <div id="content" class="wrap">
+            <form class="login__signup-form" method="post" accept-charset="utf-8">
+                <fieldset style="margin: 3em 0">
+                    <ol>
+                        <li><?php echo $form->render('useremail'); ?></li>
+                        <li><?php echo $form->render('password'); ?></li>
+                    </ol>
+                    <ol class="sub_login_form">
+                        <li><?php echo $form->render('remember_me'); ?> Remember me</li>
+                        <li><a href="<?php echo $this->url->get('/store/site/' . $storeVendor->vendorId . '/resetpassword'); ?>" class="forgot_password_btn"> Forgot your password?</a></li>
+                    </ol>
+                    <button class="btnn" type="submit">Log in</button>
+                    <hr>
+                    <a href="<?php echo $this->url->get('/store/site/' . $storeVendor->vendorId . '/register'); ?>">Not a member yet? Sign up here!</a>
+                </fieldset>
+            </form>
+        </div>
+        <h1 class="wrap tit" style="margin-top:20px;"> Or Login Using</h1>
+        <div class="wrap" style="width: 200px;">
+            <a id="google_btn" class="btn btn-block btn-social btn-google">
+                <i class="fa fa-google-plus"></i> Sign in with Google
+            </a>
+            <a class="btn btn-block btn-social btn-facebook" onclick="checkLoginState();
+                    return false;">
+                <i class="fa fa-facebook"></i> Sign in with Facebook
+            </a>
+        </div>
+    </div>
+</section>
+<?php echo $this->tag->stylesheetLink($this->url->getStatic(VENDOR_DIR . "css/bootstrap-social.css")); ?>
+<?php echo $this->tag->stylesheetLink($this->url->getStatic(VENDOR_DIR . "css/font-awesome.css")); ?>
+<script src="https://apis.google.com/js/platform.js"></script>
+<script type="text/javascript">
+    var auth2;
+    function initGApi() {
+        gapi.load('auth2', function () {
+            auth2 = gapi.auth2.init({
+                client_id: "456240196979-0riuvevl5h5og9h2umrgbcqnr04lucbu.apps.googleusercontent.com"
+            });
+            auth2.attachClickHandler('google_btn', {}, onSuccess, onFailure);
+        });
+    }
+    function onSuccess(user) {
+        var basicProfile = { 
+            id: user.getBasicProfile().getId(),
+            name: user.getBasicProfile().getName(),
+            email: user.getBasicProfile().getEmail()
+        };
+        
+        jQuery.ajax({
+            url: "<?php echo $this->url->get('/ajax/socialLogin');?>",
+            method: "POST",
+            dataType: "json",
+            data: jQuery.extend({
+                <?php if (isset($_GET['_rt']) && !empty($_GET['_rt'])) { ?>
+                    <?php if ($targetUri = base64_decode($_GET['_rt'])) { ?>
+                        target_uri: "<?php echo $targetUri;?>",
+                    <?php } ?>
+                <?php } ?>
+                base_uri: "<?php echo $storeVendor->getStorFrontUri();?>/",
+                login_uri: "<?php echo $storeVendor->getStorFrontUri();?>/login",
+                register_uri: "<?php echo $storeVendor->getStorFrontUri();?>/register",
+            }, basicProfile),
+            beforeSend: function (jqXHR, settings) {
+                console.log('Searching for users');
+            },
+            success: function (data, textStatus, jqXHR) {
+                window.location.href = data.redirect_uri;
+            }
+        });
+    }
+    function onFailure(error) {
+        console.log(error);
+    }
+    initGApi();
+</script>
+<script type="text/javascript">
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '484302985080949',
+            xfbml: false,
+            status: true,
+            cookie: true,
+            version: 'v2.4'
+        });
+    };
+
+    // Load the SDK asynchronously
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id))
+            return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function checkLoginState() {
+        var status = null;
+        FB.getLoginStatus(function (response) {
+            status = response.status;
+            if (status !== 'connected') {
+                FB.login(function (response) {
+                    if (response.status === 'connected') {
+                        fetchProfile();
+                    }
+                }, {
+                    scope: 'publish_actions',
+                    return_scopes: true
+                });
+            }
+            
+            if (status === 'connected') {
+                fetchProfile();
+            }
+        });
+    }
+    
+    function fetchProfile() {
+        FB.api('/me', function (response) {
+            var basicProfile = { 
+                id: response.id,
+                name: response.name,
+                email: response.email
+            };
+
+            jQuery.ajax({
+                url: "<?php echo $this->url->get('/ajax/socialLogin');?>",
+                method: "POST",
+                dataType: "json",
+                data: jQuery.extend({
+                    <?php if (isset($_GET['_rt']) && !empty($_GET['_rt'])) { ?>
+                        <?php if ($targetUri = base64_decode($_GET['_rt'])) { ?>
+                            target_uri: "<?php echo $targetUri;?>",
+                        <?php } ?>
+                    <?php } ?>
+                    base_uri: "<?php echo $storeVendor->getStorFrontUri();?>/",
+                    login_uri: "<?php echo $storeVendor->getStorFrontUri();?>/login",
+                    register_uri: "<?php echo $storeVendor->getStorFrontUri();?>/register"
+                }, basicProfile),
+                beforeSend: function (jqXHR, settings) {
+                    console.log('Searching for users');
+                },
+                success: function (data, textStatus, jqXHR) {
+                    window.location.href = data.redirect_uri;
+                }
+            });
+        });
+    }
+</script>

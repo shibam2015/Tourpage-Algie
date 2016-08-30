@@ -1,0 +1,17 @@
+<?php $this->partial('account/common/index_sidebar'); ?>
+<div class="layout contents">
+    <form id="change-password" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <h2><i class="glyphicon glyphicon-lock"></i> Change Password</h2>
+        <div class="account basicinfo">
+            <ul>
+                <li><label>Password</label><?php echo $form->renderElement('old_password', array('class' => 'form-control')); ?></li>
+                <li><label>New Password</label><?php echo $form->renderElement('password', array('class' => 'form-control')); ?></li>
+                <li><label>Repeat Password</label><?php echo $form->renderElement('re_password', array('class' => 'form-control')); ?></li>
+            </ul>
+        </div><!--//account.basicinfo-->
+        <div class="lastcontent thebuttonlayout001">
+            <input type="submit" class="btn btn-primary" name="submit" value="Save">
+        </div>
+    </form>
+</div>
+

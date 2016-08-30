@@ -1,0 +1,30 @@
+<?php $this->partial('settings/menu'); ?>
+<div class="col-md-9">
+    <div class="panel panel-danger">
+        <div class="panel-heading"><i class="glyphicon glyphicon-bullhorn"></i> <?php echo $pageHeading; ?></div>
+        <div class="panel-body">
+            <?php echo $this->tag->form(array('class' => 'form-horizontal')) ?>
+                <div class="form-group">
+                    <div class="col-lg-12">
+                    <?php echo $this->tag->hiddenField(array(
+                        "anc_type",
+                        "value"=> $type
+                    )) ?>
+                    <?php echo $this->tag->textArea(array(
+                        "anc_content",
+                        "value" => $announcementContent,
+                        "class" => "form-control",
+                    )) ?>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            <?php echo $this->tag->endForm() ?>
+        </div>
+    </div>
+</div>
+<?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/ckeditor/ckeditor.js")); ?>
+<script type="text/javascript">
+    CKEDITOR.replace('anc_content', {
+        "height": 300
+    });
+</script>

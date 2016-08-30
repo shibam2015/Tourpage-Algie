@@ -1,0 +1,179 @@
+<div style="margin-bottom: 10px;">
+    <h4>Filter Vendors</h4>
+    <form class="form-inline" method="post">
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::textField(array(
+                    "vn",
+                    "class" => "form-control input-sm",
+                    "placeholder" => "By Vendor Name",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::textField(array(
+                    "sf",
+                    "class" => "form-control input-sm",
+                    "placeholder" => "By Store Front",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "c",
+                    \Tourpage\Models\Country::find(),
+                    "useEmpty" => true,
+                    "emptyText" => "By Country",
+                    'emptyValue' => "[all]",
+                    "using" => array("countryId", "name"),
+                    "class" => "form-control input-sm",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::select(array(
+                    "p",
+                    \Tourpage\Models\State::find(array('order' => 'name ASC')),
+                    "useEmpty" => true,
+                    "emptyText" => "By State",
+                    'emptyValue' => "[all]",
+                    "using" => array("stateId", "name"),
+                    "class" => "form-control input-sm",
+                    "style" => "width: 100%;"
+                ));
+                ?>
+            </div>
+        </div>
+        <div class="col-lg-2 no-pad-left">
+            <div class="form-group">
+                <?php
+                echo Phalcon\Tag::selectStatic(array(
+                    "s",
+                    "useEmpty" => true,
+                    "emptyText" => "All Status",
+                    'emptyValue' => "[all]",
+                    array(
+                        \Tourpage\Models\Vendors::ACTIVE_STATUS_CODE => 'Active',
+                        \Tourpage\Models\Vendors::INACTIVE_STATUS_CODE => 'Inactive',
+                        \Tourpage\Models\Vendors::PENDING_APPROVAL_STATUS_CODE => 'Pending Approval',
+                        \Tourpage\Models\Vendors::PENDING_EMAIL_VALIDATION_STATUS_CODE => 'Email Varification Pending',
+                    ),
+                    "class" => "form-control input-sm"
+                ));
+                ?>
+            </div>
+        </div>
+        <input type="hidden" name="formtp" value="fltr" />
+        <button type="submit" class="btn btn-danger btn-sm">Filter</button>
+        <?php if (count($defaultValues) > 0) { ?>
+            <?php echo $this->tag->linkTo("/admin/vendors", "Clear"); ?>
+        <?php } ?>
+    </form>
+</div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <div class="pull-left">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-th-list"></span> Vendors <span class="badge"><?php echo $pager->getTotalItems(); ?></span>
+            </h3>
+        </div>
+        <?php /*<div class="pull-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-danger dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Action <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a onclick="runAction('active');
+                            return false;" style="cursor: pointer;">Active</a></li>
+                    <li><a onclick="runAction('inactive');
+                            return false;" style="cursor: pointer;">Inactive</a></li>
+                    <li><a onclick="runAction('remove');
+                            return false;" style="cursor: pointer;">Remove</a>
+                </ul>
+            </div>
+        </div></li>*/?>
+        <div class="clearfix"></div>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="vlist" method="post">
+                <input type="hidden" name="formtp" value="actn" />
+                <input type="hidden" name="acttp" value="" />
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <?php /*<th width="2%"><?php echo \Phalcon\Tag::checkField(array("sav", "value" => "s")); ?></th>*/?>
+                            <th>Name</th>
+                            <th>Store Front</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($pager->getTotalItems() > 0) { ?>
+                            <?php foreach ($pager->getItems() as $item) { ?>
+                                <tr>
+                                    <?php /*<td width="2%"><?php echo \Phalcon\Tag::checkField(array("v[]", "value" => $item->vendorId, "class" => "secvdr")); ?></td>*/?>
+                                    <td><?php echo $item->firstName . ' ' . $item->lastName; ?></td>
+                                    <td><?php echo $this->tag->linkTo(array($item->getStorFrontUri(), $item->businessName, 'local' => false, 'target' => '_blank')); ?></td>
+                                    <td><?php echo $item->emailAddress; ?></td>
+                                    <td><?php echo $item->phone; ?></td>
+                                    <td><?php echo $item->getStatus(); ?></td>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/admin/vendors/view/' . $item->vendorId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-default btn-xs tooltips', 'title' => 'View')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/vendors/edit/' . $item->vendorId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Vendor')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/vendors/remove/' . $item->vendorId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Vendor')); ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="5" class="text-center">No tours is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<nav>
+    <?php echo $pager->getLinks(); ?>
+</nav>
+<script type="text/javascript">
+    jQuery(function () {
+        jQuery("#sav").click(function () {
+            if (jQuery(this).is(":checked")) {
+                jQuery(".secvdr").prop("checked", true);
+            } else {
+                jQuery(".secvdr").prop("checked", false);
+            }
+        });
+        jQuery(".secvdr").click(function () {
+            if (jQuery("#sav").is(":checked")) {
+                jQuery("#sav").prop("checked", false);
+            }
+        });
+    });
+
+    function runAction(action) {
+        jQuery("input[name='acttp']").val(action);
+        
+        jQuery("form#vlist").submit();
+    }
+</script>

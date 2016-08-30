@@ -1,0 +1,45 @@
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <span class="glyphicon glyphicon-th-list"></span> Tour Description Fields <span class="badge"><?php echo $attributeKeys->count(); ?></span>
+            <div class="pull-right">
+                <a class="btn btn-danger btn-xs tooltips" href="<?php echo $this->url->get('/admin/tours/adddescfields'); ?>" role="button" title="Add New Description Fields">
+                    <span class="glyphicon glyphicon-plus"></span> New Tour Description Fields
+                </a>
+            </div>
+        </h3>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <form id="vlist" method="post">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($attributeKeys->count() > 0) { ?>
+                            <?php foreach ($attributeKeys as $attributeKey) { ?>
+                                <tr>
+                                    <td><?php echo $attributeKey->keyName; ?></td>
+                                    <td><?php echo $attributeKey->getStatus(); ?></td>
+                                    <td>
+                                        <?php echo $this->tag->linkTo(array('/admin/tours/editdescfields/' . $attributeKey->keyId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour Description Fields')); ?>
+                                        <?php echo $this->tag->linkTo(array('/admin/tours/removedescfields/' . $attributeKey->keyId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour Description Fields')); ?>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } else { ?>
+                            <tr>
+                                <td colspan="3" class="text-center">No tour description fields is here</td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
