@@ -1,42 +1,32 @@
-<header class="header">
-<div class="s-banner">
-<div class="banner-caption">
- <h1>Book tickets for top attractions around the world</h1>
-</div>
-   <div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
-			<!-- Indicators -->
-			<ol class="carousel-indicators">
-				<li data-target="#transition-timer-carousel" data-slide-to="0" class="active"></li>
-				<li data-target="#transition-timer-carousel" data-slide-to="1"></li>
-				
-			</ol>
-
-			<!-- Wrapper for slides -->
-			<div class="carousel-inner">
-				<div class="item active">
-                    <img src="/public/elements/frontend/images/banner.jpg" alt="" />
-                    <div class="carousel-caption">
-                      
-                        
-                    </div>
-                </div>
-                
-                <div class="item">
-                  <img src="/public/elements/frontend/images/banner1.jpg" alt="" />
-                   
-                </div>
-                
-                
-            </div>
-
-			<!-- Controls -->
-			
-            
-            <!-- Timer "progress bar" -->
-          
-		</div>   
- </div>
-</header>
+<!-- DYNAMIC BANNER IMAGES BEGIN -->
+		<!-- @author Algie Caballes -->
+    	<header class="header">
+			<div class="s-banner">
+				<div class="banner-caption">
+					<!--<h1>Book tickets for top attractions around the world</h1>-->
+				</div>
+				<div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
+				<div class="carousel-inner">
+					<!-- banner images display -->
+					<?php if ($bannerImages->count() > 0): ?>
+						<?php foreach ($bannerImages as $key => $banner): ?>
+							<div class="item <?php if ($key == 0) { echo 'active'; } ?>">
+								<img src="<?php echo $banner->getBannerUri(); ?>" alt=""style="width:100%; "/>
+								<div class="carousel-caption">
+								  
+									
+								</div>
+							</div>
+						<?php endforeach; ?>
+					<?php else: ?>
+						<div class="item">
+							<img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/banner-img.png'); ?>"/> 
+						</div>
+					<?php endif; ?>
+				</div>
+			</div>   
+		</div>
+	</header>
 
 <section class="tour-content">
     <div class="container">
