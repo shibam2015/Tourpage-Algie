@@ -279,7 +279,12 @@ class TourController extends FrontendController {
                 }
             }
         }
-
+        
+        /**
+         * @desc get Banner images from vendor
+         */
+        $vendor = \Tourpage\Models\Vendors::findFirst($tour->tourVendor->vendorId);
+        
         $this->assets->collection('header_css')->addCss(FRONT_END_DIR . 'css/new_style.css');
         $this->assets->collection('header_css')->addCss(FRONT_END_DIR . 'css/new_media.css');
         $this->assets->collection('header_css')->addCss(FRONT_END_DIR . 'css/font-awesome.min.css');				
@@ -302,6 +307,11 @@ class TourController extends FrontendController {
         $this->view->disablDates = $disablDates;
         $this->view->tour = $tour;
         $this->view->reviews = $reviews;
+        /**
+         * @desc banner images
+         * @author Algie Caballes
+         */
+        $this->view->bannerImages = $vendor->vendorBanners;
     }
 
     /**
