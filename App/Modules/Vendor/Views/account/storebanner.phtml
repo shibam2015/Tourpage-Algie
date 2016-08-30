@@ -30,6 +30,10 @@
                                 <input type="text" class="form-control" id="banner_link_<?php echo $vendorBanner->bannerId; ?>" name="banner_link[<?php echo $vendorBanner->bannerId; ?>]" value="<?php echo $vendorBanner->bannerLink; ?>">
                             </div>
                             <div class="form-group">
+                                <label for="banner_caption_<?php echo $vendorBanner->bannerId; ?>">Banner Caption</label>
+                                <input type="text" class="form-control" id="banner_caption_<?php echo $vendorBanner->bannerId; ?>" name="banner_caption_[<?php echo $vendorBanner->bannerId; ?>]" value="<?php echo $vendorBanner->bannerCaption; ?>">
+                            </div>
+                            <div class="form-group">
                                 <label for="banner_image_<?php echo $vendorBanner->bannerId; ?>">Banner Image</label>
                                 <input type="file" class="form-control" id="banner_image_<?php echo $vendorBanner->bannerId; ?>" name="banner_image[<?php echo $vendorBanner->bannerId; ?>]">
                             </div>
@@ -84,6 +88,8 @@
             panel += '<label for="banner_link">Link to</label>';
             panel += '<input type="text" class="form-control" name="banner_link[' + uid + ']" id="banner_link">';
             panel += '</div>';
+            panel += '<div class="form-group"><label for="banner_caption">Banner Caption</label>';
+            panel += '<input type="text" class="form-control" name="banner_caption[' + uid + ']" id="banner_caption"></div>';
             panel += '<button onclick="return removeBannerPanel(\'' + uid + '\');"><i class="fa fa-close"></i></button>';
             bannerContainer.html(panel);
             bannerPanel.append(bannerContainer);
