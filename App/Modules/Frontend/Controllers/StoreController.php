@@ -127,6 +127,7 @@ class StoreController extends FrontendController {
         $this->view->storeVendorBanner = $storeVendorBanner;
 	$this->view->otherTours = $otherTours;
         $this->view->reviews = $reviews;
+		$this->view->bannerImages = $storeVendor->vendorBanners;
  
 		
 	
