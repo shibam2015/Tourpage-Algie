@@ -13,8 +13,9 @@
 							<div class="item <?php if ($key == 0) { echo 'active'; } ?>">
 								<img src="<?php echo $banner->getBannerUri(); ?>" alt=""style="width:100%; "/>
 								<div class="carousel-caption">
-								  
-									
+									<div class="carousel-caption" style="top: 0; bottom: 0;">
+										<h1><?php echo $banner->bannerCaption; ?></h1>
+									</div>
 								</div>
 							</div>
 						<?php endforeach; ?>
