@@ -370,7 +370,8 @@ class Utils {
         $value = $defaultValue;
         $variable = \Tourpage\Models\Variable::findFirstByVariableKey($variableKey);
         if ($variable) {
-            $value = unserialize($variable->variableData);
+	    $data = preg_replace('!s:(\d+):"(.*?)";!e', "'s:'.strlen('$2').':\"$2\";'", $variable->variableData);
+            $value = unserialize($data);
         }
         return $value;
     }
