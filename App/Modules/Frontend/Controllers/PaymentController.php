@@ -179,24 +179,34 @@ class PaymentController extends FrontendController {
 
         if ($paymentOption == 'paypal') {
             //die("Inside paypal block");
-            $payment = \PayPal\Api\Payment::get($paymentId, $apiContext);
-            $execution = new \PayPal\Api\PaymentExecution();
-            $execution->setPayerId($payerId);
-
-            $amount = new \PayPal\Api\Amount();
-            $amount->setCurrency('USD');
-            $amount->setTotal($this->cart->totalAmount);
-
-            $transaction = new \PayPal\Api\Transaction();
-            $transaction->setAmount($amount);
-            $execution->addTransaction($transaction);
             try {
-                $payment->execute($execution, $apiContext);
-            } catch (\PayPal\Exception\PayPalConnectionException $ex) {
-                $error[] = print_r(json_decode($ex->getData()));
-            } catch (\Exception $ex) {
-                $error[] = $ex->getMessage();
-            }
+		$payment = \PayPal\Api\Payment::get($paymentId, $apiContext);
+	    } catch (\PayPal\Exception\PayPalConnectionException $ex) {
+		$payment = null;
+	    }
+	    if ($payment != null) {
+            	$execution = new \PayPal\Api\PaymentExecution();
+            	$execution->setPayerId($payerId);
+
+            	$amount = new \PayPal\Api\Amount();
+            	$amount->setCurrency('USD');
+            	$amount->setTotal($this->cart->totalAmount);
+
+            	$transaction = new \PayPal\Api\Transaction();
+            	$transaction->setAmount($amount);
+            	$execution->addTransaction($transaction);
+            	try {
+                    $payment->execute($execution, $apiContext);
+            	} catch (\PayPal\Exception\PayPalConnectionException $ex) {
+			$this->response->redirect('/cart');
+                    $error[] = print_r(json_decode($ex->getData()));
+            	} catch (\Exception $ex) {
+                    $error[] = $ex->getMessage();
+            	}
+	    } else {
+		// redirect to cart page if there are errors
+		return $this->response->redirect('/cart/thankyou');
+	    }
         }
         
 
