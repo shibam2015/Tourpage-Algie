@@ -296,6 +296,7 @@ class AccountController extends VendorController {
         if ($this->request->isPost()) {
             $bannerLink = $this->request->getPost('banner_link');
             $bannerStatus = $this->request->getPost('banner_status');
+            $bannerCaption = $this->request->getPost('banner_caption');
             $removeBanner = $this->request->getPost('remove_banner');
             if (count($removeBanner) > 0) {
                 foreach ($removeBanner as $rb) {
@@ -346,6 +347,27 @@ class AccountController extends VendorController {
                     }
                 }
             }
+            
+            /**
+             * @desc save banner caption
+             * @auth Algie Caballes
+             */
+            if (count($bannerCaption) > 0) {
+                foreach ($bannerCaption as $cKey => $caption) {
+                    $cbanner = \Tourpage\Models\VendorsBanner::findFirst(array(
+                                'bannerId = :banner_id: AND vendorId = :vendor_id:',
+                                'bind' => array(
+                                    'banner_id' => $cKey,
+                                    'vendor_id' => $vendor->vendorId
+                                )
+                    ));
+                    if ($cbanner && $cbanner->count() > 0) {
+                        $cbanner->bannerCaption = $caption;
+                        $cbanner->save();
+                    }
+                }
+            }
+            
             if ($this->request->hasFiles(true)) {
                 $i = 1;
                 $baseLocation = $this->vendors->getTourImagesPath();
@@ -381,6 +403,7 @@ class AccountController extends VendorController {
                                     $modelBanner->bannerImage = $imageName;
                                     $modelBanner->bannerLink = (isset($bannerLink[$key]) && !empty($bannerLink[$key]) ? $bannerLink[$key] : '');
                                     $modelBanner->bannerStatus = $bannerStatus[$key];
+                                    $modelBanner->bannerCaption = $bannerCaption[$key];
                                     $modelBanner->imageUploadedOn = \Tourpage\Helpers\Utils::currentDate();
                                     if (!$modelBanner->save()) {
                                         foreach ($modelBanner->getMessages() as $message) {
