@@ -281,5 +281,9 @@ class CartController extends FrontendController {
                 break;
         }
     }
+    
+    public function thankyouAction() {
+        $this->tag->setTitle('Payment Completed');
+    }
 
 }
