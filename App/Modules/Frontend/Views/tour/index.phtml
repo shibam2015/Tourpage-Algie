@@ -600,7 +600,13 @@ switch ($tour->tourDuration->lengthType) {
                         'selected_date': selectedDate,
                     });
                     availibilityPost.done(function (data) {
-                        var response = jQuery.parseJSON(data);
+						// @Algie Caballes - add a condition if the response is already in object, if it is a string, parse it to JSON
+						var response;
+						if (typeof data == 'object') {
+							response = data;
+						} else {
+							var response = jQuery.parseJSON(data);
+						}
                         if (response.availableForBooking) {
                             if (typeof response.timeOptions !== 'undefined') {
                                 checkAvailState = true;
