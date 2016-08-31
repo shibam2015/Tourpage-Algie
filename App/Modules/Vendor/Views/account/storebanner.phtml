@@ -31,7 +31,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="banner_caption_<?php echo $vendorBanner->bannerId; ?>">Banner Caption</label>
-                                <input type="text" class="form-control" id="banner_caption_<?php echo $vendorBanner->bannerId; ?>" name="banner_caption_[<?php echo $vendorBanner->bannerId; ?>]" value="<?php echo $vendorBanner->bannerCaption; ?>">
+                                <input type="text" class="form-control" id="banner_caption_<?php echo $vendorBanner->bannerId; ?>" name="banner_caption[<?php echo $vendorBanner->bannerId; ?>]" value="<?php echo $vendorBanner->bannerCaption; ?>">
                             </div>
                             <div class="form-group">
                                 <label for="banner_image_<?php echo $vendorBanner->bannerId; ?>">Banner Image</label>
@@ -83,13 +83,13 @@
             bannerContainer.css('padding-bottom', '5px');
             bannerContainer.attr('id', uid);
             var panel = '<div class="form-group"><label for="banner_image">Banner Image</label>';
-            panel += '<input id="banner_image" name="banner_image[' + uid + ']" type="file" class="form-control">';
+            panel += '<input id="banner_image" name="banner_image['+uid+']" type="file" class="form-control">';
             panel += '</div><div class="form-group">';
             panel += '<label for="banner_link">Link to</label>';
-            panel += '<input type="text" class="form-control" name="banner_link[' + uid + ']" id="banner_link">';
+            panel += '<input type="text" class="form-control" name="banner_link['+uid+']" id="banner_link">';
             panel += '</div>';
             panel += '<div class="form-group"><label for="banner_caption">Banner Caption</label>';
-            panel += '<input type="text" class="form-control" name="banner_caption[' + uid + ']" id="banner_caption"></div>';
+            panel += '<input type="text" class="form-control" name="banner_caption['+uid+']" id="banner_caption"></div>';
             panel += '<button onclick="return removeBannerPanel(\'' + uid + '\');"><i class="fa fa-close"></i></button>';
             bannerContainer.html(panel);
             bannerPanel.append(bannerContainer);
