@@ -146,8 +146,8 @@ class PaymentController extends FrontendController {
                 $approvalUrl = $payment->getApprovalLink();
                // echo $approvalUrl;        // error, this is not printing
                //die("no error block paypal"); 
-                ///$this->response->redirect($approvalUrl, true);  // code by amitda.
-               $this->response->redirect('/payment/return?paymentId=5');  /// given by Tarun for testing
+                $this->response->redirect($approvalUrl, true);  // code by amitda.
+               //$this->response->redirect('/payment/return?paymentId=5');  /// given by Tarun for testing
             }
             if ($paymentOption == 'credit_card') {
                     // print_r($payment);
