@@ -98,7 +98,7 @@
                  <div class="menu">
                 	<ul class="pull-right navbar-nav">
                        <!--<li><?php //echo $this->tag->linkTo('/store/page/' . $storeVendor->vendorId . '/about-us', "About"); ?></li>-->
-			  <li><a href="javascript:redirectToAboutUs('<?php echo "/about-us/".urlencode($storeVendor->businessName)?>', '<?php echo $storeVendor->vendorId; ?>')">About</a></li>
+			  <li><a href="javascript:redirectToAboutUs('<?php echo "/".urlencode($storeVendor->businessName)."/about-us"; ?>', '<?php echo $storeVendor->vendorId; ?>')">About</a></li>
                           <li><?php echo $this->tag->linkTo('/store/tours/' . $storeVendor->vendorId, "Our Tours"); ?></li>
                             <li><a href="#">Blog</a></li>   
                              <li><a href="#">Gallery</a></li>
