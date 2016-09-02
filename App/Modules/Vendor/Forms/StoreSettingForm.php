@@ -149,7 +149,8 @@ class StoreSettingForm extends CForm {
         $storeAboutus->setAttribute('class', 'form-control');
         if (isset($this->options['edit']) && $this->options['edit']) {
             if ($this->entity && isset($this->entity->aboutUs)) {
-                $storeAboutus->setDefault(\Tourpage\Helpers\Utils::decodeString($this->entity->aboutUs));
+		$value = !empty($this->entity->aboutUs) ? \Tourpage\Helpers\Utils::decodeString($this->entity->aboutUs) : $this->defaultAboutUs();
+                $storeAboutus->setDefault($value);
             }
         }
         $this->add($storeAboutus);
@@ -161,7 +162,8 @@ class StoreSettingForm extends CForm {
         $storeAboutus->setAttribute('class', 'form-control');
         if (isset($this->options['edit']) && $this->options['edit']) {
             if ($this->entity && isset($this->entity->aboutUsAdvance)) {
-                $storeAboutus->setDefault(\Tourpage\Helpers\Utils::decodeString($this->entity->aboutUsAdvance));
+		$value = !empty($this->entity->aboutUsAdvance) ? \Tourpage\Helpers\Utils::decodeString($this->entity->aboutUsAdvance) : $this->defaultAboutUs();
+                $storeAboutus->setDefault($value);
             }
         }
         $this->add($storeAboutus);
@@ -234,6 +236,22 @@ class StoreSettingForm extends CForm {
         $this->attachElementPolicy();
         $this->attachElementCancelPolicy();
         $this->attachElementSubmit();
+    }
+
+    private function defaultAboutUs()
+    {
+        return '<p><span style="font-size:20px"><strong>About Guitar Hero</strong></span></p>
+
+<div>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+</div>
+
+<p><span style="font-size:20px"><strong>Why explore with Guitar Hero?</strong>&nbsp;</span></p>
+
+<div>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+</div>
+';
     }
 
 }
