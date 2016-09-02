@@ -71,7 +71,7 @@ foreach (array('frontend', 'vendor', 'backend','supplier') as $modules) {
 }
 
 // about us route
-$router->add('/about-us/:params', array(
+$router->add('/:params/about-us', array(
     'module' => 'frontend',
     'controller' => 'store',
     'action' => 'aboutus',
