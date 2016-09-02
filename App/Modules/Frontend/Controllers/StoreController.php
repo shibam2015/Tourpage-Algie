@@ -503,11 +503,13 @@ class StoreController extends FrontendController {
                 $pageContent = \Tourpage\Helpers\Utils::decodeString($storeVendor->policy);
                 break;
         }
+
         $this->view->pageContent = $pageContent;
          $this->view->pageBanner = $pageBanner;
          $this->view->pageAboutUsStatus = $pageAboutUsStatus;
          $this->view->pageContentAdvance = $pageContentAdvance;
         $this->view->storeVendor = $storeVendor;
+		$this->view->bannerImages = $storeVendor->vendorBanners;
     }
 
     /**
@@ -627,6 +629,18 @@ public function contactsAction($store = '', $content = '') {
            $this->view->form = $form;
     }
 
+	public function aboutusAction($params = '')
+    {
+		$this->tag->settitle('About Us');
+        $vendorId = $this->request->getPost()['vendor_id'];
+        $storeVendor = \Tourpage\Models\Vendors::findFirst((int)$vendorId);
+		$pageAboutUsStatus = \Tourpage\Helpers\Utils::decodeString($storeVendor->aboutUsStatus);
+        $pageContentAdvance = \Tourpage\Helpers\Utils::decodeString($storeVendor->aboutUsAdvance);
+        $pageContentDefault = \Tourpage\Helpers\Utils::decodeString($storeVendor->aboutUs);
+        $this->view->pageContent = (int)$pageAboutUsStatus == 2 ? $pageContentAdvance : $pageContentDefault;
+        $this->view->storeVendor = $storeVendor;
+		$this->view->bannerImages = $storeVendor->vendorBanners;
+    }
 
 
 }
