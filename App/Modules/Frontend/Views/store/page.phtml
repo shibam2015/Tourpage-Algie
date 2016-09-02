@@ -1,36 +1,38 @@
-<section class="bodysection">
-    <?php if($pageAboutUsStatus == 2) { echo $pageContentAdvance; }else {?>
-    
-    
-<section class="about-banner_1">
-<!--<img style="max-width:100%; height:auto;" src="/public/elements/frontend/assets/images/about-banner1.jpg" alt="banner-1" />-->
+<!-- DYNAMIC BANNER IMAGES BEGIN -->
+    <!-- @author Algie Caballes -->
+    <header class="header">
+        <div class="s-banner">
+            <div class="banner-caption">
+                <!--<h1>Book tickets for top attractions around the world</h1>-->
+            </div>
+            <div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
+                <div class="carousel-inner">
+                    <!-- banner images display -->
+                    <?php if ($bannerImages->count() > 0): ?>
+                        <?php foreach ($bannerImages as $key => $banner): ?>
+                            <div class="item <?php if ($key == 0) { echo 'active'; } ?>">
+                                <a href="<?php echo $banner->bannerLink; ?>" target="_blank"><img src="<?php echo $banner->getBannerUri(); ?>" alt=""style="width:100%; "/></a>
+                                <div class="carousel-caption">
+                                    <div class="carousel-caption" style="top: 0; bottom: 0;">
+                                        <h1><?php echo $banner->bannerCaption; ?></h1>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="item">
+                            <img src="<?php echo $this->url->getStatic(FRONT_END_DIR . 'images/banner-img.png'); ?>"/> 
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>   
+        </div>
+    </header>
 
-    <?php echo $pageBanner;?> 
-   
-</section>
-
-<section class="about-contant">
-<div class="container">
-<div class="row">
-    <?php echo $pageContent;?> 
-<!--<div class="about-text-holder">
-<h1>About Guitar Hero</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
-</div>
-
-<div class="about-text-holder">
-<h1>Why explore with Guitar Hero?</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
-</div>
-
-<div class="about-text-holder">
-<h1>Lorem ipsum dolor sit amet</h1>
-<p>
-<img style="max-width:100%; height:auto;" src="/Tour_Page/public/elements/frontend/assets/images/about-img1.jpg" alt="img" />
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
-</div>-->
-</div>
-</div>
-</section>
-    <?php }?>
+<section class="tour-content">
+    <div class="container">
+        <div style="margin-top: 20px !important; margin-bottom: 20px !important;">
+            <?php echo $pageContent; ?>
+        </div>
+    </div>
 </section>
