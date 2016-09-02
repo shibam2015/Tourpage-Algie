@@ -97,7 +97,8 @@
                 
                  <div class="menu">
                 	<ul class="pull-right navbar-nav">
-                       <li><?php echo $this->tag->linkTo('/store/page/' . $storeVendor->vendorId . '/about-us', "About"); ?></li>
+                       <!--<li><?php //echo $this->tag->linkTo('/store/page/' . $storeVendor->vendorId . '/about-us', "About"); ?></li>-->
+			  <li><a href="javascript:redirectToAboutUs('<?php echo "/about-us/".urlencode($storeVendor->businessName)?>', '<?php echo $storeVendor->vendorId; ?>')">About</a></li>
                           <li><?php echo $this->tag->linkTo('/store/tours/' . $storeVendor->vendorId, "Our Tours"); ?></li>
                             <li><a href="#">Blog</a></li>   
                              <li><a href="#">Gallery</a></li>
@@ -222,3 +223,22 @@
 		margin-right: 10px;
     }*/
 </style>
+<script>
+    function redirectToAboutUs(url, vendor_id) {
+    	var mapForm = document.createElement("form");
+    	mapForm.method = "POST";
+    	mapForm.action = url;
+
+    	var mapInput = document.createElement("input");
+    	mapInput.type = "hidden";
+    	mapInput.name = "vendor_id";
+    	mapInput.value = vendor_id;
+    	mapForm.appendChild(mapInput);
+
+    	document.body.appendChild(mapForm);
+    	map = window.open(url, "_self");
+    	if (map) {
+            mapForm.submit();
+    	}
+    }
+</script>
