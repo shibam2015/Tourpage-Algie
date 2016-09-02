@@ -347,7 +347,7 @@ class Elements extends Component {
             'reset_store' => array(
                 'title' => 'Store Setting',
                 'title before' => '<i class="fa fa-shopping-cart"></i> ',
-                'link' => '/account/store',
+                'link' => '/account/storesetting',
                 'controller' => 'account',
                 'action' => 'store',
             ),
