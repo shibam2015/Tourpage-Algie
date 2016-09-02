@@ -62,7 +62,8 @@
                 <?php } ?>
                     </td>
                     <td><?php echo $vendor->firstName . ' ' . $vendor->lastName; ?></td>
-                    <td><?php echo $this->tag->linkTo(array($vendor->getStorFrontUri(), $vendor->businessName, 'local' => false)); ?></td>
+                    <!--<td><?php #echo $this->tag->linkTo(array($vendor->getStorFrontUri(), $vendor->businessName, 'local' => false)); ?></td>-->
+                    <td><a href="javascript:redirectToPage('<?php echo "/". strtolower((preg_replace('/[\s_]/', '', $vendor->businessName)))."/store"; ?>', '<?php echo $vendor->vendorId; ?>')"><?php echo $vendor->businessName; ?></a></td>
                     <td>
                         <?php if ($vendor->city !="") { ?>
                         <?php echo $vendor->city . ', '; }?><?php if ($vendor->state !="") { echo $vendor->state->name . ', ';}?><?php if ($vendor->country !="") { echo $vendor->country->name; }?>
@@ -97,9 +98,15 @@
                         <br /><span style="font-size: 12px;"><?php echo $vendorTour->tour->tourSubTitle; ?></span>
                         <br /><span style="font-size: 12px;">Price type: <?php echo $vendorTour->tour->tourPrice->data->priceTypeText; ?></span>
                     </td>
+                    <!--
                     <td style="vertical-align:middle">
-                    <?php echo $this->tag->linkTo(array($vendorTour->vendor->getStorFrontUri(), $vendorTour->vendor->businessName, 'local' => false)); ?>
-                        <br /><span style="font-size: 12px;">Operator: <?php echo $vendorTour->vendor->firstName . ' ' . $vendorTour->vendor->lastName; ?></span>
+                    <?php #echo $this->tag->linkTo(array($vendorTour->vendor->getStorFrontUri(), $vendorTour->vendor->businessName, 'local' => false)); ?>
+                        <br /><span style="font-size: 12px;">Operator: <?php #echo $vendorTour->vendor->firstName . ' ' . $vendorTour->vendor->lastName; ?></span>
+                    </td>-->
+                    <td style="vertical-align:middle">
+                        <a href="javascript:redirectToPage('<?php echo "/". strtolower((preg_replace('/[\s_]/', '', $vendorTour->vendor->businessName)))."/store"; ?>', '<?php echo $vendorTour->vendor->vendorId; ?>')"><?php echo $vendorTour->vendor->businessName; ?></a>
+                        <br />
+                        <span style="font-size: 12px;">Operator: <?php echo $vendorTour->vendor->firstName . ' ' . $vendorTour->vendor->lastName; ?></span>
                     </td>
                     <td style="vertical-align:middle"><?php echo $vendorTour->tour->tourDuration->lengthTypeText; ?></td>
                     <td style="vertical-align:middle"><?php echo \Tourpage\Helpers\Utils::formatCurrency($vendorTour->tour->tourPrice->getPrice()); ?></td>
@@ -137,3 +144,22 @@
         margin-top: 30px;
     }
 </style>
+<script>
+    function redirectToPage(url, vendor_id) {
+    	var mapForm = document.createElement("form");
+    	mapForm.method = "POST";
+    	mapForm.action = url;
+
+    	var mapInput = document.createElement("input");
+    	mapInput.type = "hidden";
+    	mapInput.name = "vendor_id";
+    	mapInput.value = vendor_id;
+    	mapForm.appendChild(mapInput);
+
+    	document.body.appendChild(mapForm);
+    	map = window.open(url, "_self");
+    	if (map) {
+            mapForm.submit();
+    	}
+    }
+</script>
