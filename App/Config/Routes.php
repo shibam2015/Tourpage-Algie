@@ -70,6 +70,14 @@ foreach (array('frontend', 'vendor', 'backend','supplier') as $modules) {
     $i++;
 }
 
+// about us route
+$router->add('/about-us/:params', array(
+    'module' => 'frontend',
+    'controller' => 'store',
+    'action' => 'aboutus',
+    'params' => 1
+));
+
 $router->add('/admin/settings/([a-z]+)/:controller/:action/:params', array(
     'namespace' => 'Multiple\Backend\Controllers\Settings',
     'module' => 'backend',
