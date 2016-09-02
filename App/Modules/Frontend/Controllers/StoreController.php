@@ -35,7 +35,9 @@ class StoreController extends FrontendController {
             return FALSE;
         }
 
-        if (!preg_match_all('/[0-9]/', $store)) {
+		if (isset($this->request->getPost()['vendor_id'])) {
+			$store = $this->request->getPost()['vendor_id'];
+		} else if (!preg_match_all('/[0-9]/', $store)) {
             return FALSE;
         }
         $storeVendor = \Tourpage\Models\Vendors::findFirst($store);
@@ -144,7 +146,9 @@ class StoreController extends FrontendController {
             return FALSE;
         }
 
-        if (!preg_match_all('/[0-9]/', $store)) {
+        if (isset($this->request->getPost()['vendor_id'])) {
+			$store = $this->request->getPost()['vendor_id'];
+		} else if (!preg_match_all('/[0-9]/', $store)) {
             return FALSE;
         }
         if (!preg_match_all('/[0-9]+/', $page, $matches)) {
@@ -565,7 +569,9 @@ public function contactsAction($store = '', $content = '') {
             return FALSE;
         }
 
-        if (!preg_match_all('/[0-9]/', $store)) {
+        if (isset($this->request->getPost()['vendor_id'])) {
+			$store = $this->request->getPost()['vendor_id'];
+		} else if (!preg_match_all('/[0-9]/', $store)) {
             return FALSE;
         }
         $storeVendor = \Tourpage\Models\Vendors::findFirst($store);
