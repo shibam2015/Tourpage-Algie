@@ -135,7 +135,7 @@ class AccountController extends VendorController {
     /**
      * Action for modify store details
      */
-    public function storeAction() {
+    public function storesettingAction() {
         $this->tag->setTitle('Store Setting');
         $vendorId = !$this->vendors->getVendorData()->isParent() ? $this->vendors->getVendorData()->parentId : $this->vendors->getId();
         $vendor = \Tourpage\Models\Vendors::findFirst($vendorId);
