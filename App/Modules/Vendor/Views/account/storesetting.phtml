@@ -111,7 +111,8 @@
                 <div class="col-sm-12" id="dvPassport" style="display: none"><br>
                     <?php $form->renderHorizental('store_advance_about_us'); ?>
                 </div>
-                
+                <!-- this is a hidden about us status -->
+				<input type="hidden" class="aboutus-status" name="adv_setting" value="2">
                 <!-- ////////for advance setting in about us page end////-->
                
                 <div class="col-sm-12"><br>
@@ -188,6 +189,11 @@
     
     if(document.getElementById("chkPassport").checked == true){
       dvPassport.style.display =  "block";
-        dvPassportMain.style.display = "none";  
-    }
+        dvPassportMain.style.display = "none";
+		//make the status value to 2
+		$(".aboutus-status").val(2);
+    } else {
+		//make the status value to 1
+		$(".aboutus-status").val(1);
+	}
 </script>
