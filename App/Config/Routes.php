@@ -73,7 +73,7 @@ foreach (array('frontend', 'vendor', 'backend','supplier') as $modules) {
 
 // ----------------- storefront route begin  -------------------------
 // about us route
-$router->add('/:params/about-us', array(
+$router->add('/:params/aboutus', array(
     'module' => 'frontend',
     'controller' => 'store',
     'action' => 'aboutus',
@@ -90,11 +90,18 @@ $router->add('/:params/store', array(
 
 // out tours
 // store us route
-$router->add('/:params/our-tours', array(
+$router->add('/:params/ourtours', array(
     'module' => 'frontend',
     'controller' => 'store',
     'action' => 'tours',
     'params' => 1
+));
+
+//our tour details
+$router->add('/([a-z0-9_-]+){2}/ourtours/([a-z0-9_-]+)', array(
+    'module' => 'frontend',
+    'controller' => 'tour',
+    'action' => 'index',
 ));
 
 // contacts route
