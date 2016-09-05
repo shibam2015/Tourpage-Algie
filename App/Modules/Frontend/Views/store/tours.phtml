@@ -246,7 +246,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a href="<?php echo $groupTour->tour->getUri(); ?>" class="btn-lg btn-block btn-book-tour">Book Now</a>
+                                            <!--<a href="<?php #echo $groupTour->tour->getUri(); ?>" class="btn-lg btn-block btn-book-tour">Book Now</a>-->
+											<a href="javascript:redirectToPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$groupTour->tour->tourSlug; ?>', '<?php echo $groupTour->tourId; ?>')" class="btn-lg btn-block btn-book-tour">Book Now</a>
                                         </div>
                                         <div class="clearfix"></div>
                                     </div>
