@@ -7,8 +7,29 @@ jQuery(function () {
      * with elements having class "tooltips"
      */
     jQuery('.tooltips').tooltip();
+    redirectToStoreFront('#storefront-link');
 });
 
+function redirectToStoreFront(element) {
+    $(element).click(function() {
+	var link = $(this).attr('link');
+	var vendor_id = $(this).attr('vendor');
+	var mapForm = document.createElement("form");
+    	mapForm.method = "POST";
+    	mapForm.action = link;
+	mapForm.target= 'map-'+link+vendor_id;
+    	var mapInput = document.createElement("input");
+    	mapInput.type = "hidden";
+    	mapInput.name = "vendor_id";
+    	mapInput.value = vendor_id;
+    	mapForm.appendChild(mapInput);
+    	document.body.appendChild(mapForm);
+    	map = window.open("", "map-"+link+vendor_id);
+    	if (map) {
+            mapForm.submit();
+    	}
+    });
+}
 /**
  * Clock
  */
