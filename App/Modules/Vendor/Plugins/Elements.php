@@ -252,7 +252,7 @@ class Elements extends Component {
         $activeController = $this->view->getControllerName();
         $activeAction = $this->view->getActionName();
         $menuHtml .= '<ul class="' . ($ulCssClass != '' ? $ulCssClass : 'nav navbar-nav') . '">';
-        foreach ($mainMenu as $menu) {
+        foreach ($mainMenu as $key => $menu) {
             if ($this->vendors->isAllowed($menu['controller'], $menu['action'])) {
                 $cssClassList = $cssClassLink = $attributesLink = array();
                 $cssClassLink[] = 'menu-' . $menu['action'];
@@ -279,9 +279,14 @@ class Elements extends Component {
                 if (isset($menu['outer'])) {
                     $attributesLink['local'] = FALSE;
                 }
+        
                 $menuHtml .= '<li' . (count($cssClassList) > 0 ? ' class="' . implode($cssClassList, ' ') . '"' : '') . '>';
                 if (isset($menu['title']) && $menu['title'] != '') {
-                    $menuHtml .= $this->tag->linkTo(array((isset($menu['link']) ? (isset($menu['outer']) && $menu['outer'] ? '' : '/vendor') . $menu['link'] : '#'), $menu['title'], 'class' => implode($cssClassLink, ' ')) + $attributesLink);
+                    if ($key == 'store_front') {
+                        $menuHtml .= "<a href='#' id='storefront-link' vendor='" . $menu['vendor_id'] . "' link='" . $menu['url_link'] . "'>" . $menu['title'] . '</a>';
+                    } else {
+                        $menuHtml .= $this->tag->linkTo(array((isset($menu['link']) ? (isset($menu['outer']) && $menu['outer'] ? '' : '/vendor') . $menu['link'] : '#'), $menu['title'], 'class' => implode($cssClassLink, ' ')) + $attributesLink);
+                    }
                     if (isset($menu['child']) && count($menu['child']) > 0) {
                         $this->getMenuRecursion($menu['child'], 'dropdown-menu');
                     }
@@ -301,6 +306,8 @@ class Elements extends Component {
         if (isset($this->mainMenuRight['user']['child'])) {
             if (isset($this->mainMenuRight['user']['child']['store_front'])) {
                 $this->mainMenuRight['user']['child']['store_front']['link'] = $this->vendors->getVendorData()->getStorFrontUri();
+                $this->mainMenuRight['user']['child']['store_front']['url_link'] = "/". strtolower((preg_replace('/[\s_]/', '', $this->vendors->getVendorData()->businessName)))."/store";
+                $this->mainMenuRight['user']['child']['store_front']['vendor_id'] = $this->vendors->getVendorData()->vendorId;
             }
         }
         $this->getMenuRecursion($this->mainMenuRight, 'nav navbar-nav navbar-right');
