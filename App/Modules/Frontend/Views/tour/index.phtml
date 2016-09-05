@@ -315,7 +315,8 @@
                                 <div class="sujjest-tour">
                     	<div class="sujjest-img"><img src="<?php echo $fromCategory->tour->getDefaultImage() ? $fromCategory->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" class="scale" data-scale="best-fill" data-align="center" ></div>
                         <div class="sujjest-content">
-                        	<?php echo $this->tag->linkTo(array($fromCategory->tour->getUri(), '<h4>'.$fromCategory->tour->tourTitle.'</h4>', 'local' => false)); ?>
+                        	<?php #echo $this->tag->linkTo(array($fromCategory->tour->getUri(), '<h4>'.$fromCategory->tour->tourTitle.'</h4>', 'local' => false)); ?>
+							<a href="javascript:redirectToTourDetailsPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$fromCategory->tour->tourSlug; ?>', '<?php echo $fromCategory->tour->tourId; ?>', 'tour_id');"><h4><?php echo $fromCategory->tour->tourTitle; ?></h4></a>
                             <div class="star">
                             	<i class="fa fa-star"></i>
                             	<i class="fa fa-star"></i>
@@ -324,7 +325,8 @@
                             	<i class="fa fa-star"></i>
                                 <span>(156)</span>
                             </div>
-                            <?php echo $this->tag->linkTo(array($fromCategory->tour->tourVendor->vendor->getStorFrontUri(), '<p>By'.$fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName.'</p>', 'local' => false)); ?>
+                            <?php #echo $this->tag->linkTo(array($fromCategory->tour->tourVendor->vendor->getStorFrontUri(), '<p>By'.$fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName.'</p>', 'local' => false)); ?>
+							<a href="javascript:redirectToTourDetailsPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/store"; ?>', '<?php echo $storeVendor->vendorId; ?>', 'vendor_id');"><?php echo '<p>By'.$fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName.'</p>'; ?></a>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -910,4 +912,23 @@ switch ($tour->tourDuration->lengthType) {
   CKEDITOR.replace('rrtext', {
   "height": 150
   }); */ ?>
+</script>
+<script>
+    function redirectToTourDetailsPage(url, id, id_type) {
+    	var mapForm = document.createElement("form");
+    	mapForm.method = "POST";
+    	mapForm.action = url;
+
+    	var mapInput = document.createElement("input");
+    	mapInput.type = "hidden";
+    	mapInput.name = id_type;
+    	mapInput.value = id;
+    	mapForm.appendChild(mapInput);
+
+    	document.body.appendChild(mapForm);
+    	map = window.open(url, "_self");
+    	if (map) {
+            mapForm.submit();
+    	}
+    }
 </script>
