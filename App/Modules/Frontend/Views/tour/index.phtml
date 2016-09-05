@@ -134,6 +134,7 @@
 			<p class="clearboth"></p>
 			<form id="tour_booking_form" method="post" class="book-form">
 				<input type="hidden" name="form_action" value="booking">
+				<input type="hidden" name="tour_id" value="<?php echo $tour->tourId; ?>">
 					<?php if (isset($tour->tourDuration->totalDays)) { ?>
 						<p>(for <?php echo $tour->tourDuration->totalDays; ?>days <?php echo ($tour->tourDuration->totalDays - 1); ?>nights)</p>
 					<?php } ?>
