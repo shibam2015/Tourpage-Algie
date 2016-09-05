@@ -44,7 +44,9 @@ class TourController extends FrontendController {
           return FALSE;
           } */
 
-        if ($tourId == '') {
+        if (isset($this->request->getPost()['tour_id'])) {
+			$tourId = $this->request->getPost()['tour_id'];
+		} else if ($tourId == '') {
             return FALSE;
         }
 
