@@ -136,11 +136,13 @@
                                         <div class="sale-<?php echo $groupTour->groupId; ?>" style="position:absolute;top:15px;left:4px;height: 25px;width: 92px;padding-top:8px;padding-left: 30px;color:#ffffff;font-size: 10px;font-weight: bold;">&nbsp;
                                         </div>
                                         <?php } ?>
-                                    <a href="<?php echo $groupTour->tour->getUri(); ?>"><img src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>
+                                    <!--<a href="<?php #echo $groupTour->tour->getUri(); ?>"><img src="<?php #echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>-->
+									   <a href="javascript:redirectToPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$groupTour->tour->tourSlug; ?>', '<?php echo $groupTour->tourId; ?>')"><img src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>
                                 </div>
                                 <div class="col-md-7">
                                     <section class="content-header">
-                                        <h1><a href="<?php echo $groupTour->tour->getUri(); ?>"><?php echo $groupTour->tour->tourTitle; ?></a></h1>
+                                        <!--<h1><a href="<?php #echo $groupTour->tour->getUri(); ?>"><?php #echo $groupTour->tour->tourTitle; ?></a></h1>-->
+										<h1><a href="javascript:redirectToPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$groupTour->tour->tourSlug; ?>', '<?php echo $groupTour->tourId; ?>')"><?php echo $groupTour->tour->tourTitle; ?></a></h1>
                                         <ul class="review">
                                             <li class="text-yellow">
                                                 <div id="star-rate-grid-<?php echo $groupTour->tour->tourId; ?>"></div>
@@ -632,6 +634,24 @@ $(document).ready(function(){
     
     .h60 {font-size: 50px;margin-left: 35%;}
 </style>
+<script>
+    function redirectToPage(url, tour_id) {
+    	var mapForm = document.createElement("form");
+    	mapForm.method = "POST";
+    	mapForm.action = url;
 
+    	var mapInput = document.createElement("input");
+    	mapInput.type = "hidden";
+    	mapInput.name = "tour_id";
+    	mapInput.value = tour_id;
+    	mapForm.appendChild(mapInput);
+
+    	document.body.appendChild(mapForm);
+    	map = window.open(url, "_self");
+    	if (map) {
+            mapForm.submit();
+    	}
+    }
+</script>
 
 
