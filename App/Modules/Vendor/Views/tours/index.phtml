@@ -108,7 +108,10 @@
                                 </td>
                                 <td>
                                     <?php if ($this->vendors->isAllowed('tours', 'edit')) { ?>
-                                        <?php echo $this->tag->linkTo(array('/vendor/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
+									<!--- check if the tours is close then we allow editting the tour -->
+										<?php if($bookingCode!=3 && $bookingCode!=1){ ?>
+											<?php echo $this->tag->linkTo(array('/vendor/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
+										<?php } ?>
                                     <?php } ?>
                                     <?php if ($this->vendors->isAllowed('tours', 'remove')) { ?>
                                         <?php echo $this->tag->linkTo(array('/vendor/tours/remove/' . $item->tourId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour')); ?>
