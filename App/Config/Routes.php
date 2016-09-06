@@ -105,11 +105,10 @@ $router->add('/([a-z0-9_-]+){2}/ourtours/([a-z0-9_-]+)', array(
 ));
 
 // contacts route
-$router->add('/:params/contacts', array(
+$router->add('/([a-z0-9_-]+){2}/contacts', array(
     'module' => 'frontend',
     'controller' => 'store',
-    'action' => 'contacts',
-    'params' => 1
+    'action' => 'contacts'
 ));
 // ---------------- storefront route end -----------------------------
 
