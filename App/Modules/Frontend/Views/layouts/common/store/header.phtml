@@ -236,6 +236,12 @@
     	mapInput.name = "vendor_id";
     	mapInput.value = vendor_id;
     	mapForm.appendChild(mapInput);
+		
+		var mapInput2 = document.createElement("input");
+    	mapInput2.type = "hidden";
+    	mapInput2.name = "from_prev_page";
+    	mapInput2.value = "true";
+    	mapForm.appendChild(mapInput2);
 
     	document.body.appendChild(mapForm);
     	map = window.open(url, "_self");
