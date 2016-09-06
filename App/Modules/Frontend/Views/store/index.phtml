@@ -201,11 +201,12 @@ heart" aria-hidden="true"></i></div>
                                         <div class="sale-<?php echo $groupTour->groupId; ?>" style="position:absolute;top:15px;left:4px;height: 25px;width:92px;padding-top:8px;padding-left: 30px;color:#ffffff;font-size:10px;font-weight: bold;">&nbsp;
                                         </div>
                                         <?php } ?>
-                                    <a href="<?php echo $groupTour->tour->getUri(); ?>"><img src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>
+                                    <!--<a href="<?php #echo $groupTour->tour->getUri(); ?>"><img src="<?php #echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>-->
+									<a href="javascript:redirectToSpecificPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$groupTour->tour->tourSlug; ?>', '<?php echo $groupTour->tourId; ?>', 'tour_id')"><img src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" width="253" height="225"/></a>
                                 </div>
                                 <div class="col-md-7">
                                     <section class="content-header">
-                                        <h1><a href="<?php echo $groupTour->tour->getUri(); ?>"><?php echo $groupTour->tour->tourTitle;?></a></h1>
+                                        <h1><a href="javascript:redirectToSpecificPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$groupTour->tour->tourSlug; ?>', '<?php echo $groupTour->tourId; ?>', 'tour_id')"><?php echo $groupTour->tour->tourTitle;?></a></h1>
                                         <ul class="review">
                                             <li class="text-yellow">
                                                 <div id="star-rate-grid-<?php echo $groupTour->tour->tourId; ?>"></div>
@@ -313,7 +314,8 @@ else{ echo '';}*/?></strong>, Duration: <strong>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a href="<?php echo $groupTour->tour->getUri(); ?>" class="btn-lg btn-block btn-book-tour">Book Now</a>
+                                            <!--<a href="<?php #echo $groupTour->tour->getUri(); ?>" class="btn-lg btn-block btn-book-tour">Book Now</a>-->
+											<a href="javascript:redirectToSpecificPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$groupTour->tour->tourSlug; ?>', '<?php echo $groupTour->tourId; ?>', 'tour_id')" class="btn-lg btn-block btn-book-tour">Book Now</a>
                                         </div>
                                         <div class="clearfix"></div>
                                     </div>
@@ -407,13 +409,13 @@ else{ echo '';}*/?></strong>, Duration: <strong>
 
                                     <div class="tour-similar-box clearfix" style="background:transparent;margin-top: 5px;margin-bottom: 5px;border: solid 1px #ccc;padding: 10px;">
                                         <div class="col-sm-6">
-                                            <a href="<?php echo $fromCategory->tour->getUri(); ?>">
+                                            <a href="javascript:redirectToSpecificPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$fromCategory->tour->tourSlug; ?>', '<?php echo $fromCategory->tour->tourId; ?>', 'tour_id')">
                                                 <img src="<?php echo $fromCategory->tour->getDefaultImage() ? $fromCategory->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" style="width:160px;height:100px"/>
                                             </a>
                                         </div>
                                         <div class="col-sm-6">
                                             <ol>
-                                                <li class="tit"><a href="<?php echo $fromCategory->tour->getUri(); ?>">
+                                                <li class="tit"><a href="javascript:redirectToSpecificPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$fromCategory->tour->tourSlug; ?>', '<?php echo $fromCategory->tour->tourId; ?>', 'tour_id')">
                                                         <?php //echo $fromCategory->tour->tourTitle; ?>
                                                         <?php
                                                             $tourTitle = $fromCategory->tour->tourTitle;
@@ -435,7 +437,7 @@ else{ echo '';}*/?></strong>, Duration: <strong>
                                                         </li> 
                                                     </ul><?php */?>
                                                 </li>
-                                                <li class="ven">By <a href="<?php echo $fromCategory->tour->tourVendor->vendor->getStorFrontUri(); ?>"><?php echo $fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName; ?></a></li>            
+                                                <li class="ven">By <a href="javascript:redirectToSpecificPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/store"; ?>', '<?php echo $storeVendor->vendorId; ?>', 'vendor_id');"><?php echo $fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName; ?></a></li>            
                                             </ol>       
                                             <ul class="review">
                                                 <li class="text-yellow">
@@ -687,3 +689,22 @@ $(document).ready(function(){
     
     .h60 {font-size: 50px;margin-left: 35%;}
 </style>
+<script>
+    function redirectToSpecificPage(url, id, type) {
+    	var mapForm = document.createElement("form");
+    	mapForm.method = "POST";
+    	mapForm.action = url;
+
+    	var mapInput = document.createElement("input");
+    	mapInput.type = "hidden";
+    	mapInput.name = type;
+    	mapInput.value = id;
+    	mapForm.appendChild(mapInput);
+
+    	document.body.appendChild(mapForm);
+    	map = window.open(url, "_self");
+    	if (map) {
+            mapForm.submit();
+    	}
+    }
+</script>
