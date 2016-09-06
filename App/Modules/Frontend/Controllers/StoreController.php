@@ -565,7 +565,7 @@ class StoreController extends FrontendController {
 
 
 public function contactsAction($store = '', $content = '') {
-        if (!$store) {
+        if (!$store && !isset($this->request->getPost()['vendor_id'])) {
             return FALSE;
         }
 
@@ -591,8 +591,8 @@ public function contactsAction($store = '', $content = '') {
           $this->tag->settitle('Store Contacts'); 
           //$contactForm = new \Multiple\Frontend\Forms\ContactForm();
            $form = new \Multiple\Frontend\Forms\ContactForm();
-           
-           if ($this->request->isPost()) {
+           // added isset($this->request->getPost()['from_prev_page'] if its id is generated from the other page
+           if ($this->request->isPost() && !isset($this->request->getPost()['from_prev_page'])) {
            // if ($form->isValid($this->request->getPost())) {
              //$vendor = \Tourpage\Models\Vendors();
                // $vendorId = $this->vendors->getId();
