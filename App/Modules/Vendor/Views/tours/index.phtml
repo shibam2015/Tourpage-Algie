@@ -109,7 +109,7 @@
                                 <td>
                                     <?php if ($this->vendors->isAllowed('tours', 'edit')) { ?>
 									<!--- check if the tours is close then we allow editting the tour -->
-										<?php if($bookingCode!=3 && $bookingCode!=1 && $item->tour->tourCapacity <= 0){ ?>
+										<?php if(($bookingCode!=3 && $bookingCode!=1) || !isset($bookingInfo['bookedCount'][$item->tour->tourId])){ ?>
 											<?php echo $this->tag->linkTo(array('/vendor/tours/edit/' . $item->tourId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Tour')); ?>
 										<?php } ?>
                                     <?php } ?>
