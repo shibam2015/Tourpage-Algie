@@ -107,7 +107,26 @@ class ToursController extends VendorController {
             "page" => $page,
         ));
         $this->view->defaultValues = $defaultValues;
+        $this->view->bookingInfo = $this->getBookingInfo($vendorId);
         $this->view->pager = $pager;
+    }
+    
+    private function getBookingInfo($vendorId)
+    {
+        $info = [];
+        $bookings = \Tourpage\Models\BookingTours::query();
+        $bookings->where("\Tourpage\Models\BookingTours.vendorId = :vendorId:");
+        $modelBind['vendorId'] = $vendorId;
+        $bookings->bind($modelBind);
+        $bookings->order("\Tourpage\Models\BookingTours.bookingId DESC");
+        $bookings->groupBy("\Tourpage\Models\BookingTours.bookingId");
+        $bookingsData = $bookings->execute();
+        foreach ($bookingsData as $item) {
+            $info['bookedCount'][$item->tourId] = $item->headCount;
+            //$booking = \Tourpage\Models\Booking::findFirst($item->bookingId);
+            //$info['bookingStatus'][$item->tourId] = $booking->bookingStatus;
+        }
+        return $info;
     }
 
     /**
