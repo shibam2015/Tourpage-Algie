@@ -244,7 +244,10 @@ class PaymentController extends FrontendController {
             $booking->memberId = $this->member->getId();
             if ($this->member->getResource()->isAgent()) {
                 $booking->agentId = $this->member->getId();
-            }
+            } else {
+                // set to default 0 if agent is false
+                $booking->agentId = 0;
+            } 
             $booking->bookingAmount = $this->cart->totalAmount;
             $booking->bookedOn = \Tourpage\Helpers\Utils::currentDate();
             $booking->bookingStatus = \Tourpage\Models\Booking::COMPLETE_STATUS_CODE;
