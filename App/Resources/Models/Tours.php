@@ -60,6 +60,22 @@ class Tours extends ApplicationModel {
     public $sm;
 
     /**
+     *setter
+     */
+    public function setSocialMedia($socialMedia)
+    {
+        $this->socialMedia = $socialMedia;
+    }
+    
+    /*
+     * setter
+     */
+    public function setTourLengthData($tourLengthData)
+    {
+        $this->tourLengthData = $tourLengthData;
+    }
+    
+    /**
      * Initializing Model Tours
      */
     public function initialize() {
