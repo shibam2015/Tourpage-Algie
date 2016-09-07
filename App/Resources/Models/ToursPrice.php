@@ -50,6 +50,14 @@ class ToursPrice extends ApplicationModel {
     private $offerData = null;
 
     /**
+     * priceData setter
+     */
+    public function setPriceData($priceData)
+    {
+        $this->priceData = $priceData;
+    }
+    
+    /**
      * Initializing Model Products Price
      */
     public function initialize() {
