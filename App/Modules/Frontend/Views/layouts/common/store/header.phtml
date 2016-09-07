@@ -3,7 +3,7 @@
         
                     <div class="col-sm-3">
                     <div class="logo">
-                        <a href="<?php echo $storeVendor->getStorFrontUri(); ?>">
+                        <a href="javascript:redirectToPage('<?php echo "/". strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/store"; ?>', '<?php echo $storeVendor->vendorId; ?>')">
                                 <?php if ($storeVendor->getLogoUri()) { ?>
                                     <img src="<?php echo $storeVendor->getLogoUri(); ?>" alt="<?php echo $storeVendor->businessName; ?>" title="<?php echo $storeVendor->businessName; ?>"/>
                                     <?php } else { ?>
