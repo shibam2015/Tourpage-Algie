@@ -211,14 +211,14 @@
                                                     <label for="tour_age_group_<?php echo $groupKey;?>_price">Price</label>
                                                     <div id="input_group_<?php echo $groupKey;?>_price" class="input-group">
                                                         <span class="input-group-addon">$</span>
-                                                        <input<?php echo $disable ? ' disabled="disabled"' : '';?> type="text" placeholder="0.00" class="form-control" name="tour_age_group[<?php echo $groupKey;?>][price]" id="tour_age_group_<?php echo $groupKey;?>_price" value="<?php echo isset($tour_age_group[$groupKey]['price']) ? $tour_age_group[$groupKey]['price'] : ''; ?>">
+                                                        <input<?php echo $disable ? ' disabled="disabled"' : '';?> type="text" placeholder="0.00" class="form-control" name="tour_age_group[<?php echo $groupKey;?>][price]" id="tour_age_group_<?php echo $groupKey;?>_price" value="<?php echo isset($tour_age_group[$groupKey]['price']) ? $tour_age_group[$groupKey]['price'] : ''; ?>" required="required">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-xs-3 no-pad-right">
                                                 <div class="form-group">
                                                     <label for="tour_age_group_<?php echo $groupKey;?>_age">Age</label>
-                                                    <input<?php echo $disable ? ' disabled="disabled"' : '';?> type="text" class="form-control" name="tour_age_group[<?php echo $groupKey;?>][age]" id="tour_age_group_<?php echo $groupKey;?>_age" value="<?php echo isset($tour_age_group[$groupKey]['age']) ? $tour_age_group[$groupKey]['age'] : ''; ?>" placeholder="ex. 50">
+                                                    <input<?php echo $disable ? ' disabled="disabled"' : '';?> type="text" class="form-control" name="tour_age_group[<?php echo $groupKey;?>][age]" id="tour_age_group_<?php echo $groupKey;?>_age" value="<?php echo isset($tour_age_group[$groupKey]['age']) ? $tour_age_group[$groupKey]['age'] : ''; ?>" placeholder="ex. 50" required="required">
                                                 </div>
                                             </div>
                                             <div class="col-xs-3 no-pad-right">
@@ -1484,10 +1484,15 @@ if ($this->request->hasPost('tour_seasonal_offer')) {
             document.getElementById("tour_age_group_" + groupKey + "_price").disabled = false;
             document.getElementById("tour_age_group_" + groupKey + "_age").disabled = false;
             document.getElementById("tour_age_group_" + groupKey + "_age_type").disabled = false;
+			// add required attribute
+            $("#tour_age_group_" + groupKey + "_price").attr("required", "required");
+            $("#tour_age_group_" + groupKey + "_age").attr("required", "required");
         } else {
             document.getElementById("tour_age_group_" + groupKey + "_price").disabled = true;
             document.getElementById("tour_age_group_" + groupKey + "_age").disabled = true;
             document.getElementById("tour_age_group_" + groupKey + "_age_type").disabled = true;
+			$("#tour_age_group_" + groupKey + "_price").removeAttr("required");
+            $("#tour_age_group_" + groupKey + "_age").removeAttr("required");
         }
     }
     jQuery(function () {
