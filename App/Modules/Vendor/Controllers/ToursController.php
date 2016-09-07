@@ -468,13 +468,13 @@ class ToursController extends VendorController {
                     //$tour->tourTitle = $this->request->getPost('tour_title', "string");
                     //$tour->tourSlug = \Tourpage\Helpers\Utils::slug($tour->tourTitle);
                     //$tour->tourSubTitle = $this->request->getPost('tour_sub_title', "string");
-                    //$tour->tourBookingStatus = $this->request->getPost('tour_booking_status', "int");
+                    $tour->tourBookingStatus = $this->request->getPost('tour_booking_status', "int");
                     $tour->tourCapacity = $tourCapacity;
                     $tour->tourKeyword = \Tourpage\Helpers\Utils::encodeString($this->request->getPost('tour_keyword'));
                     $tour->tourPolicy = \Tourpage\Helpers\Utils::encodeString($this->request->getPost('tour_policy'));
-                    //$tour->tourStartFrom = \Tourpage\Helpers\Utils::formatDatepickerToMySql($this->request->getPost('tour_start_date'));
-                    //$tour->tourEndTo = \Tourpage\Helpers\Utils::formatDatepickerToMySql($this->request->getPost('tour_end_date'));
-                    //$tour->tourLengthData = serialize($lengthData);
+                    $tour->tourStartFrom = \Tourpage\Helpers\Utils::formatDatepickerToMySql($this->request->getPost('tour_start_date'));
+                    $tour->tourEndTo = \Tourpage\Helpers\Utils::formatDatepickerToMySql($this->request->getPost('tour_end_date'));
+                    $tour->tourLengthData = serialize($lengthData);
                     $tour->socialMedia = serialize($socialMedia);
                     //$tour->tourCountryId = $this->request->getPost('tour_country', "int");
                     //$tour->tourStateId = $this->request->getPost('tour_state', "int");
