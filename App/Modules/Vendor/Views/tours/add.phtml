@@ -941,7 +941,8 @@
         file.previewElement.querySelector(".progress-bar").innerHTML = progress + "(%)";
     });
     TourImage.on("success", function (file, response) {
-        var r = jQuery.parseJSON(response);
+		if (typeof response === 'object') var r = response;
+		else var r = jQuery.parseJSON(response);
         file.previewElement.querySelector(".image_name").value = r.file.name;
         file.previewElement.querySelector(".image_path").value = r.file.upload_path;
         setTimeout(function () {
@@ -1499,7 +1500,8 @@ if ($this->request->hasPost('tour_seasonal_offer')) {
             var url = "<?php echo $this->url->get('/ajax/renderstate/'); ?>";
             var stateElement = jQuery("#tour_state");
             jQuery.get(url + countryId, function (data) {
-                var response = jQuery.parseJSON(data);
+                if (typeof data == 'object') var response = data;
+				else var response = jQuery.parseJSON(data);
                 if (typeof response.states != 'undefined' && response.states.length > 0) {
                     stateElement.html("<option value=''>Please choose one...</option>");
                     for (var s in response.states) {
