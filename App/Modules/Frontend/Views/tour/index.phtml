@@ -697,7 +697,10 @@ switch ($tour->tourDuration->lengthType) {
                                 jQuery('#jstd').val(std.toLocaleDateString("en-US"));
                                 jQuery('#jedd').val(edd.toLocaleDateString("en-US"));
                             } else {
-                                alert('Booking not available on ' + dateText);
+				// set the value to blank
+				jQuery('#jstd').val('');
+                                jQuery('#jedd').val('');
+                                alert('Booking not available on ' + dateText + '. Selected date is out of tour duration. Please select the other date.');
                             }
                             <?php
                             break;
