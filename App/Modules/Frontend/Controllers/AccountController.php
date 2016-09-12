@@ -409,12 +409,56 @@ class AccountController extends FrontendController {
             "data" => $memberReviews->execute(),
             "page" => $page,
         ));
+        // galleries images
+        $gallerries = \Tourpage\Models\ToursReviewGallery::query();
+        $galleryData = $this->getGalleries($gallerries->execute());
+        
         $pager->setUriPattern('/account/reviews/' . $type . '/{page}');
         $this->assets->collection('header_css')->addCss(FRONT_END_DIR . 'css/jquery.rateyo.min.css');
         $this->assets->collection('header_js')->addJs(FRONT_END_DIR . 'js/jquery.rateyo.min.js');
         $this->tag->setTitle('Reviews');
         $this->view->reviewType = $type;
         $this->view->pager = $pager;
+        $this->view->gallery = $galleryData;
+    }
+    
+    private function getGalleries($result)
+    {
+        $url = $this->request->getServer('HTTP_POST');
+        $data = [];
+        foreach($result as $item) {
+            $data[(int)$item->reviewId]['image'][] = $url . $item->imagePath;
+            $data[(int)$item->reviewId]['thumb'][] = $url . $item->imageThumb;
+        }
+        return $data;
+    }
+    
+    public function galleryAction()
+    {
+        $images = $this->request->getPost('galleries');
+        $reviewId = $this->request->getPost('galleries')['reviewId'];
+        $tourId = $this->request->getPost('galleries')['tourId'];
+        $publicDirectory = '/public/elements/uploads/tours_gallery/';
+        $baseLocation = $this->getDi()->getUrl()->getBasePath() . $publicDirectory;
+        foreach ($images['name'] as $fileIndex => $fileName) {
+            $gallery = new \Tourpage\Models\ToursReviewGallery();
+            $gallery->reviewId = $reviewId;
+            $gallery->tourId = $tourId;
+            $gallery->imagePath = $publicDirectory . $fileName;
+            $gallery->imageThumb = $publicDirectory . 'thumb' . $fileName;
+            $gallery->dateUploaded = \Tourpage\Helpers\Utils::currentDate();
+            if ($gallery->save()) {
+                //save to gallery directory
+                $imageFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . $fileName);
+                $imageFile->save($baseLocation . $fileName);
+                $thumbFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+                $thumbFile->save($baseLocation . 'thumb' . $fileName);
+                unlink($images['path'][$fileIndex] . '/' . $fileName);
+                unlink($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+            }
+        }
+        $this->flash->success('Images successfully uploaded.');
+        $this->response->redirect('/account/reviews/pending');
     }
 
     public function offersAction() {
