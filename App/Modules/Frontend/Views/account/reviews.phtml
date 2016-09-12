@@ -1,3 +1,10 @@
+<?php echo $this->tag->stylesheetLink($this->url->getStatic(COMMON_DIR . "css/dropzone.css")); ?>
+<!-- REMOVE DROPZONE BORDER -->
+<style>
+	.dropzone {
+		border: none !important;
+	}
+</style>
 <?php $this->partial('account/common/reviews_sidebar'); ?>
 <div class="layout contents">
     <h2>
@@ -67,6 +74,85 @@
                         </div><!--//right-->
                     </div><!--//info-->
                     <br class="clearboth">
+					<!-- FILES UPLOAD START -->
+					<div class="list-group">
+						<div class="list-group-item">
+							<div class="row" id="actions">
+								<div class="col-lg-7">
+									<span class="btn btn-success fileinput-button"><i class="glyphicon glyphicon-plus"></i> <span>Add Photos / Images</span></span>
+									<button class="btn btn-primary start" type="submit" style="display:none;"><i class="glyphicon glyphicon-upload"></i> <span>Start upload</span></button>
+									<button class="btn btn-warning cancel" type="reset" style="display:none;"><i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel upload</span></button>
+								</div>
+							</div>
+						</div>
+						<!-- FORM Action -->
+						<form action="/account/gallery" method="post" id="gallery-form">
+						<div class="list-group-item" style="float: left; width: 100%">
+							<!-- start dropzone -->
+							<div class="dropzone" id="dropzone">
+								<div id="previews" class="table table-striped">
+									<?php if (count($gallery) > 0): ?>
+										<?php foreach ($gallery[$review->reviewId]['image'] as $item): ?>
+											<div class="col-sm-6 col-md-4">
+												<div class="thumbnail">
+													<span class="preview"><img src="<?php echo $item; ?>" style="height: 200px;" alt=""></span>
+													<div class="caption">
+														<div class="action_buttons">
+															<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="" /> Remove</label>
+															<label style="font-size: 12px;float: right;"><input type="radio" name="default_img" value="" /> Default</label>
+															<div class="clearfix"></div>
+														</div>
+													</div>
+												</div>
+											</div>
+										<?php endforeach; ?>
+									<?php endif; ?>
+								</div>
+								<div class="table table-striped" class="files">
+									<div id="template" class="file-row">
+										<div class="col-sm-6 col-md-4">
+											<input type="hidden" name="galleries[name][]" class="image_name">
+											<input type="hidden" name="galleries[path][]" class="image_path">
+											<input type="hidden" name="galleries[code][]" class="image_code">
+											<input type="hidden" name="galleries[reviewId]" value="<?php echo $review->reviewId; ?>" class="">
+											<input type="hidden" name="galleries[tourId]" value="<?php echo $review->tour->tourId; ?>">
+											<div class="thumbnail">
+												<span class="preview"><img alt="" data-dz-thumbnail></span>
+												<div class="caption">
+													<div>
+														<p class="name col-sm-8 no-pad-left" data-dz-name></p>
+														<p class="size col-sm-4 no-pad text-right" data-dz-size></p>
+														<div class="clearfix"></div>
+													</div>
+													<div><strong class="error text-danger" data-dz-errormessage></strong></div>
+													<div class="file_progress">
+														<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+															<div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+														</div>
+													</div>
+													<div class="action_buttons">
+														<button class="btn btn-primary start"><i class="glyphicon glyphicon-upload"></i> <span>Start</span></button>
+														<button data-dz-remove class="btn btn-warning cancel"><i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel</span></button>
+														<button data-dz-remove class="btn btn-danger delete"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="clearboth" style="padding:15px 0px 15px 0px;">
+							<div class="row">
+								<div class="col-lg-7">
+									<span class="btn btn-primary" id="save-photos"><i class="glyphicon glyphicon-drop"></i> <span>Save Photos / Images</span></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- IMAGE UPLOAD END -->
+					</form>
+					<br class="clearboth">
                 </div>
             <?php } ?>
         <?php } else { ?>
@@ -79,3 +165,76 @@
 </div>
 <style>.image a img{height:154px;}</style>
 
+<!-- handles dropzone -->
+<?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/dropzone.js")); ?>
+<script>
+$('#save-photos').click(function() {
+	$('#gallery-form').submit();
+});
+var previewNode = document.querySelector("#template");
+previewNode.id = "";
+var previewTemplate = previewNode.parentNode.innerHTML;
+previewNode.parentNode.removeChild(previewNode);
+var TourImage = new Dropzone('#dropzone', {
+        url: "<?php echo $this->url->get('/ajax/sendFile'); ?>",
+        acceptedFiles: 'image/jpeg,image/png',
+        thumbnailWidth: 242,
+        thumbnailHeight: 200,
+        parallelUploads: 8,
+        previewTemplate: previewTemplate,
+        autoQueue: false,
+        previewsContainer: "#previews",
+        clickable: ".fileinput-button",
+        dictDefaultMessage: ""
+    });
+    TourImage.on("addedfile", function (file) {
+		hasNewImage = true;
+        document.querySelector("#actions .cancel").removeAttribute("disabled");
+        file.previewElement.querySelector(".start").onclick = function () {
+            TourImage.enqueueFile(file);
+            return false;
+        };
+    });
+	
+    TourImage.on("thumbnail", function (file, dataUrl) {
+        file.previewElement.querySelector(".image_code").value = dataUrl;
+    });
+    TourImage.on("sending", function (file, xhr, formData) {
+        file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
+    });
+    TourImage.on("uploadprogress", function (file, progress) {
+        file.previewElement.querySelector(".progress-bar").innerHTML = progress + "(%)";
+    });
+    TourImage.on("success", function (file, response) {
+        if (typeof response == 'object') var r= response;
+		else var r = jQuery.parseJSON(response);
+        file.previewElement.querySelector(".image_name").value = r.file.name;
+        file.previewElement.querySelector(".image_path").value = r.file.upload_path;
+        setTimeout(function () {
+            file.previewElement.querySelector(".action_buttons").remove();
+            file.previewElement.querySelector(".file_progress").remove();
+        }, 2000);
+    });
+    var submitButton = document.querySelector("#tsubmit");
+    submitButton.addEventListener("click", function(evt) {
+		evt.preventDefault();
+		evt.stopPropagation();
+		if (hasNewImage) {
+			TourImage.enqueueFiles(TourImage.getFilesWithStatus(Dropzone.ADDED));
+		} else {
+			document.querySelector("#actions .start").click();
+		}
+	});
+    TourImage.on("reset");
+    TourImage.on("queuecomplete", function () {
+        document.querySelector("#actions .cancel").setAttribute("disabled", "disabled");
+        setTimeout(function () {
+            document.querySelector("#actions .start").click();
+        }, 2000);
+    });
+    document.querySelector("#actions .cancel").onclick = function () {
+        TourImage.removeAllFiles(true);
+        return false;
+    };
+
+</script>
