@@ -96,6 +96,7 @@
 											<div class="col-sm-6 col-md-4">
 												<div class="thumbnail">
 													<span class="preview"><img src="<?php echo $item; ?>" style="height: 200px;" alt=""></span>
+													<!--
 													<div class="caption">
 														<div class="action_buttons">
 															<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="" /> Remove</label>
@@ -103,9 +104,15 @@
 															<div class="clearfix"></div>
 														</div>
 													</div>
+													-->
 												</div>
 											</div>
 										<?php endforeach; ?>
+									<?php else: ?>
+										<div class="dz-message">
+											Drop files here or click to "Add Photos / Images" button. Accepted file types are image/jpeg, image/png<br>
+											<span class="note">(This is just a drop zone. Selected files will <strong>not</strong> uploaded directly. Click the <strong>"Start upload"</strong> button to uploads the files and after that you need to click on <strong>"Save Photos / Images"</strong> button below to save images for this review.)</span>
+										</div>
 									<?php endif; ?>
 								</div>
 								<div class="table table-striped" class="files">
@@ -116,6 +123,7 @@
 											<input type="hidden" name="galleries[code][]" class="image_code">
 											<input type="hidden" name="galleries[reviewId]" value="<?php echo $review->reviewId; ?>" class="">
 											<input type="hidden" name="galleries[tourId]" value="<?php echo $review->tour->tourId; ?>">
+											<input type="hidden" name="galleries[memberId]" value="<?php echo $memberId; ?>">
 											<div class="thumbnail">
 												<span class="preview"><img alt="" data-dz-thumbnail></span>
 												<div class="caption">
@@ -190,6 +198,7 @@ var TourImage = new Dropzone('#dropzone', {
     TourImage.on("addedfile", function (file) {
 		hasNewImage = true;
         document.querySelector("#actions .cancel").removeAttribute("disabled");
+		$('.dz-message').html('');
         file.previewElement.querySelector(".start").onclick = function () {
             TourImage.enqueueFile(file);
             return false;
