@@ -152,6 +152,12 @@ class Elements extends Component {
             'controller' => 'ads',
             'action' => '',
         ),
+        'gallery' => array(
+            'title' => 'Gallery',
+            'link' => '/gallery',
+            'controller' => 'gallery',
+            'action' => 'index',
+        ),
     );
 
     /**
