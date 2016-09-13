@@ -420,6 +420,7 @@ class AccountController extends FrontendController {
         $this->view->reviewType = $type;
         $this->view->pager = $pager;
         $this->view->gallery = $galleryData;
+        $this->view->memberId = $this->member->getId();
     }
     
     private function getGalleries($result)
@@ -438,12 +439,16 @@ class AccountController extends FrontendController {
         $images = $this->request->getPost('galleries');
         $reviewId = $this->request->getPost('galleries')['reviewId'];
         $tourId = $this->request->getPost('galleries')['tourId'];
+        $memberId = $this->request->getPost('galleries')['memberId'];
         $publicDirectory = '/public/elements/uploads/tours_gallery/';
         $baseLocation = $this->getDi()->getUrl()->getBasePath() . $publicDirectory;
         foreach ($images['name'] as $fileIndex => $fileName) {
             $gallery = new \Tourpage\Models\ToursReviewGallery();
             $gallery->reviewId = $reviewId;
             $gallery->tourId = $tourId;
+            $gallery->memberId = $memberId;
+            // this is a flag if this review gallery will be shown in the storefront. defaulted to false
+            $gallery->isShown = 0;
             $gallery->imagePath = $publicDirectory . $fileName;
             $gallery->imageThumb = $publicDirectory . 'thumb' . $fileName;
             $gallery->dateUploaded = \Tourpage\Helpers\Utils::currentDate();
