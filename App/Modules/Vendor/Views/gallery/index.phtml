@@ -28,13 +28,15 @@
     </ul>
     </form>
     <div class="clearfix"></div>
-    <div class="clearboth" style="padding:15px 0px 15px 0px;">
-        <div class="row">
-            <div class="col-lg-7">
-                <span class="btn btn-primary" id="save-btn"><i class="glyphicon"></i> <span>Save Changes</span></span>
+    <?php if (isset($gallery['images'])): ?>
+        <div class="clearboth" style="padding:15px 0px 15px 0px;">
+            <div class="row">
+                <div class="col-lg-7">
+                    <span class="btn btn-primary" id="save-btn"><i class="glyphicon"></i> <span>Save Changes</span></span>
+                </div>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 </div>
 <?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/jquery.colorbox.js")); ?>
 <script>
