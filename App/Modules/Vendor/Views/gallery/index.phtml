@@ -6,6 +6,7 @@
     <h1>Gallery</h1>
     <form action="/vendor/gallery/save" method="post" id="gallery-form">
     <ul>
+        <?php if (isset($gallery['images'])): ?>
         <?php foreach ($gallery['images']['image'] as $key => $item): ?>
             <li>
                 <div class="image-holder">
@@ -21,6 +22,9 @@
                 </div>
             </li>
         <?php endforeach; ?>
+        <?php else: ?>
+        <h3>There are no images to display.</h3>
+        <?php endif; ?>
     </ul>
     </form>
     <div class="clearfix"></div>
