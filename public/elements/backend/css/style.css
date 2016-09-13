@@ -186,4 +186,31 @@ button, input, optgroup, select, textarea{
     color: #666;
 }
 
+header, nav, section, article, aside, footer {
+   display:block;
+}
+
+.clear{clear:both;}
+
+/****************************gallery********************************/
+.gallery-sec{margin-top:20px;}
+.gallery-sec h1{color:#030202; font-size:35px; margin:20px 0;}
+.gallery-sec ul li{
+		list-style:none;
+		width:23.5%;
+		border:1px solid #ccc;
+		margin:0.5%;
+		display:inline-block;
+		overflow:hidden;
+		
+	}
+
+.gallery-sec ul li .image-holder{width:100%; height:207px;}
+.gallery-sec ul li .text-holder{padding:10px;}
+.gallery-sec ul li .text-holder p{margin-bottom:10px; color:#020202; font-size:15px;}
+.gallery-sec ul li .text-holder p span{ color:#1e769e; }
+.gallery-sec .text-holder ul{margin-top:10px; text-align:right;}
+.gallery-sec .text-holder ul li{list-style:none; display:inline-block; margin:0 1px;
+ font-size:15px; color:#979393; width:auto; border:0;}
+
 
