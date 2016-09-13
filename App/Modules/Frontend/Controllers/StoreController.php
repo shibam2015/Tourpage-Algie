@@ -648,5 +648,43 @@ public function contactsAction($store = '', $content = '') {
 		$this->view->bannerImages = $storeVendor->vendorBanners;
     }
 
-
+	public function toursgalleryAction()
+	{
+		$store = $this->request->getPost()['vendor_id'];
+        $storeVendor = \Tourpage\Models\Vendors::findFirst($store);
+        if (!$storeVendor || $storeVendor->count() == 0) {
+            return FALSE;
+        }
+        $this->view->storeVendor = $storeVendor;
+		$this->tag->setTitle('Gallery');
+        $gallerries = \Tourpage\Models\ToursReviewGallery::query();
+        $this->view->gallery = $this->getGalleries($gallerries->execute());
+        $this->view->members = $this->getMembers();	
+	}
+	
+	private function getGalleries($result)
+    {
+        $url = $this->request->getServer('HTTP_POST');
+        $data = [];
+        foreach($result as $item) {
+            $data['images']['image'][] = $url . $item->imagePath;
+            $data['images']['date_uploaded'][] = date("F j, Y", strtotime($item->dateUploaded));
+            $data['images']['memberId'][] = $item->memberId;
+            $data['images']['galleryId'][] = $item->galleryId;
+            $data['images']['isShown'][] = $item->isShown;
+        }
+        return $data;
+    }
+    
+    private function getMembers()
+    {
+        $data = [];
+        $members = \Tourpage\Models\Members::query();
+        $members->leftJoin('\Tourpage\Models\ToursReviewGallery', 'b.memberId = \Tourpage\Models\Members.memberId', 'b');
+        $result = $members->execute();
+        foreach($result as $member) {
+            $data[$member->memberId] = "{$member->firstName} {$member->lastName}";
+        }
+        return $data;
+    }
 }
