@@ -102,7 +102,7 @@
                           <!--<li><?php //echo $this->tag->linkTo('/store/tours/' . $storeVendor->vendorId, "Our Tours"); ?></li>-->
 							<li><a href="javascript:redirectToPage('<?php echo "/". strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours"; ?>', '<?php echo $storeVendor->vendorId; ?>')">Our Tours</a></li>
                             <li><a href="#">Blog</a></li>   
-                            <li><a href="#">Gallery</a></li>
+                            <li><a href="javascript:redirectToPage('<?php echo "/". strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/toursgallery"; ?>', '<?php echo $storeVendor->vendorId; ?>')">Gallery</a></li>
 							<!--<li><?php //echo $this->tag->linkTo('/store/contacts/' . $storeVendor->vendorId, "Contact"); ?></li>-->
 							<li><a href="javascript:redirectToPage('<?php echo "/". strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/contacts"; ?>', '<?php echo $storeVendor->vendorId; ?>')">Contacts</a></li>
                          </ul>
