@@ -203,7 +203,14 @@ class Elements extends Component {
                     'action' => 'add'
                 ),
             )
-        )
+        ),
+        'gallery' => array(
+            'title' => 'Gallery',
+            'title before' => '<i class="fa fa-camera"></i> ',
+            'link' => '/gallery',
+            'controller' => 'gallery',
+            'action' => 'index',
+        ),
     );
 
     /**
