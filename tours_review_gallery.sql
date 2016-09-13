@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 12, 2016 at 09:03 PM
+-- Generation Time: Sep 13, 2016 at 12:54 PM
 -- Server version: 5.5.50-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.19
 
@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS `tours_review_gallery` (
   `galleryId` int(10) NOT NULL AUTO_INCREMENT,
   `imagePath` varchar(255) NOT NULL,
   `imageThumb` varchar(255) NOT NULL,
+  `memberId` int(10) NOT NULL,
+  `isShown` int(1) NOT NULL,
   `reviewId` int(10) NOT NULL,
   `tourId` varchar(100) NOT NULL,
   `dateUploaded` date NOT NULL,
