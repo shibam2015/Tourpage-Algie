@@ -43,12 +43,14 @@ class GalleryController extends VendorController {
     {
         $url = $this->request->getServer('HTTP_POST');
         $data = [];
-        foreach($result as $item) {
-            $data['images']['image'][] = $url . $item->imagePath;
-            $data['images']['date_uploaded'][] = date("F j, Y", strtotime($item->dateUploaded));
-            $data['images']['memberId'][] = $item->memberId;
-            $data['images']['galleryId'][] = $item->galleryId;
-            $data['images']['isShown'][] = $item->isShown;
+        if (!empty($result)) {
+            foreach($result as $item) {
+                $data['images']['image'][] = $url . $item->imagePath;
+                $data['images']['date_uploaded'][] = date("F j, Y", strtotime($item->dateUploaded));
+                $data['images']['memberId'][] = $item->memberId;
+                $data['images']['galleryId'][] = $item->galleryId;
+                $data['images']['isShown'][] = $item->isShown;
+            }
         }
         return $data;
     }
