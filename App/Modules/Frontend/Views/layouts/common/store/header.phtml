@@ -48,7 +48,9 @@
                                 <li><a href="<?php 
                                             if(!$this->member->isLoggedIn()){
                                              echo $this->url->get('/auth/login');
-                                            }else{}
+                                            }else{
+												echo $this->url->get('/account');
+											}
                                              ?>">Users</a></li>
                              <li>
                                 <a href="<?php echo $this->url->get('/vendor/login'); ?>">Vendor</a>
