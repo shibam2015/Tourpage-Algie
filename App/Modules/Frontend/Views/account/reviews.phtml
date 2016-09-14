@@ -1,4 +1,6 @@
 <?php echo $this->tag->stylesheetLink($this->url->getStatic(COMMON_DIR . "css/dropzone.css")); ?>
+<?php echo $this->tag->stylesheetLink($this->url->getStatic(COMMON_DIR . "css/slimNav_sk78.css")); ?>
+<?php echo $this->tag->stylesheetLink($this->url->getStatic(COMMON_DIR . "css/colorbox.css")); ?>
 <!-- REMOVE DROPZONE BORDER -->
 <style>
 	.dropzone {
@@ -76,6 +78,7 @@
                     <br class="clearboth">
 					<!-- FILES UPLOAD START -->
 					<div class="list-group">
+						<?php if ($reviewType == 'pending'): ?>
 						<div class="list-group-item">
 							<div class="row" id="actions">
 								<div class="col-lg-7">
@@ -85,17 +88,35 @@
 								</div>
 							</div>
 						</div>
+						<?php endif; ?>
 						<!-- FORM Action -->
 						<form action="/account/gallery" method="post" id="gallery-form">
+						<input type="hidden" name="action" value="<?php echo $reviewType; ?>">
 						<div class="list-group-item" style="float: left; width: 100%">
 							<!-- start dropzone -->
 							<div class="dropzone" id="dropzone">
 								<div id="previews" class="table table-striped">
 									<?php if (count($gallery) > 0): ?>
-										<?php foreach ($gallery[$review->reviewId]['image'] as $item): ?>
+										<?php foreach ($gallery[$review->reviewId]['image'] as $key => $item): ?>
 											<div class="col-sm-6 col-md-4">
 												<div class="thumbnail">
-													<span class="preview"><img src="<?php echo $item; ?>" style="height: 200px;" alt=""></span>
+													<span class="preview">
+														<?php if ($reviewType == 'confirmed'): ?>
+															<a class="group1" href="<?php echo $item; ?>" title="">
+																<img src="<?php echo $item; ?>" style="height: 200px;" alt="">
+															</a>
+														<?php else: ?>
+															<img src="<?php echo $item; ?>" style="height: 200px;" alt="">
+														<?php endif; ?>
+													</span>
+													<?php if ($reviewType == 'confirmed'): ?>
+														<div class="caption">
+															<div class="action_buttons">
+																<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="<?php echo $gallery[$review->reviewId]['galleryId'][$key]; ?>" /> Remove</label>
+																<div class="clearfix"></div>
+															</div>
+														</div>
+													<?php endif; ?>
 													<!--
 													<div class="caption">
 														<div class="action_buttons">
@@ -110,8 +131,12 @@
 										<?php endforeach; ?>
 									<?php else: ?>
 										<div class="dz-message">
-											Drop files here or click to "Add Photos / Images" button. Accepted file types are image/jpeg, image/png<br>
+											<?php if ($reviewType == 'pending'): ?>
+												Drop files here or click to "Add Photos / Images" button. Accepted file types are image/jpeg, image/png<br>
 											<span class="note">(This is just a drop zone. Selected files will <strong>not</strong> uploaded directly. Click the <strong>"Start upload"</strong> button to uploads the files and after that you need to click on <strong>"Save Photos / Images"</strong> button below to save images for this review.)</span>
+											<?php else: ?>
+												No Images uploaded
+											<?php endif; ?>
 										</div>
 									<?php endif; ?>
 								</div>
@@ -153,7 +178,7 @@
 						<div class="clearboth" style="padding:15px 0px 15px 0px;">
 							<div class="row">
 								<div class="col-lg-7">
-									<span class="btn btn-primary" id="save-photos"><i class="glyphicon glyphicon-drop"></i> <span>Save Photos / Images</span></span>
+									<span class="btn btn-primary" id="save-photos"><i class="glyphicon glyphicon-drop"></i> <span><?php if ($reviewType == 'pending') { ?>Save Photos / Images<?php } else { ?>Update Changes<?php } ?></span></span>
 								</div>
 							</div>
 						</div>
@@ -173,9 +198,11 @@
 </div>
 <style>.image a img{height:154px;}</style>
 
+<?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/jquery.colorbox.js")); ?>
 <!-- handles dropzone -->
 <?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "js/dropzone.js")); ?>
 <script>
+$(".group1").colorbox({rel:'group1'});
 $('#save-photos').click(function() {
 	$('#gallery-form').submit();
 });
