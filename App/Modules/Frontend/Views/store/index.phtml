@@ -119,16 +119,20 @@ echo $groupTour->tour->tourCity; } else { echo '';}
                      else { ?>
                    
                    <div class="col-xs-6 col-sm-4">
-<div class="tour-box-smr tour-box-wht clearfix">
+<div class="tour-box-smr clearfix">
 <img style="width:100%; height:300px;" src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" />
 
 <div class="tour-box-smr-detail">
 <div class="tour-box-smr-review">
-<i class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star" 
-aria-hidden="true"></i>
- <i class="fa fa-star" aria-hidden="true"></i> <i class="fa fa-star" 
-aria-hidden="true"></i>
-<span>(1403)</span>
+	<ul class="review">
+		<li class="text-yellow">
+			<div id="star-rate-box-<?php echo $groupTour->tour->tourId; ?>"></div>
+			<script>jQuery(function () {
+				jQuery('#star-rate-box-<?php echo $groupTour->tour->tourId; ?>').rateYo({rating: <?php echo $groupTour->tour->tourRating ? $groupTour->tour->tourRating->getStar() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
+			});</script>
+		</li>
+		<li class="review-count">(<?php echo $groupTour->tour->tourReviews ? $groupTour->tour->tourReviews->count() : 0; ?>)</li>
+	</ul>
 </div>
 
 <div class="tour-box-smr-dtls">
@@ -137,10 +141,11 @@ $groupTour->tour->tourTitle; ?></a>
 </div>
 
 <div class="tour-box-smr-detail-bottom clearfix">
-<div class="tour-box-smr-detail-bottom-lft">Fellow LLC •&nbsp;<?php 
-					if($groupTour->tour->tourCity){ 
-echo $groupTour->tour->tourCity; } else { echo '';}
-					?></div>
+<div class="tour-box-smr-detail-bottom-lft">
+	Location:&nbsp;<?php 
+					if($groupTour->tour->tourCity){ echo $groupTour->tour->tourCity; } else { echo '';}
+					?><br>Duration: <?php echo $groupTour->tour->tourDuration->lengthTypeText;?>
+</div>
 <div class="tour-box-smr-detail-bottom-rht w-col">
 				   <?php if ($groupTour->tour->tourPrice->hasDiscount() || $groupTour->tour->tourPrice->hasOffers()) 
 { ?>
