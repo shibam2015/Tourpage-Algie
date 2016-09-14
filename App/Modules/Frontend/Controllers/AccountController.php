@@ -430,6 +430,7 @@ class AccountController extends FrontendController {
         foreach($result as $item) {
             $data[(int)$item->reviewId]['image'][] = $url . $item->imagePath;
             $data[(int)$item->reviewId]['thumb'][] = $url . $item->imageThumb;
+            $data[(int)$item->reviewId]['galleryId'][] = $item->galleryId;
         }
         return $data;
     }
@@ -440,30 +441,41 @@ class AccountController extends FrontendController {
         $reviewId = $this->request->getPost('galleries')['reviewId'];
         $tourId = $this->request->getPost('galleries')['tourId'];
         $memberId = $this->request->getPost('galleries')['memberId'];
+        $removeIds = $this->request->getPost('remove_img');
+        $action = $this->request->getPost('action');
         $publicDirectory = '/public/elements/uploads/tours_gallery/';
         $baseLocation = $this->getDi()->getUrl()->getBasePath() . $publicDirectory;
-        foreach ($images['name'] as $fileIndex => $fileName) {
-            $gallery = new \Tourpage\Models\ToursReviewGallery();
-            $gallery->reviewId = $reviewId;
-            $gallery->tourId = $tourId;
-            $gallery->memberId = $memberId;
-            // this is a flag if this review gallery will be shown in the storefront. defaulted to false
-            $gallery->isShown = 0;
-            $gallery->imagePath = $publicDirectory . $fileName;
-            $gallery->imageThumb = $publicDirectory . 'thumb' . $fileName;
-            $gallery->dateUploaded = \Tourpage\Helpers\Utils::currentDate();
-            if ($gallery->save()) {
-                //save to gallery directory
-                $imageFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . $fileName);
-                $imageFile->save($baseLocation . $fileName);
-                $thumbFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
-                $thumbFile->save($baseLocation . 'thumb' . $fileName);
-                unlink($images['path'][$fileIndex] . '/' . $fileName);
-                unlink($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+        if ($images != null) {
+            foreach ($images['name'] as $fileIndex => $fileName) {
+                $gallery = new \Tourpage\Models\ToursReviewGallery();
+                $gallery->reviewId = $reviewId;
+                $gallery->tourId = $tourId;
+                $gallery->memberId = $memberId;
+                // this is a flag if this review gallery will be shown in the storefront. defaulted to false
+                $gallery->isShown = 0;
+                $gallery->imagePath = $publicDirectory . $fileName;
+                $gallery->imageThumb = $publicDirectory . 'thumb' . $fileName;
+                $gallery->dateUploaded = \Tourpage\Helpers\Utils::currentDate();
+                if ($gallery->save()) {
+                    //save to gallery directory
+                    $imageFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . $fileName);
+                    $imageFile->save($baseLocation . $fileName);
+                    $thumbFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+                    $thumbFile->save($baseLocation . 'thumb' . $fileName);
+                    unlink($images['path'][$fileIndex] . '/' . $fileName);
+                    unlink($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+                }
             }
         }
-        $this->flash->success('Images successfully uploaded.');
-        $this->response->redirect('/account/reviews/pending');
+        // remove gallery
+        if ($removeIds != null) {
+            foreach ($removeIds as $id) {
+                $gallery = \Tourpage\Models\ToursReviewGallery::findFirstByGalleryId($id);
+                $gallery->delete();
+            }
+        }
+        $this->flash->success('Successfully save.');
+        $this->response->redirect('/account/reviews/'.$action);
     }
 
     public function offersAction() {
