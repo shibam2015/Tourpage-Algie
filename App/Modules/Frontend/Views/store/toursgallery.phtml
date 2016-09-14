@@ -16,7 +16,7 @@
                     <div class="text-holder">
                         <div><span><?php echo $gallery['images']['tourname'][$key]; ?></span></div>
                         <hr>
-                        <p><span><?php echo $members[$gallery['images']['memberId'][$key]]['email']; ?></span> / <span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?></p>
+                        <p><span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?></p>
                     </div>
                 </li>
             <?php endif; ?>
