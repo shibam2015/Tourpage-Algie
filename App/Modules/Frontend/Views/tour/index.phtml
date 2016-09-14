@@ -37,16 +37,18 @@
             	<div class="tour-details">
 	<h3><?php echo $tour->tourTitle; ?></h3>
 		<div class="rating">
-        <p><?php echo $tour->tourSubTitle; ?></p>
-        <div class="star">
-                        	<i class="fa fa-star"></i>
-                        	<i class="fa fa-star"></i>
-                        	<i class="fa fa-star"></i>
-                        	<i class="fa fa-star"></i>
-                        	<i class="fa fa-star no-rate"></i>
-                        </div>
-                        <span>(23) <a href="#">Read Reviews</a></span>
-                    </div>
+			<p><?php echo $tour->tourSubTitle; ?></p>
+			<ul class="review">
+				<li class="text-yellow">
+					<div id="star-rate-box-<?php echo $tour->tourId; ?>"></div>
+					<script>
+						jQuery(function () {
+						jQuery('#star-rate-box-<?php echo $tour->tourId; ?>').rateYo({rating: <?php echo $tour->tourRating ? $tour->tourRating->getStar() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
+					});</script>
+				</li>
+				<li class="review-count">(<?php echo $tour->tourReviews ? $tour->tourReviews->count() : 0; ?>)</li>
+			</ul>
+		</div>
                     <div class="tour-details-img">
                         <!--<img src="assets/images/tour-img.jpg" class="scale" data-scale="best-fill" data-align="center" >-->
 		<?php if ($tour->tourImages->count() > 0) { ?>
@@ -318,14 +320,16 @@
                         <div class="sujjest-content">
                         	<?php #echo $this->tag->linkTo(array($fromCategory->tour->getUri(), '<h4>'.$fromCategory->tour->tourTitle.'</h4>', 'local' => false)); ?>
 							<a href="javascript:redirectToTourDetailsPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/ourtours/".$fromCategory->tour->tourSlug; ?>', '<?php echo $fromCategory->tour->tourId; ?>', 'tour_id');"><h4><?php echo $fromCategory->tour->tourTitle; ?></h4></a>
-                            <div class="star">
-                            	<i class="fa fa-star"></i>
-                            	<i class="fa fa-star"></i>
-                            	<i class="fa fa-star"></i>
-                            	<i class="fa fa-star"></i>
-                            	<i class="fa fa-star"></i>
-                                <span>(156)</span>
-                            </div>
+                            <ul class="review">
+							   <li class="text-yellow">
+								   <div id="star-rate-<?php echo $fromCategory->tour->tourId; ?>"></div>
+								   <script>
+									   jQuery(function () {
+									   jQuery('#star-rate-<?php echo $fromCategory->tour->tourId; ?>').rateYo({rating: <?php echo $fromCategory->tour->tourRating ? $fromCategory->tour->tourRating->getStar() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
+								   });</script>
+							   </li>
+							   <li class="review-count">(<?php echo $fromCategory->tour->tourReviews ? $fromCategory->tour->tourReviews->count() : 0; ?>)</li>
+						   </ul>
                             <?php #echo $this->tag->linkTo(array($fromCategory->tour->tourVendor->vendor->getStorFrontUri(), '<p>By'.$fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName.'</p>', 'local' => false)); ?>
 							<a href="javascript:redirectToTourDetailsPage('<?php echo "/".strtolower((preg_replace('/[\s_]/', '', $storeVendor->businessName)))."/store"; ?>', '<?php echo $storeVendor->vendorId; ?>', 'vendor_id');"><?php echo '<p>By'.$fromCategory->tour->tourVendor->vendor->firstName . ' ' . $fromCategory->tour->tourVendor->vendor->lastName.'</p>'; ?></a>
                         </div>
