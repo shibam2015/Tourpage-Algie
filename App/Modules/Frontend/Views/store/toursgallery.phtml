@@ -9,12 +9,14 @@
             <?php if ($gallery['images']['isShown'][$key]): ?>
                 <li>
                     <div class="image-holder">
-                        <a class="group1" href="<?php echo $item; ?>" title="<span><?php echo $members[$gallery['images']['memberId'][$key]]; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?>">
+                        <a class="group1" href="<?php echo $item; ?>" title="<span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?>">
                             <img style="max-width:100%; height:auto;" src="<?php echo $item; ?>" alt="img1" />
                         </a>
                     </div>
                     <div class="text-holder">
-                        <p><span><?php echo $members[$gallery['images']['memberId'][$key]]; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?></p>
+                        <div><span><?php echo $gallery['images']['tourname'][$key]; ?></span></div>
+                        <hr>
+                        <p><span><?php echo $members[$gallery['images']['memberId'][$key]]['email']; ?></span> / <span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?></p>
                     </div>
                 </li>
             <?php endif; ?>
