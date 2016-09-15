@@ -21,8 +21,10 @@ class GalleryController extends VendorController {
      */
     public function indexAction($action = 'list')
     {
+        $vendorId = !$this->vendors->getVendorData()->isParent() ? $this->vendors->getVendorData()->parentId : $this->vendors->getId();
         $this->tag->setTitle('Gallery');
         $gallerries = \Tourpage\Models\ToursReviewGallery::query();
+        $gallerries->where("vendorId = :vendorId:", ['vendorId' => $vendorId]);
         $gallerries->orderBy('\Tourpage\Models\ToursReviewGallery.galleryId DESC');
         $this->view->gallery = $this->getGalleries($gallerries->execute());
         $this->view->members = $this->getMembers();
