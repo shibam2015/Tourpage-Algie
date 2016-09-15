@@ -658,6 +658,7 @@ public function contactsAction($store = '', $content = '') {
         $this->view->storeVendor = $storeVendor;
 		$this->tag->setTitle('Gallery');
         $gallerries = \Tourpage\Models\ToursReviewGallery::query();
+		$gallerries->where("vendorId = :vendorId:", ['vendorId' => $store]);
 		$gallerries->orderBy('\Tourpage\Models\ToursReviewGallery.galleryId DESC');
         $this->view->gallery = $this->getGalleries($gallerries->execute());
         $this->view->members = $this->getMembers();	
