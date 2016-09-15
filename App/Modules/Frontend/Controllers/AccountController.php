@@ -441,6 +441,7 @@ class AccountController extends FrontendController {
         $reviewId = $this->request->getPost('galleries')['reviewId'];
         $tourId = $this->request->getPost('galleries')['tourId'];
         $memberId = $this->request->getPost('galleries')['memberId'];
+        $vendorId = $this->request->getPost('galleries')['vendorId'];
         $removeIds = $this->request->getPost('remove_img');
         $action = $this->request->getPost('action');
         $publicDirectory = '/public/elements/uploads/tours_gallery/';
@@ -450,6 +451,7 @@ class AccountController extends FrontendController {
                 $gallery = new \Tourpage\Models\ToursReviewGallery();
                 $gallery->reviewId = $reviewId;
                 $gallery->tourId = $tourId;
+                $gallery->vendorId = $vendorId;
                 $gallery->memberId = $memberId;
                 // this is a flag if this review gallery will be shown in the storefront. defaulted to false
                 $gallery->isShown = 0;
