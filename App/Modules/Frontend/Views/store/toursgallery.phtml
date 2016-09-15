@@ -5,22 +5,34 @@
 <div class="gallery-sec">
     <h1>Gallery</h1>
     <ul>
-        <?php foreach ($gallery['images']['image'] as $key => $item): ?>
-            <?php if ($gallery['images']['isShown'][$key]): ?>
-                <li>
-                    <div class="image-holder">
-                        <a class="group1" href="<?php echo $item; ?>" title="<span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?>">
-                            <img style="max-width:100%; height:auto;" src="<?php echo $item; ?>" alt="img1" />
-                        </a>
-                    </div>
-                    <div class="text-holder">
-                        <div><span><?php echo $gallery['images']['tourname'][$key]; ?></span></div>
-                        <hr>
-                        <p><span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?></p>
-                    </div>
-                </li>
-            <?php endif; ?>
-        <?php endforeach; ?>
+        <?php if (isset($gallery['images'])): ?>
+            <?php foreach ($gallery['images']['image'] as $key => $item): ?>
+                <?php if ($gallery['images']['isShown'][$key]): ?>
+                    <li>
+                        <div class="image-holder">
+                            <a class="group1" href="<?php echo $item; ?>" title="<span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?>">
+                                <img style="max-width:100%; height:auto;" src="<?php echo $item; ?>" alt="img1" />
+                            </a>
+                        </div>
+                        <div class="text-holder">
+                            <div><span><?php echo $gallery['images']['tourname'][$key]; ?></span></div>
+                            <hr>
+                            <p><span><?php echo $members[$gallery['images']['memberId'][$key]]['name']; ?></span> / <?php echo $gallery['images']['date_uploaded'][$key]; ?></p>
+                            <ul>
+<li><img src="<?php echo $this->url->getStatic(COMMON_DIR . 'images/g-edit-icon.png');?>" alt="image" /></li>
+<li><img src="<?php echo $this->url->getStatic(COMMON_DIR . 'images/g-view-icon.png'); ?>" alt="image" /></li>
+<li>4,951</li>
+<li><img src="<?php echo $this->url->getStatic(COMMON_DIR . 'images/g-like-icon.png'); ?>" alt="image" /></li>
+<li>1</li>
+
+</ul>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <?php else: ?>
+                <h4>No images to display.</h4>
+        <?php endif; ?>
     </ul>
     <div class="clearfix" style="margin-bottom:20px;"></div>
 </div>
@@ -28,6 +40,6 @@
 <script>
     $(document).ready(function(){
         //Examples of how to assign the Colorbox event to elements
-        $(".group1").colorbox({rel:'group1'});
+        $(".group1").colorbox({rel:'group1', width:'90%', height:'95%'});
     });
 </script>
