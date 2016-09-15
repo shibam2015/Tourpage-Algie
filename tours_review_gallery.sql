@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 13, 2016 at 12:54 PM
+-- Generation Time: Sep 15, 2016 at 07:32 PM
 -- Server version: 5.5.50-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.19
 
@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `tours_review_gallery` (
   `isShown` int(1) NOT NULL,
   `reviewId` int(10) NOT NULL,
   `tourId` varchar(100) NOT NULL,
+  `vendorId` int(10) NOT NULL,
   `dateUploaded` date NOT NULL,
   PRIMARY KEY (`galleryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
