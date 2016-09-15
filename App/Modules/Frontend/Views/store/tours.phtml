@@ -67,12 +67,13 @@
                 </div>
                 </div>
           <div class="clearfix"></div>
-        
-    <div class="row tour-box-container" id="form1" style="display:none" >
+     </div> 
+            
+           <div class="row tour-box-container" id="form1" style="display:none" >
                   <?php if ($groupTours && $groupTours->count() > 0) { ?>
                     <?php foreach ($groupTours as $groupTour) { ?>
                 <!-- box view -->
-               <div id="grid" class="tour-box-view show" >
+               <div id="grid-view" class="tour-grid tour-<?php echo $groupTour->groupId; ?>" >
                <div class="col-xs-6 col-sm-4">
                     <div class="tour-box-smr clearfix">
                    <img style="width:100%; height:300px;" src="<?php echo $groupTour->tour->getDefaultImage() ? $groupTour->tour->getDefaultImage()->getImageUri('thumb') : ''; ?>" />
@@ -127,13 +128,8 @@
                     <?php } ?>
                     <?php } ?>
                  </div>
-                 </div>
-
-
-            
-            
-            
-            
+				<!-- end box view --> 
+            <!-- list view -->
             <div class="tab-contents" id="form2" >
             
                 <?php if ($groupTours && $groupTours->count() > 0) { ?>
@@ -272,7 +268,8 @@
                     <article class="jumbotron">No Tour Found</article>
                     <?php } ?>
             </div>
-            <div class="clearfix"></div>
+            <!-- end list view -->
+			<div class="clearfix"></div>
         </div>             
     </div>
 </section>
@@ -319,7 +316,9 @@
                 var tourId = jQuery(this).attr("id");
                 jQuery(".tours").css('border-bottom','0px')
                 jQuery(".tour").hide();
-				if(jQuery(".tour").hasClass("tour-"+tourId)){
+				// for box view
+				jQuery(".tour-grid").hide();
+				if(jQuery(".tour").hasClass("tour-"+tourId) || jQuery(".tour-grid").hasClass("tour-"+tourId)){
                 	jQuery(".tour-"+tourId).show();
 					jQuery(".no-tour").css('display','none');
 				} else {
@@ -334,7 +333,9 @@
             var tourId = jQuery(this).attr("id");
             jQuery(".tours").css('border-bottom','0px')
             jQuery(".tour").hide();
-            if(jQuery(".tour").hasClass("tour-"+tourId)){
+			// box view
+			jQuery(".tour-grid").hide();
+            if(jQuery(".tour").hasClass("tour-"+tourId) || jQuery(".tour-grid").hasClass("tour-"+tourId)){
                 jQuery(".tour-"+tourId).show();
 				jQuery(".no-tour").css('display','none');
 			} else {
