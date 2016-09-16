@@ -223,6 +223,36 @@ class CartController extends FrontendController {
                                 'card_exp_year' => $this->request->getPost('card_exp_year'),
                                 'card_name' => $this->request->getPost('card_name'),
                             ));
+                            
+                            // save new cc
+                            $member = \Tourpage\Models\Members::findByMemberId($this->member->getId());
+                            $member = $member[0];
+                            $membercards = \Tourpage\Models\MembersCards::find([
+                                'conditions' => 'cardNumber = :card_number:',
+                                'bind' => ['card_number' => $this->request->getPost('card_number')]
+                            ]);
+                            if ((int)$membercards->count() == 0) {
+                                $newcard = new \Tourpage\Models\MembersCards();
+                                $newcard->memberId = $this->member->getId();
+                                $newcard->firstName = $member->firstName;
+                                $newcard->lastName = $member->lastName;
+                                $newcard->addressOne = $member->addressOne;
+                                $newcard->addressTwo = $member->addressTwo;
+                                $newcard->phone = $member->phone;
+                                $newcard->countryId = $member->countryId;
+                                $newcard->stateId = $member->stateId;
+                                $newcard->city = $member->city;
+                                $newcard->zipCode = $member->zipCode;
+                                $newcard->cardType = $this->request->getPost('card_type');
+                                $newcard->cardNumber = $this->request->getPost('card_number');
+                                $newcard->cardName = $this->request->getPost('card_name');
+                                $newcard->cardCvv = $this->request->getPost('card_cvv');
+                                $newcard->expiryMonth = $this->request->getPost('card_exp_month');
+                                $newcard->expiryYear = $this->request->getPost('card_exp_year');
+                                $newcard->status = 1;
+                                $newcard->addedOn = \Tourpage\Helpers\Utils::currentDate();
+                                $newcard->save();
+                            }
                         } else {
                             
                             $cardDetails = \Tourpage\Models\MembersCards::findFirst($saveCard);
@@ -236,25 +266,24 @@ class CartController extends FrontendController {
                             ));
                         }
                        // die("cart");
-                        $this->response->redirect('/payment/processPayment');
-                        
+                       $this->response->redirect('/payment/processPayment');                        
                     }
                 }
 //                 die("pp");
-//                $memberCards = [];
-//                $memberSaveCards = \Tourpage\Models\MembersCards::find(array(
-//                    'conditions' => 'memberId = :member_id: AND status = :status:',
-//                    'bind' => array(
-//                        'member_id' => $this->member->getId(),
-//                        'status' => \Tourpage\Models\MembersCards::ACTIVE_STATUS_CODE
-//                    )
-//                ));
-//                if ($memberSaveCards && $memberSaveCards->count() > 0) {
-//                    foreach ($memberSaveCards as $memberSaveCard) {
-//                        $memberCards[$memberSaveCard->cardId] = $memberSaveCard->cardNumber . ' ( ' . $memberSaveCard->cardName . ' )';
-//                    }
-//                    $memberCards['o'] = 'Others';
-//                }
+                $memberCards = [];
+                $memberSaveCards = \Tourpage\Models\MembersCards::find(array(
+                    'conditions' => 'memberId = :member_id: AND status = :status:',
+                    'bind' => array(
+                        'member_id' => $this->member->getId(),
+                        'status' => \Tourpage\Models\MembersCards::ACTIVE_STATUS_CODE
+                    )
+                ));
+                if ($memberSaveCards && $memberSaveCards->count() > 0) {
+                    foreach ($memberSaveCards as $memberSaveCard) {
+                        $memberCards[$memberSaveCard->cardId] = $memberSaveCard->cardNumber . ' ( ' . $memberSaveCard->cardName . ' )';
+                    }
+                    $memberCards['o'] = 'Others';
+                }
                 $this->tag->setTitle('Credit Card Payemnt');
                 $this->view->form = $form;
                 $this->view->memberCards = $memberCards;
