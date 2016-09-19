@@ -413,6 +413,18 @@ class AccountController extends FrontendController {
         $gallerries = \Tourpage\Models\ToursReviewGallery::query();
         $galleryData = $this->getGalleries($gallerries->execute());
         
+        // get members booking
+        $modelBind = [];
+        $bookings = \Tourpage\Models\BookingTours::query();
+        $bookings->rightJoin('\Tourpage\Models\Booking', 'b.bookingId = \Tourpage\Models\BookingTours.bookingId', 'b');
+        $bookings->where("b.memberId = :member_id:");
+        $modelBind['member_id'] = $this->member->getId();
+        $modelBind['current_date'] = \Tourpage\Helpers\Utils::currentDate();
+        $bookings->andWhere("\Tourpage\Models\BookingTours.departureOn <= :current_date:");
+        $bookings->bind($modelBind);
+        $bookings->order("\Tourpage\Models\BookingTours.departureOn DESC");
+        $bookingData = $this->getBookingTours($bookings->execute());
+        
         $pager->setUriPattern('/account/reviews/' . $type . '/{page}');
         $this->assets->collection('header_css')->addCss(FRONT_END_DIR . 'css/jquery.rateyo.min.css');
         $this->assets->collection('header_js')->addJs(FRONT_END_DIR . 'js/jquery.rateyo.min.js');
@@ -421,6 +433,19 @@ class AccountController extends FrontendController {
         $this->view->pager = $pager;
         $this->view->gallery = $galleryData;
         $this->view->memberId = $this->member->getId();
+        $this->view->membersTours = $bookingData;
+    }
+    
+    private function getBookingTours($res)
+    {
+        $data = [];
+        foreach ($res as $item) {
+            $tours = \Tourpage\Models\Tours::findFirstByTourId($item->tourId);
+            $data['title'][] = $tours->tourTitle;
+            $data['tourId'][] = $tours->tourId;
+            $data['vendorId'][] = $item->vendorId;
+        }
+        return $data;
     }
     
     private function getGalleries($result)
@@ -478,6 +503,89 @@ class AccountController extends FrontendController {
         }
         $this->flash->success('Successfully save.');
         $this->response->redirect('/account/reviews/'.$action);
+    }
+    
+    public function addReviewAction()
+    {
+        $member = \Tourpage\Models\Members::findFirstByMemberId($this->member->getId());
+        $customerName = $member->firstName. ' ' .$member->lastName;
+        $customerEmail = $member->emailAddress;
+        $customerReview = $this->request->getPost('review');
+        $ratingSet = $this->request->getPost('rate');
+        $memberId = $this->member->getId();
+        $reviewOn = $this->request->getPost('review_on');
+        $tourId = $this->request->getPost('tour');
+        $vendorId = $this->request->getPost('vendor');
+        $memberLoggin = FALSE;
+        if ($memberId > 0) {
+            $memberLoggin = TRUE;
+        }
+        $review = new \Tourpage\Models\ToursReview();
+        $review->tourId = $tourId;
+        $review->vendorId = $vendorId;
+        $review->reviewByName = \Tourpage\Helpers\Utils::encodeString($customerName);
+        $review->reviewByEmail = $customerEmail;
+        $review->reviewContent = \Tourpage\Helpers\Utils::encodeString($customerReview);
+        $review->isMember = $memberLoggin ? \Tourpage\Models\ToursReview::REVIEWER_IS_MEMBER_STATUS_CODE : \Tourpage\Models\ToursReview::REVIEWER_IS_NOT_MEMBER_STATUS_CODE;
+        $review->starCount = $ratingSet;
+        // new added review will be confirmed
+        $review->reviewStatus = 1;
+        $review->reviewOn = \Tourpage\Helpers\Utils::currentDate();
+        if ($review->save()) {
+            $rating = \Tourpage\Models\ToursRating::findFirstByTourId($tourId);
+            if ($rating && $rating->count() > 0) {
+                if ($ratingSet > 0) {
+                    $rating->{'star_' . $ratingSet} = $rating->{'star_' . $ratingSet} + 1;
+                    $rating->save();
+                }
+            } else {
+                $rating = new \Tourpage\Models\ToursRating();
+                $rating->tourId = $tourId;
+                for ($star = 1; $star <= 5; $star++) {
+                    $starCount = 0;
+                    if ($star == $ratingSet) {
+                        $starCount = 1;
+                    }
+                    $rating->{'star_' . $star} = $starCount;
+                }
+                $rating->save();
+            }
+            
+            $memberReview = new \Tourpage\Models\MembersTourReview();
+            $memberReview->memberId = $memberId;
+            $memberReview->tourId = $tourId;
+            $memberReview->reviewId = $review->reviewId;
+            $memberReview->save();
+        }
+        // save images/ files
+        $publicDirectory = '/public/elements/uploads/tours_gallery/';
+        $baseLocation = $this->getDi()->getUrl()->getBasePath() . $publicDirectory;
+        $images = $this->request->getPost('galleries');
+        if ($images != null) {
+            foreach ($images['name'] as $fileIndex => $fileName) {
+                $gallery = new \Tourpage\Models\ToursReviewGallery();
+                $gallery->reviewId = $review->reviewId;
+                $gallery->tourId = $tourId;
+                $gallery->vendorId = $vendorId;
+                $gallery->memberId = $memberId;
+                // this is a flag if this review gallery will be shown in the storefront. defaulted to false
+                $gallery->isShown = 0;
+                $gallery->imagePath = $publicDirectory . $fileName;
+                $gallery->imageThumb = $publicDirectory . 'thumb' . $fileName;
+                $gallery->dateUploaded = \Tourpage\Helpers\Utils::currentDate();
+                if ($gallery->save()) {
+                    //save to gallery directory
+                    $imageFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . $fileName);
+                    $imageFile->save($baseLocation . $fileName);
+                    $thumbFile = new \Phalcon\Image\Adapter\GD($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+                    $thumbFile->save($baseLocation . 'thumb' . $fileName);
+                    unlink($images['path'][$fileIndex] . '/' . $fileName);
+                    unlink($images['path'][$fileIndex] . '/' . 'thumb' . $fileName);
+                }
+            }
+        }
+        $this->flash->success('Successfully added.');
+        $this->response->redirect('/account/reviews/confirmed');
     }
 
     public function offersAction() {
