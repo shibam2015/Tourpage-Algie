@@ -16,8 +16,133 @@
         <?php if ($reviewType == 'confirmed') { ?>
             <i class="glyphicon glyphicon-sunglasses"></i> Confirmed review <span>(<?php echo $pager->getTotalItems(); ?>)</span>
         <?php } ?>
+		<?php if ($reviewType == 'new') { ?>
+            <i class="glyphicon glyphicon-plus"></i> Add new review
+        <?php } ?>
     </h2>
     <div class="account column1">
+		<?php if ($reviewType == 'new'): ?>
+		<!-- ADD NEW REVIEW START -->
+		<form action="/account/addReview" method="post" id="gallery-form">
+		<input type="hidden" name="rate" id="star-rate">
+		<input type="hidden" name="vendor" id="vendor">
+		<div class="item">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="label-10">Select Your Tour</label><br>
+						<select name="tour" class="form-control" required="required" onchange="onTourChange(this)">
+							<option value=''>-- select tour --</option>
+							<?php foreach($membersTours['title'] as $k => $tours): ?>
+								<option vendor="<?php echo $membersTours['vendorId'][$k]; ?>" value="<?php echo $membersTours['tourId'][$k]; ?>"><?php echo $tours ?></option>
+							<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+				<div class="clear-fixed"></div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="label-10">Review</label><br>
+						<textarea class="form-control" rows="10" required="required" name="review"></textarea>
+					</div>
+				</div>
+				<div class="clear-fixed"></div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="label-10">Star Rate</label><br>
+						<ul class="review">
+							<li class="text-yellow">
+								<div id="star-rate-box"></div>
+								<script>
+									jQuery(function () {
+									jQuery('#star-rate-box').rateYo({rating: 2, starWidth: "15px", readOnly: false, ratedFill: "#ede811", onSet: function (rating, rateYoInstance) {
+		$("#star-rate").val(rating);
+    }});
+								});</script>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="clear-fixed"></div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<!-- FILES UPLOAD START -->
+					<div class="list-group">
+						<div class="list-group-item">
+							<div class="row" id="actions">
+								<div class="col-lg-7">
+									<span class="btn btn-success fileinput-button"><i class="glyphicon glyphicon-plus"></i> <span>Add Photos / Images</span></span>
+									<button class="btn btn-primary start" type="submit" style="display:none;"><i class="glyphicon glyphicon-upload"></i> <span>Start upload</span></button>
+									<button class="btn btn-warning cancel" type="reset" style="display:none;"><i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel upload</span></button>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" name="action" value="">
+						<div class="list-group-item" style="float: left; width: 100%">
+							<!-- start dropzone -->
+							<div class="dropzone" id="dropzone">
+								<div id="previews" class="table table-striped">
+										<div class="dz-message">
+												Drop files here or click to "Add Photos / Images" button. Accepted file types are image/jpeg, image/png<br>
+											<span class="note">(This is just a drop zone. Selected files will <strong>not</strong> uploaded directly. Click the <strong>"Start upload"</strong> button to uploads the files and after that you need to click on <strong>"Submit"</strong> button below to save images for this review.)</span>
+										</div>
+								</div>
+								<div class="table table-striped" class="files">
+									<div id="template" class="file-row">
+										<div class="col-sm-6 col-md-4">
+											<input type="hidden" name="galleries[name][]" class="image_name">
+											<input type="hidden" name="galleries[path][]" class="image_path">
+											<input type="hidden" name="galleries[code][]" class="image_code">
+								
+											<div class="thumbnail">
+												<span class="preview"><img alt="" data-dz-thumbnail></span>
+												<div class="caption">
+													<div>
+														<p class="name col-sm-8 no-pad-left" data-dz-name></p>
+														<p class="size col-sm-4 no-pad text-right" data-dz-size></p>
+														<div class="clearfix"></div>
+													</div>
+													<div><strong class="error text-danger" data-dz-errormessage></strong></div>
+													<div class="file_progress">
+														<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+															<div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+														</div>
+													</div>
+													<div class="action_buttons">
+														<button class="btn btn-primary start"><i class="glyphicon glyphicon-upload"></i> <span>Start</span></button>
+														<button data-dz-remove class="btn btn-warning cancel"><i class="glyphicon glyphicon-ban-circle"></i> <span>Cancel</span></button>
+														<button data-dz-remove class="btn btn-danger delete"><i class="glyphicon glyphicon-trash"></i> <span>Delete</span></button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- IMAGE UPLOAD END -->
+					</div>
+					<br class="clearboth">
+					</div>
+				</div>
+		</form>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="form-group">
+					<button name="submit" value="Add" class="btn btn-primary" id="save-photos">Submit</button>
+				</div>
+			</div>
+			<div class="clear-fixed"></div>
+		</div>
+		<!-- END NEW REVIEW -->
+		<?php else: ?>
         <?php if ($pager->getTotalItems() > 0) { ?>
             <?php foreach ($pager->getItems() as $review) { ?>
                 <div class="item">
@@ -96,39 +221,41 @@
 							<!-- start dropzone -->
 							<div class="dropzone" id="dropzone">
 								<div id="previews" class="table table-striped">
-									<?php if (count($gallery) > 0): ?>
-										<?php foreach ($gallery[$review->reviewId]['image'] as $key => $item): ?>
-											<div class="col-sm-6 col-md-4">
-												<div class="thumbnail">
-													<span class="preview">
-														<?php if ($reviewType == 'confirmed'): ?>
-															<a class="group1" href="<?php echo $item; ?>" title="">
+									<?php if (count($gallery) > 0 ): ?>
+										<?php if (isset($gallery[$review->reviewId])): ?>
+											<?php foreach ($gallery[$review->reviewId]['image'] as $key => $item): ?>
+												<div class="col-sm-6 col-md-4">
+													<div class="thumbnail">
+														<span class="preview">
+															<?php if ($reviewType == 'confirmed'): ?>
+																<a class="group1" href="<?php echo $item; ?>" title="">
+																	<img src="<?php echo $item; ?>" style="height: 200px;" alt="">
+																</a>
+															<?php else: ?>
 																<img src="<?php echo $item; ?>" style="height: 200px;" alt="">
-															</a>
-														<?php else: ?>
-															<img src="<?php echo $item; ?>" style="height: 200px;" alt="">
+															<?php endif; ?>
+														</span>
+														<?php if ($reviewType == 'confirmed'): ?>
+															<div class="caption">
+																<div class="action_buttons">
+																	<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="<?php echo $gallery[$review->reviewId]['galleryId'][$key]; ?>" /> Remove</label>
+																	<div class="clearfix"></div>
+																</div>
+															</div>
 														<?php endif; ?>
-													</span>
-													<?php if ($reviewType == 'confirmed'): ?>
+														<!--
 														<div class="caption">
 															<div class="action_buttons">
-																<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="<?php echo $gallery[$review->reviewId]['galleryId'][$key]; ?>" /> Remove</label>
+																<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="" /> Remove</label>
+																<label style="font-size: 12px;float: right;"><input type="radio" name="default_img" value="" /> Default</label>
 																<div class="clearfix"></div>
 															</div>
 														</div>
-													<?php endif; ?>
-													<!--
-													<div class="caption">
-														<div class="action_buttons">
-															<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="" /> Remove</label>
-															<label style="font-size: 12px;float: right;"><input type="radio" name="default_img" value="" /> Default</label>
-															<div class="clearfix"></div>
-														</div>
+														-->
 													</div>
-													-->
 												</div>
-											</div>
-										<?php endforeach; ?>
+											<?php endforeach; ?>
+										<?php endif; ?>
 									<?php else: ?>
 										<div class="dz-message">
 											<?php if ($reviewType == 'pending'): ?>
@@ -192,7 +319,8 @@
         <?php } else { ?>
             List is empty
         <?php } ?>
-    </div>
+		<?php endif; ?>
+	</div>
     <nav>
         <?php echo $pager->getLinks(); ?>
     </nav>
@@ -273,5 +401,8 @@ var TourImage = new Dropzone('#dropzone', {
         TourImage.removeAllFiles(true);
         return false;
     };
-
+function onTourChange(element) {
+    var vendor = $(element).find(':selected').attr('vendor');
+	$('#vendor').val(vendor);
+}
 </script>
