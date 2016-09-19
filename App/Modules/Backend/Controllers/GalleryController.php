@@ -37,6 +37,16 @@ class GalleryController extends BackendController {
             $gallery->isShown = 1;
             $gallery->save();
         }
+        // unshown the images
+        if (isset($this->request->getPost()['uncheck']) && !empty($this->request->getPost()['uncheck'])) {
+            $ids = explode(',', $this->request->getPost()['uncheck']);
+            foreach ($ids as $id) {
+                $gallery = \Tourpage\Models\ToursReviewGallery::findFirstByGalleryId($id);
+                // update gallery to false
+                $gallery->isShown = 0;
+                $gallery->save();
+            }
+        }
         $this->response->redirect('/admin/gallery');
     }
 
