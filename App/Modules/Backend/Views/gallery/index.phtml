@@ -5,6 +5,7 @@
 <div class="gallery-sec">
     <h1>Gallery</h1>
     <form action="/admin/gallery/save" method="post" id="gallery-form">
+        <input type="hidden" name="uncheck" id="uncheck-input">
     <ul>
         <?php if (isset($gallery['images'])): ?>
         <?php foreach ($gallery['images']['image'] as $key => $item): ?>
@@ -45,7 +46,13 @@
         $(".group1").colorbox({rel:'group1'});
         // submit form
         $('#save-btn').click(function() {
-           $('#gallery-form').submit();
+            var ids = [];
+            // get uncheck fields
+            $('#gallery-form input:checkbox:not(:checked)').each(function() {
+                ids.push($(this).val());
+            });
+            $('#uncheck-input').val(ids.join(',')); 
+            $('#gallery-form').submit();
         });
     });
 </script>
