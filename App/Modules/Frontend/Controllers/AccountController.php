@@ -424,7 +424,6 @@ class AccountController extends FrontendController {
         $bookings->bind($modelBind);
         $bookings->order("\Tourpage\Models\BookingTours.departureOn DESC");
         $bookingData = $this->getBookingTours($bookings->execute());
-        
         $pager->setUriPattern('/account/reviews/' . $type . '/{page}');
         $this->assets->collection('header_css')->addCss(FRONT_END_DIR . 'css/jquery.rateyo.min.css');
         $this->assets->collection('header_js')->addJs(FRONT_END_DIR . 'js/jquery.rateyo.min.js');
@@ -441,9 +440,16 @@ class AccountController extends FrontendController {
         $data = [];
         foreach ($res as $item) {
             $tours = \Tourpage\Models\Tours::findFirstByTourId($item->tourId);
-            $data['title'][] = $tours->tourTitle;
-            $data['tourId'][] = $tours->tourId;
-            $data['vendorId'][] = $item->vendorId;
+            $findReviews = \Tourpage\Models\ToursReview::find([
+                'conditions' => 'tourId = :tour_id:',
+                'bind' => ['tour_id' => $item->tourId]
+            ]);
+            // show tours in which the member are not added a review in a specific tour
+            if ((int)$findReviews->count() == 0) {
+                $data['title'][] = $tours->tourTitle;
+                $data['tourId'][] = $tours->tourId;
+                $data['vendorId'][] = $item->vendorId;
+            }
         }
         return $data;
     }
