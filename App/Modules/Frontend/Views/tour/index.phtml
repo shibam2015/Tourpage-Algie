@@ -355,7 +355,7 @@
 										$reviewerAvator = $this->url->getStatic(FRONT_END_DIR . 'images/reviewer_avatar_default.png');
 										if ($review->isMember()) {
 											if ($review->memberTourReview && $review->memberTourReview->count() > 0) {
-												$reviewerAvator = $review->memberTourReview->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_ICON);
+												$reviewerAvator = $review->memberTourReview->member->getAvatarUri(\Tourpage\Models\Members::AVATAR_MEDIUM);
 											}
 										}
 										echo $this->tag->image(array(
