@@ -148,6 +148,8 @@ class Tours extends ApplicationModel {
         $this->tourDuration->lengthTypeText = $lengthTypeText;
         if (isset($tourLengthData['duration'])) {
             $this->tourDuration->totalDays = $tourLengthData['duration'];
+        } else {
+            $this->tourDuration->totalDays = null;
         }
         if (isset($tourLengthData['duration_hr']) && isset($tourLengthData['duration_mn'])) {
             $this->tourDuration->singleDayTime = new \stdClass();
@@ -222,7 +224,8 @@ class Tours extends ApplicationModel {
 				} else { 
                 switch ($this->tourDuration->lengthType) {
                     case self::LENGTH_MULTIPLE_DAYS_CODE:
-                        $endDate->sub(new \DateInterval('P' . $this->tourDuration->totalDays . 'D'));
+                        $duration = !$this->tourDuration->totalDays && $this->tourDuration->totalDays == null ? 0 : $this->tourDuration->totalDays;
+                        $endDate->sub(new \DateInterval('P' . $duration . 'D'));
                         if ($currentDate <= $endDate) {
                             if ($currentDate >= $startDate) {
                                 if (in_array($currentDate->format('w'), $this->tourDuration->weekDays)) {
