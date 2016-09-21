@@ -494,6 +494,16 @@ class AccountController extends FrontendController {
                 }
             }
         }
+        // update review
+        if ($this->request->getPost('review') != null) {
+            $review = $this->request->getPost('review');
+            $rate = $this->request->getPost('star_rate');
+            $reviewId = $this->request->getPost('reviewId');
+            $toursreview = \Tourpage\Models\ToursReview::findFirst($reviewId);
+            $toursreview->starCount = $rate;
+            $toursreview->reviewContent = $review;
+            $toursreview->save();
+        }
         // remove gallery
         if ($removeIds != null) {
             foreach ($removeIds as $id) {
