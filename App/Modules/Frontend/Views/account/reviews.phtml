@@ -237,8 +237,8 @@
 														</span>
 														<?php if ($reviewType == 'confirmed'): ?>
 															<div class="caption">
-																<div class="action_buttons">
-																	<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="<?php echo $gallery[$review->reviewId]['galleryId'][$key]; ?>" /> Remove</label>
+																<div class="action_buttons remove-img-checkbox-<?php echo $review->reviewId; ?>" style="display:none;">
+																	<label style="font-size: 12px;float: left;"><input type="checkbox" name="remove_img[]" value="<?php echo $gallery[$review->reviewId]['galleryId'][$key]; ?>"/> Remove</label>
 																	<div class="clearfix"></div>
 																</div>
 															</div>
@@ -304,9 +304,50 @@
 							</div>
 						</div>
 						<div class="clearboth" style="padding:15px 0px 15px 0px;">
+						<!-- START HIDDEN EDIT REVIEW -->
+						<?php if ($reviewType == 'confirmed'): ?>
+							<div class="list-group-item review-form-<?php echo $review->review->reviewId; ?>" style="display:none;">
+								<input type="hidden" name="reviewId" value="<?php echo $review->review->reviewId; ?>">
+								<input type="hidden" name="star_rate" id="star-rate-edit-review-<?php echo $review->review->reviewId; ?>">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label class="label-10">Review</label><br>
+											<textarea class="form-control textarea-edit-review-<?php echo $review->review->reviewId; ?>" rows="10" required="required" name="review">
+												<?php echo \Tourpage\Helpers\Utils::decodeString($review->review->reviewContent);?>
+											</textarea>
+										</div>
+									</div>
+									<div class="clear-fixed"></div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label class="label-10">Star Rate</label><br>
+											<ul class="review">
+												<li class="text-yellow">
+													<div id="star-rate-box-<?php echo $review->review->reviewId; ?>"></div>
+													<script>
+														jQuery(function () {
+														jQuery('#star-rate-box-<?php echo $review->review->reviewId; ?>').rateYo({rating: <?php echo $review->review->starCount;?>, starWidth: "15px", readOnly: false, ratedFill: "#ede811", onSet: function (rating, rateYoInstance) {
+							$("#star-rate-edit-review-<?php echo $review->review->reviewId; ?>").val(rating);
+							}});
+													});</script>
+												</li>
+											</ul>
+										</div>
+									</div>
+									<div class="clear-fixed"></div>
+								</div>
+							</div>
+						<?php endif; ?>
+						<!-- END HIDDEN EDIT REVIEW FORM -->
+						<div class="clearboth" style="padding:15px 0px 15px 0px;">
 							<div class="row">
 								<div class="col-lg-7">
 									<span class="btn btn-primary" id="save-photos"><i class="glyphicon glyphicon-drop"></i> <span><?php if ($reviewType == 'pending') { ?>Save Photos / Images<?php } else { ?>Update Changes<?php } ?></span></span>
+									<?php if ($reviewType == 'confirmed') { ?><span class="btn btn-warning edit-review" id="edit-review" review-id="<?php echo $review->review->reviewId; ?>"><i class="glyphicon glyphicon-drop"></i> <span>Edit Review</span></span>
+									<?php } ?>
 								</div>
 							</div>
 						</div>
@@ -334,6 +375,14 @@
 $(".group1").colorbox({rel:'group1'});
 $('#save-photos').click(function() {
 	$('#gallery-form').submit();
+});
+$('.edit-review').click(function() {
+	// trim textarea values whitespaces
+	var textarea_edit_review = $('.textarea-edit-review-'+$(this).attr('review-id'));
+	textarea_edit_review.val($.trim(textarea_edit_review.val()).replace(/\s*[\r\n]+\s*/g, '\n')
+						   .replace(/(<[^\/][^>]*>)\s*/g, '$1')
+						   .replace(/\s*(<\/[^>]+>)/g, '$1'));
+	$('.remove-img-checkbox-'+$(this).attr('review-id')+', .review-form-'+$(this).attr('review-id')).css('display','block');
 });
 var previewNode = document.querySelector("#template");
 previewNode.id = "";
