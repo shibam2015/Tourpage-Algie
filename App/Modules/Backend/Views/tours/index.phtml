@@ -92,7 +92,11 @@
 									<div id="star-rate-<?php echo $item->tourId;?>"></div>
 									<script>jQuery(function(){jQuery('#star-rate-<?php echo $item->tourId;?>').rateYo({rating: <?php echo $item->tourRating ? $item->tourRating->getStar() : 0;?>,starWidth: "20px",readOnly: true});});</script>
                                 </td>
-                                <td><?php echo $this->tag->linkTo(array($item->tourVendor->vendor->getStorFrontUri(), $item->tourVendor->vendor->businessName, 'local' => false, 'target' => '_blank')); ?></td>
+                                <td>
+									<?php if($item->tourVendor != null && $item->tourVendor->vendor != null): ?>
+										<?php echo $this->tag->linkTo(array($item->tourVendor->vendor->getStorFrontUri(), $item->tourVendor->vendor->businessName, 'local' => false, 'target' => '_blank')); ?>
+									<?php endif; ?>
+								</td>
                                 <td><?php echo \Tourpage\Helpers\Utils::formatCurrency($item->tourPrice->getPrice()); ?></td>
                                 <td><?php echo $item->isBookingActive() ? '<span class="label label-success">Available</span>' : '<span class="label label-warning">Close</span>'; ?></td>
                                 <td>
