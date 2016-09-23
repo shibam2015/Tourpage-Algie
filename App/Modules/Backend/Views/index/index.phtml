@@ -82,12 +82,12 @@
                             ?>
                             <tr>
                                 <td><?php echo $this->tag->linkTo(array($item->getUri(), $item->tourTitle, 'local' => false, 'target' => '_blank')); ?></td>
-                                <td><?php if ($item->tourVendor->vendor != null) { ?>
+                                <td><?php if ($item->tourVendor != null) { ?>
                                     <?php echo $item->tourVendor->vendor->firstName . ' ' . $item->tourVendor->vendor->lastName; ?>
                                     <?php } ?>        
                                 </td>
                                 <td>
-                                    <?php if ($item->tourVendor->vendor != null) { ?>
+                                    <?php if ($item->tourVendor != null) { ?>
                                         <?php echo $this->tag->linkTo(array($item->tourVendor->vendor->getStorFrontUri(), $item->tourVendor->vendor->businessName, 'local' => false, 'target' => '_blank')); ?>
                                     <?php } ?>        
                                 </td>
