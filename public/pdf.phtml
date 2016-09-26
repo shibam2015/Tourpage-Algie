@@ -1,0 +1,207 @@
+<?php
+ini_set('display_errors', 1);
+/**** PRE- REQ FILES AND VARIABLES ****/
+define('APP_PATH', realpath('..') . '/App');
+define('MODULES_DIR', '/Modules');
+define('CONFIG_DIR', '/Config/');
+define('COMMON_DIR', '/common/');
+
+define('FRONT_END_DIR', '/frontend/');
+define('BACK_END_DIR', '/backend/');
+define('VENDOR_DIR', '/vendor/');
+define('SUPPLIER_DIR', '/supplier/');
+
+define('RESOURCES_DIR', '/Resources/');
+define('APP_FRONT_END_DIR', '/Frontend/');
+define('APP_BACK_END_DIR', '/Backend/');
+define('APP_VENDOR_DIR', '/Vendor/');
+define('APP_SUPPLIER_DIR', '/Supplier/');
+
+define('CONFIG_PATH', APP_PATH . CONFIG_DIR);
+define('RESOURCES_PATH', APP_PATH . RESOURCES_DIR);
+define('FRONT_END_PATH', APP_PATH . MODULES_DIR . APP_FRONT_END_DIR);
+define('BACK_END_PATH', APP_PATH . MODULES_DIR . APP_BACK_END_DIR);
+define('VENDOR_PATH', APP_PATH . MODULES_DIR . APP_VENDOR_DIR);
+define('SUPPLIER_PATH', APP_PATH . MODULES_DIR . APP_SUPPLIER_DIR);
+
+require CONFIG_PATH . 'Loader.php';
+require CONFIG_PATH . 'Services.php';
+require_once '../dompdf/autoload.inc.php';
+/**** END PRE-REQUIRES ****/
+?>
+
+<?php
+/***** booking data ****/
+$booking = \Tourpage\Models\Booking::findFirstByTransactionId($_GET['id']);
+?>
+
+<!-- START PDF CONTENT -->
+<html>
+    <head>
+        <title>Booking Voucher</title>
+    </head>
+<body>
+<table width="100%" border="0">
+<tr>
+    <td style="text-align: left;">
+        Invoice Number: #<?php echo $booking->invoiceNumber; ?> <br />
+        Booking Amount: <?php echo \Tourpage\Helpers\Utils::formatCurrency($booking->bookingAmount); ?> <br />
+        Booking Number: #<?php echo $booking->bookingId; ?> <br />
+        Booked On: <?php echo \Tourpage\Helpers\Utils::formatDate($booking->bookedOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT); ?>
+    </td>
+</tr>
+</table>
+<hr/> <br />
+<table width="100%" style="border: 1px solid;border-spacing: 0;">
+<tr>
+    <td style="width: 50%;border-bottom: 1px solid;border-right: 1px solid;padding: 5px;background-color: #D9DAD0;">Customer Information</td>
+    <td style="width: 50%;border-bottom: 1px solid;padding: 5px;background-color: #D9DAD0;">Billing Address</td>
+</tr>
+<tr>
+    <td style="border-right: 1px solid;padding: 5px;">
+        <em>Name</em>: <?php echo $booking->bookingAddress->billingFirstName . ' ' . $booking->bookingAddress->billingLastName; ?> <br />
+        <em>Address</em>:
+        <?php if (!empty($booking->member->addressOne)) { ?>
+            <?php echo $booking->member->addressOne; ?>,
+        <?php } ?>
+        <?php if (!empty($booking->member->addressTwo)) { ?>
+            , <?php echo $booking->member->addressTwo; ?>
+        <?php } ?>
+        <?php echo (!empty($booking->member->city) ? $booking->member->city . ', ' : '') . ($booking->member->state ? $booking->member->state->name . ', ' : '') . ($booking->member->country ? $booking->member->country->name : ''); ?>
+        <?php if (!empty($booking->member->zipCode)) { ?>
+            , <?php echo $booking->member->zipCode; ?>
+        <?php } ?> <br />
+        <em>Email</em>: <?php echo $booking->member->emailAddress; ?> 
+        <?php if (!empty($booking->member->phone)) { ?>
+            <br />
+            <em>Phone</em>: <?php echo $booking->member->phone; ?>
+        <?php } ?>
+    </td>
+    <td style="padding: 5px;">
+        <em>Name</em>: <?php echo $booking->bookingAddress->billingFirstName . ' ' . $booking->bookingAddress->billingLastName; ?> <br />
+        <em>Address</em>: 
+        <?php echo $booking->bookingAddress->billingAddressOne; ?>
+        <?php if (!empty($booking->bookingAddress->billingAddressTwo)) { ?>
+            , <?php echo $booking->bookingAddress->billingAddressTwo; ?>
+        <?php } ?>
+        , <?php echo $booking->bookingAddress->billingCity . ', ' . $booking->bookingAddress->state->name . ', ' . $booking->bookingAddress->country->name; ?>
+        <?php if (!empty($booking->bookingAddress->billingZipCode)) { ?>
+            , <?php echo $booking->bookingAddress->billingZipCode; ?>
+        <?php } ?><br />
+        <em>Email</em>: <?php echo $booking->bookingAddress->billingEmailAddress; ?>
+        <?php if (!empty($booking->bookingAddress->billingPhone)) { ?>
+            <br />
+            <em>Phone</em>: <?php echo $booking->bookingAddress->billingPhone; ?>
+        <?php } ?>
+    </td>
+</tr>
+</table>
+<br />
+<strong>Tours for this booking</strong><hr/>
+<table width="100%" style="border: 1px solid;border-spacing: 0;">
+<tr>
+    <td style="border-bottom: 1px solid;border-right: 1px solid;padding: 5px;background-color: #D9DAD0;" colspan="2">Tour</td>
+    <td style="border-bottom: 1px solid;border-right: 1px solid;padding: 5px;background-color: #D9DAD0;">Amount</td>
+    <td style="border-bottom: 1px solid;border-right: 1px solid;padding: 5px;background-color: #D9DAD0;">Discount(%)</td>
+    <td style="border-bottom: 1px solid;border-right: 1px solid;padding: 5px;background-color: #D9DAD0;">Choosen Date</td>
+    <td style="border-bottom: 1px solid;border-right: 1px solid;padding: 5px;background-color: #D9DAD0;">Participants</td>
+    <td style="border-bottom: 1px solid;padding: 5px;background-color: #D9DAD0;">Options</td>
+</tr>
+<?php foreach ($booking->bookingTours as $bookingTour) { ?>
+    <tr>
+        <td style="border-bottom: 1px solid;border-right: 1px solid;" colspan="2">
+            <a href="<?php echo $bookingTour->tour->getUri(); ?>" target="_blank"><?php echo $bookingTour->tour->tourTitle; ?></a>
+            <?php //echo $this->tag->linkTo(array($bookingTour->tour->getUri(), $bookingTour->tour->tourTitle, 'local' => false, "target" => "_blank")); ?><br />
+            <span style="font-size:12px;">
+                Tour type: <?php echo $bookingTour->tour->tourDuration->lengthTypeText; ?><br/>
+                Price for: <?php echo $bookingTour->tour->tourPrice->data->priceTypeText; ?><br/>
+                Operator: <a href="<?php echo $bookingTour->vendor->getStorFrontUri(); ?>" target="_blank"><?php echo $bookingTour->vendor->businessName; ?></a><?php //echo $this->tag->linkTo(array($bookingTour->vendor->getStorFrontUri(), $bookingTour->vendor->businessName, 'local' => false, "target" => "_blank")); ?>
+            </span>
+        </td>
+        <td style="border-bottom: 1px solid;border-right: 1px solid;"><?php echo \Tourpage\Helpers\Utils::formatCurrency($bookingTour->finalAmount); ?></td>
+        <td style="border-bottom: 1px solid;border-right: 1px solid;">
+            <?php echo $bookingTour->discount; ?>%
+            <?php
+            if (isset($bookingTour->data->multiPurches)) {
+                echo '<hr>';
+                echo 'MPD*: ' . $bookingTour->data->multiPurches->discount . '%';
+            }
+            ?>
+        </td>
+        <td style="border-bottom: 1px solid;border-right: 1px solid;">
+            <?php
+            echo \Tourpage\Helpers\Utils::formatDate($bookingTour->departureOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT);
+            if (!empty($bookingTour->arivalOn)) {
+                echo ' - ' . \Tourpage\Helpers\Utils::formatDate($bookingTour->arivalOn, Tourpage\Helpers\Utils::DATE_FORMAT_SHORT);
+            }
+            if (isset($bookingTour->data->timeSlot)) {
+                echo '<hr>';
+                echo 'Time: ';
+                echo \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->start->hours) . ':' . \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->start->minutes) . ' ' . ($bookingTour->data->timeSlot->start->hours >= 12 ? 'PM' : 'AM');
+                echo ' - ' . \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->end->hours) . ':' . \Tourpage\Helpers\Utils::padInt($bookingTour->data->timeSlot->end->minutes) . ' ' . ($bookingTour->data->timeSlot->end->hours >= 12 ? 'PM' : 'AM');
+            }
+            ?>
+        </td>
+        <td style="border-bottom: 1px solid;border-right: 1px solid;"><?php //echo $bookingTour->headCount . ' ' . $bookingTour->data->headCountUnit;    ?>
+            <?php
+            if (isset($bookingTour->data->headCount)) {
+                $c = 1;
+                $ageGroupVar = \Tourpage\Helpers\Utils::getVar('config_tour_age_group');
+                foreach ($bookingTour->data->headCount as $ag => $hc) {
+                    ?>
+                    <?php echo $hc['count']; ?> <?php echo $ageGroupVar[$ag]; ?> ( Age <?php echo $bookingTour->tour->tourPrice->data->priceGroup[$ag]['age_type'] . ' ' . $bookingTour->tour->tourPrice->data->priceGroup[$ag]['age']; ?> ) x <?php echo \Tourpage\Helpers\Utils::formatCurrency($hc['unit_price']); ?>
+                    <?php if ($c < count($bookingTour->data->headCount)) { ?>
+                        <br>
+                    <?php } $c++; ?>
+                <?php } ?>
+                <hr>Total: <?php echo $bookingTour->headCount . ' ' . $bookingTour->data->headCountUnit; ?>
+            <?php } ?>
+            <?php if (isset($bookingTour->data->groupHeadCount)) { ?>
+                Total <?php echo $bookingTour->data->groupHeadCount . ' ' . $bookingTour->data->headCountUnit; ?>
+            <?php } ?>
+        </td>
+        <td style="border-bottom: 1px solid;">
+            <?php
+            if (isset($bookingTour->data->tourOptions) && count($bookingTour->data->tourOptions) > 0) {
+                foreach ($bookingTour->data->tourOptions as $tourOpt) {
+                    $optionString = $tourOpt['name'];
+                    $optionString .= ' (';
+                    if (isset($tourOpt['type'])) {
+                        switch ($tourOpt['type']) {
+                            case \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_CODE:
+                                $optionString .= \Tourpage\Models\ToursOptions::OPTION_PER_PERSON_TEXT;
+                                break;
+                            case \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_CODE:
+                                $optionString .= \Tourpage\Models\ToursOptions::OPTION_PER_GROUP_TEXT;
+                                break;
+                        }
+                    }
+                    $optionString .= ') ';
+                    $optionString .= ' ' . \Tourpage\Helpers\Utils::formatCurrency($tourOpt['unit_price']);
+                    if (isset($tourOpt['head_count'])) {
+                        $optionString .= ' x ' . $tourOpt['head_count'];
+                    }
+                    $optionString .= ' = ' . \Tourpage\Helpers\Utils::formatCurrency($tourOpt['amount']);
+                    echo $optionString . '<br />';
+                }
+            }
+            ?>
+        </td>
+    </tr>
+<?php } ?>
+</table>
+<?php if (!empty($booking->bookingComments)) { ?>
+<h3>Comments</h3>
+<p style="padding: 10px; border: 1px solid;"><?php echo $booking->bookingComments; ?></p>
+<?php } ?>
+</body>
+</html>
+<!-- END PDF CONTENT -->
+<?php
+$pdf = new \Dompdf\Dompdf();
+$pdf->loadHtml(ob_get_clean());
+//$pdf->setPaper('A4', 'landscape');
+//$pdf->set_option('isHtml5ParserEnabled', true);
+$pdf->render();
+$pdf->stream('voucher', ['Attachment' => 0]);
+?>
