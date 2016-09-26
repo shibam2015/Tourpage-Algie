@@ -51,7 +51,7 @@
 								</ul>
 							</div><!--//operator-->
 							<div class="bt-btns" style="margin-top: 15px;">
-								<a class="btn btn-default"><i class="glyphicon glyphicon-print"></i> Print Voucher</a>
+								<a class="btn btn-default" href="javascript:printVoucher('<?php echo $booking->booking->transactionId;?>')"><i class="glyphicon glyphicon-print"></i> Print Voucher</a>
 								<a class="btn btn-info" data-toggle="modal" data-target="#model-tour-bd_<?php echo $booking->bookingId;?>"><i class="glyphicon glyphicon-book"></i> Booking Details</a>
 							</div>
 						</div><!--//left-->
@@ -333,3 +333,8 @@
     </nav>
 </div>
 <style>.image img{height:154px;}</style>
+<script>
+	function printVoucher(transactionId) {
+		window.open('/pdf.phtml?id='+transactionId, '_blank');
+	}
+</script>
