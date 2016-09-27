@@ -36,9 +36,12 @@ abstract class VendorController extends Controller {
                 ->addCss(COMMON_DIR . 'css/jquery-ui.css')
                 ->addCss(COMMON_DIR . 'css/font-awesome.css')
                 ->addCss(VENDOR_DIR . 'css/style.css');
-        $this->assets->collection('footer')
+        $assets = $this->assets->collection('footer')
                 ->addJs(COMMON_DIR . 'js/bootstrap.js')
                 ->addJs(COMMON_DIR . 'js/script.js');
+        if ($this->dispatcher->getControllerName() != 'account' && $this->dispatcher->getActionName() != 'edit') {
+            $assets->addJs(VENDOR_DIR . 'js/common.js');
+        }
     }
 
     /**
