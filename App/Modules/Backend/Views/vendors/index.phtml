@@ -138,6 +138,11 @@
                                         <?php echo $this->tag->linkTo(array('/admin/vendors/view/' . $item->vendorId, '<span class="glyphicon glyphicon-search"></span>', 'class' => 'btn btn-default btn-xs tooltips', 'title' => 'View')); ?>
                                         <?php echo $this->tag->linkTo(array('/admin/vendors/edit/' . $item->vendorId, '<span class="glyphicon glyphicon-pencil"></span>', 'class' => 'btn btn-primary btn-xs tooltips', 'title' => 'Edit Vendor')); ?>
                                         <?php echo $this->tag->linkTo(array('/admin/vendors/remove/' . $item->vendorId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Vendor')); ?>
+                                    <?php
+                                        if ($item->status == 3 || $item->status == 4) {
+                                            echo $this->tag->linkTo(array('/admin/vendors/activate/' . $item->vendorId, '<span class="glyphicon glyphicon-ok"></span>', 'class' => 'btn btn-success btn-xs tooltips', 'title' => 'Activate'));
+                                        }
+                                    ?>
                                     </td>
                                 </tr>
                             <?php } ?>
