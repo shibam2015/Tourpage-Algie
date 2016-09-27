@@ -193,7 +193,8 @@ class AuthController extends VendorController {
                             $mail->send();
 
                             //$this->flash->success("Your account has been created successfuly. An activation email has been sent to your email address. Please activate your account within 24 hrs.");
-                            $this->response->redirect('/vendor/auth/endto/' . md5('success'));
+                            //$this->response->redirect('/vendor/auth/endto/' . md5('success'));
+                            $this->response->redirect('/vendor/auth/register?s=' . md5('success'));
                         } else {
                             foreach ($vendors->getMessages() as $message) {
                                 $this->flash->error((string) $message);
