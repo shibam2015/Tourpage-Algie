@@ -509,6 +509,6 @@ class VendorsController extends BackendController {
     private function getEmailBody()
     {
         $url = $this->url->get('/vendor/auth/');
-        return "Hi,<br>We're glad to inform you that the administrator has beed approved and activated yout account.<br><br>Please visit this <a href='{$url}' target='_blank'>link</a> to login.";
+        return "Hi,<br>We're glad to inform you that the administrator approved and activated your account.<br><br>Please visit this <a href='{$url}' target='_blank'>link</a> to login.";
     }
 }
