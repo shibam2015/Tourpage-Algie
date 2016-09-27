@@ -490,5 +490,25 @@ class VendorsController extends BackendController {
         $this->tag->prependTitle('Remove Tour & Activities');
         $this->view->tourType = $tourType;
     }
-
+    
+    public function activateAction($vendorId = 0)
+    {
+        $vendor = \Tourpage\Models\Vendors::findFirst($vendorId);
+        $vendor->status = 1;
+        $vendor->save();
+        // send email
+        $mail = new \Tourpage\Library\Mail();
+        $mail->setTo($vendor->emailAddress, $vendor->firstName . ' ' . $vendor->lastName);
+        $mail->setSubject('Your Account has been Activated!');
+        $mail->setBody($this->getEmailBody());
+        $mail->send();
+        $this->flash->success("Vendor activated successfuly. An email already sent to notify the vendor.");
+        $this->response->redirect('/admin/vendors');
+    }
+    
+    private function getEmailBody()
+    {
+        $url = $this->url->get('/vendor/auth/');
+        return "Hi,<br>We're glad to inform you that the administrator has beed approved and activated yout account.<br><br>Please visit this <a href='{$url}' target='_blank'>link</a> to login.";
+    }
 }
