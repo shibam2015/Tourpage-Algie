@@ -100,4 +100,15 @@ class IndexController extends VendorController {
 		}
     }
 
+	public function checkAccountSetUpAction()
+	{
+		$return = 1;
+		$vendorId = !$this->vendors->getVendorData()->isParent() ? $this->vendors->getVendorData()->parentId : $this->vendors->getId();
+		$vendorData = \Tourpage\Models\Vendors::findFirstByVendorId($vendorId);
+		if ($vendorData->businessName == '' || $vendorData->businessName == null) {
+			$return = 0;
+		}
+		echo $return;		
+		exit();
+	}
 }
