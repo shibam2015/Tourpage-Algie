@@ -396,6 +396,7 @@ class AuthController extends VendorController {
         $this->response->redirect('/vendor');
     }
 
+
     public function endtoAction($endType = '') {
         switch ($endType) {
             case md5('success'):
@@ -403,6 +404,11 @@ class AuthController extends VendorController {
                 echo '<div class="alert alert-success">Your account has been created successfuly. An activation email has been sent to your email address. Please activate your account within 24 hrs.</div>';
                 break;
         }
+    }
+    
+    public function pricingAction()
+    {
+        $this->tag->setTitle('Tourpage Pricing');
     }
 
 }
