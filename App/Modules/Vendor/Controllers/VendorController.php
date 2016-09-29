@@ -31,11 +31,15 @@ abstract class VendorController extends Controller {
      * Initializing Frontend Base Controllers Options
      */
     public function initialize() {
-        $this->assets->collection('header')
+        $styles = $this->assets->collection('header')
                 ->addCss(COMMON_DIR . 'css/bootstrap.css')
                 ->addCss(COMMON_DIR . 'css/jquery-ui.css')
-                ->addCss(COMMON_DIR . 'css/font-awesome.css')
-                ->addCss(VENDOR_DIR . 'css/style.css');
+                ->addCss(COMMON_DIR . 'css/font-awesome.css');
+        if ($this->dispatcher->getControllerName() == 'auth' && $this->dispatcher->getActionName() == 'pricing') {
+            $styles->addCss(VENDOR_DIR . 'css/pricing.css');
+        } else {
+            $styles->addCss(VENDOR_DIR . 'css/style.css');
+        }
         $assets = $this->assets->collection('footer')
                 ->addJs(COMMON_DIR . 'js/bootstrap.js')
                 ->addJs(COMMON_DIR . 'js/script.js');
