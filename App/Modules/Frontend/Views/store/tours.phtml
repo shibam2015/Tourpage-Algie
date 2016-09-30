@@ -89,7 +89,7 @@
 								   <div id="star-rate-box-<?php echo $groupTour->tour->tourId; ?>"></div>
 								   <script>
 									   jQuery(function () {
-									   jQuery('#star-rate-box-<?php echo $groupTour->tour->tourId; ?>').rateYo({rating: <?php echo $groupTour->tour->tourRating ? $groupTour->tour->tourRating->getStar() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
+									   jQuery('#star-rate-box-<?php echo $groupTour->tour->tourId; ?>').rateYo({rating: <?php echo $groupTour->tour->tourReviews ? $groupTour->tour->tourReviews->count() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
 								   });</script>
 							   </li>
 							   <li class="review-count">(<?php echo $groupTour->tour->tourReviews ? $groupTour->tour->tourReviews->count() : 0; ?>)</li>
@@ -155,7 +155,7 @@
                                             <li class="text-yellow">
                                                 <div id="star-rate-grid-<?php echo $groupTour->tour->tourId; ?>"></div>
                                                 <script>jQuery(function () {
-                                                    jQuery('#star-rate-grid-<?php echo $groupTour->tour->tourId; ?>').rateYo({rating: <?php echo $groupTour->tour->tourRating ? $groupTour->tour->tourRating->getStar() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
+                                                    jQuery('#star-rate-grid-<?php echo $groupTour->tour->tourId; ?>').rateYo({ rating: <?php echo $groupTour->tour->tourReviews ? $groupTour->tour->tourReviews->count() : 0; ?>, starWidth: "15px", readOnly: true, ratedFill: "#ede811"});
                                                 });</script>
                                             </li>
                                             <li class="review-count">(<?php echo $groupTour->tour->tourReviews ? $groupTour->tour->tourReviews->count() : 0; ?>)</li>
