@@ -381,33 +381,46 @@ class AccountController extends VendorController {
                                 $imageName = 'banner' . time() . $i . '.' . $file->getExtension();
                                 
                                 if ($file->moveTo($baseLocation . '/' . $imageName)) {
-                                    $bannerResize = new \Phalcon\Image\Adapter\GD($baseLocation . '/' . $imageName);
-                                    $bannerResize->resize(800, 360);
-                                    $bannerResize->save($baseLocation . '/' . $imageName);
-                                    $modelBanner = \Tourpage\Models\VendorsBanner::findFirst(array(
-                                                'bannerId = :banner_id: AND vendorId = :vendor_id:',
-                                                'bind' => array(
-                                                    'banner_id' => $key,
-                                                    'vendor_id' => $vendor->vendorId
-                                                )
-                                    ));
-                                    if (!$modelBanner || $modelBanner->count() == 0) {
-                                        $modelBanner = new \Tourpage\Models\VendorsBanner();
-                                    }
-                                    if ($modelBanner->bannerImage != NULL) {
-                                        if (file_exists($modelBanner->getBannerUri(TRUE))) {
-                                            unlink($modelBanner->getBannerUri(TRUE));
+                                    /******* check the banner upload file if too small******/
+                                    $imageLocation = $baseLocation . '/' . $imageName;
+                                    $imagefile = new \Phalcon\Image\Adapter\GD($imageLocation);
+                                    $width = $imagefile->getWidth();
+                                    $height = $imagefile->getHeight();
+                                    if ((int)$width < 1905 && (int)$height < 400) {
+                                        $this->flash->error('Uploaded banner image is too small for banner #'.$key.'. Please upload a banner size file with a dimension atleast 1905 x 400 in pixels.');
+                                        //remove the file in tmp
+                                        unlink($imageLocation);
+                                    } else {
+                                        $bannerResize = new \Phalcon\Image\Adapter\GD($baseLocation . '/' . $imageName);
+                                        //$bannerResize->resize(800, 360);
+                                        //$bannerResize->crop(1905, 400, 500, 500);
+                                        $bannerResize->resize(1905, 400);
+                                        $bannerResize->save($baseLocation . '/' . $imageName);
+                                        $modelBanner = \Tourpage\Models\VendorsBanner::findFirst(array(
+                                                    'bannerId = :banner_id: AND vendorId = :vendor_id:',
+                                                    'bind' => array(
+                                                        'banner_id' => $key,
+                                                        'vendor_id' => $vendor->vendorId
+                                                    )
+                                        ));
+                                        if (!$modelBanner || $modelBanner->count() == 0) {
+                                            $modelBanner = new \Tourpage\Models\VendorsBanner();
                                         }
-                                    }
-                                    $modelBanner->vendorId = $vendor->vendorId;
-                                    $modelBanner->bannerImage = $imageName;
-                                    $modelBanner->bannerLink = (isset($bannerLink[$key]) && !empty($bannerLink[$key]) ? $bannerLink[$key] : '');
-                                    $modelBanner->bannerStatus = $bannerStatus[$key];
-                                    $modelBanner->bannerCaption = $bannerCaption[$key];
-                                    $modelBanner->imageUploadedOn = \Tourpage\Helpers\Utils::currentDate();
-                                    if (!$modelBanner->save()) {
-                                        foreach ($modelBanner->getMessages() as $message) {
-                                            $error[] = (string) $message;
+                                        if ($modelBanner->bannerImage != NULL) {
+                                            if (file_exists($modelBanner->getBannerUri(TRUE))) {
+                                                unlink($modelBanner->getBannerUri(TRUE));
+                                            }
+                                        }
+                                        $modelBanner->vendorId = $vendor->vendorId;
+                                        $modelBanner->bannerImage = $imageName;
+                                        $modelBanner->bannerLink = (isset($bannerLink[$key]) && !empty($bannerLink[$key]) ? $bannerLink[$key] : '');
+                                        $modelBanner->bannerStatus = $bannerStatus[$key];
+                                        $modelBanner->bannerCaption = $bannerCaption[$key];
+                                        $modelBanner->imageUploadedOn = \Tourpage\Helpers\Utils::currentDate();
+                                        if (!$modelBanner->save()) {
+                                            foreach ($modelBanner->getMessages() as $message) {
+                                                $error[] = (string) $message;
+                                            }
                                         }
                                     }
                                 }
