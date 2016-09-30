@@ -97,6 +97,15 @@ class Module implements ModuleDefinitionInterface {
         $di->set('vendors', function() {
             return new \Multiple\Vendor\Library\VendorsComponent();
         });
+        $di->set('flashSession', function(){
+            $flash = new \Phalcon\Flash\Session(array(
+                'error' => 'alert alert-danger',
+                'success' => 'alert alert-success',
+                'notice' => 'alert alert-info',
+                'warning' => 'alert alert-warning'
+            ));
+            return $flash;
+        });
     }
 
 }
