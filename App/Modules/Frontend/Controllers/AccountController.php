@@ -65,26 +65,37 @@ class AccountController extends FrontendController {
                         }
                         $imageName = time() . md5($file->getName() . rand(0, 1000)) . '.' . $file->getExtension();
                         if ($file->moveTo($baseLocation . $imageName)) {
-                            foreach (\Tourpage\Models\Members::avatarSizes() as $avatarSize) {
-                                list($resizeWidth, $resizeHeight) = explode('x', $avatarSize);
+                            /******* check the profile picture upload file if too small******/
+                            $imageLocation = $baseLocation . $imageName;
+                            $imagefile = new \Phalcon\Image\Adapter\GD($imageLocation);
+                            $width = $imagefile->getWidth();
+                            $height = $imagefile->getHeight();
+                            if ((int)$width < 180 && (int)$height < 150) {
+                                $this->flash->error('Uploaded profile image is too small. Please upload a file with a dimension atleast 180 x 150 in pixels.');
+                                //remove the file
+                                unlink($imageLocation);
+                            } else {
+                                foreach (\Tourpage\Models\Members::avatarSizes() as $avatarSize) {
+                                    list($resizeWidth, $resizeHeight) = explode('x', $avatarSize);
+                                    if (!empty($member->avatar)) {
+                                        if (file_exists($baseLocation . $avatarSize . $member->avatar)) {
+                                            unlink($baseLocation . $avatarSize . $member->avatar);
+                                        }
+                                    }
+                                    $resizeFile = new \Phalcon\Image\Adapter\GD($baseLocation . $imageName);
+                                    $resizeFile->resize($resizeWidth, $resizeHeight);
+                                    $resizeFile->save($baseLocation . $avatarSize . $imageName);
+                                }
                                 if (!empty($member->avatar)) {
-                                    if (file_exists($baseLocation . $avatarSize . $member->avatar)) {
-                                        unlink($baseLocation . $avatarSize . $member->avatar);
+                                    if (file_exists($baseLocation . $member->avatar)) {
+                                        unlink($baseLocation . $member->avatar);
                                     }
                                 }
-                                $resizeFile = new \Phalcon\Image\Adapter\GD($baseLocation . $imageName);
-                                $resizeFile->resize($resizeWidth, $resizeHeight);
-                                $resizeFile->save($baseLocation . $avatarSize . $imageName);
+                                $member->avatar = $imageName;
+                                $member->save();
+                                $this->flash->success('Profile has been saved successfully');
+                                $this->member->refresh();
                             }
-                            if (!empty($member->avatar)) {
-                                if (file_exists($baseLocation . $member->avatar)) {
-                                    unlink($baseLocation . $member->avatar);
-                                }
-                            }
-                            $member->avatar = $imageName;
-                            $member->save();
-                            $this->flash->success('Profile has been saved successfully');
-                            $this->member->refresh();
                         } else {
                             $this->flash->error((string) $file->getError());
                         }
