@@ -130,6 +130,7 @@ class StoreController extends FrontendController {
 	$this->view->otherTours = $otherTours;
         $this->view->reviews = $reviews;
 		$this->view->bannerImages = $storeVendor->vendorBanners;
+		$this->view->member = $this->session->get('member') != null ? $this->session->get('member') : null;
  
 		
 	
