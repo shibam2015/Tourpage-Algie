@@ -488,6 +488,7 @@ else{ echo '';}*/?></strong>, Duration: <strong>
 		// get the current location using geolocation
 		var lat = null;
 		var long = null;
+		/*
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (p) {
 				lat = p.coords.latitude;
@@ -516,7 +517,26 @@ else{ echo '';}*/?></strong>, Duration: <strong>
 			});
 		} else {
 			alert('Geo Location feature is not supported in this browser.');
-		}
+		}*/
+		// get weather
+		$.simpleWeather({
+			location: '<?php echo $member->addressOne; ?>',
+			zipcode: '<?php echo $member->zipCode; ?>',
+			unit: 'c',
+			success: function(weather) {
+				var html = '';
+				html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
+				html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
+				html += '<li class="currently">'+weather.currently+'</li></ul>';
+				//html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+				$("#weather").html(html);
+				$(".weather-forecast").css({"background-image" : "url("+weather.image+")", "background-repeat": "no-repeat", "background-color" : "rgb(208, 218, 246)"});
+			},
+			error: function(error) {
+				$("#weather").html('<p>'+error+'</p>');
+			}
+		});
+		
 	});
     jQuery(function () {
         jQuery(".tours").each(function() {
