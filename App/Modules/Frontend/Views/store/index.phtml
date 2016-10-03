@@ -1,3 +1,4 @@
+<?php echo $this->tag->stylesheetLink($this->url->getStatic(COMMON_DIR . "weather-plugin/weather.css")); ?>
 <!-- DYNAMIC BANNER IMAGES BEGIN -->
 		<!-- @author Algie Caballes -->
     	<header class="header">
@@ -463,13 +464,60 @@ else{ echo '';}*/?></strong>, Duration: <strong>
 
                         </div>
                     </div>
-                </div>
+					
+					<!-- weather forecast -->
+					<?php echo $this->tag->javascriptInclude($this->url->getStatic(COMMON_DIR . "weather-plugin/jquery.simpleWeather.js")); ?>
+					<div class="col-sm-4">
+						<div class="tour-others">
+							<div>
+								<h4>Weather Forecast:</h4>
+							</div>
+							<div class="weather-forecast" style="border:1px solid rgb(204, 204, 204); padding: 7px !important;">
+								<div id="weather"></div>
+							</div>
+						</div>
+					</div>
+			    </div>
             </div>
         </div><!-- /.row -->
     </div>
 </section>
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		// get the current location using geolocation
+		var lat = null;
+		var long = null;
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function (p) {
+				lat = p.coords.latitude;
+				long = p.coords.longitude;
+				// get weather
+				$.simpleWeather({
+					//location: 'Mumbai',
+					//zipcode: '2201200',
+					//woeid: '',
+					location: lat+','+long,
+					//long: long,
+					unit: 'c',
+					success: function(weather) {
+						var html = '';
+						html = '<h2><i class="icon-'+weather.code+'"></i> '+weather.temp+'&deg;'+weather.units.temp+'</h2>';
+						html += '<ul><li>'+weather.city+', '+weather.region+'</li>';
+						html += '<li class="currently">'+weather.currently+'</li></ul>';
+						//html += '<li>'+weather.wind.direction+' '+weather.wind.speed+' '+weather.units.speed+'</li></ul>';
+						$("#weather").html(html);
+						$(".weather-forecast").css({"background-image" : "url("+weather.image+")", "background-repeat": "no-repeat", "background-color" : "rgb(208, 218, 246)"});
+					},
+					error: function(error) {
+						$("#weather").html('<p>'+error+'</p>');
+					}
+				});
+			});
+		} else {
+			alert('Geo Location feature is not supported in this browser.');
+		}
+	});
     jQuery(function () {
         jQuery(".tours").each(function() {
             if(jQuery(this).is(':first-child')){
