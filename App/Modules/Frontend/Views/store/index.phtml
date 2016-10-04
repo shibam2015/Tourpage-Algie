@@ -523,8 +523,8 @@ else{ echo '';}*/?></strong>, Duration: <strong>
 		}*/
 		// get weather
 		$.simpleWeather({
-			location: '<?php echo $member->addressOne; ?>',
-			zipcode: '<?php echo $member->zipCode; ?>',
+			location: '<?php if ($member != null) { echo $member->addressOne; } ?>',
+			zipcode: '<?php if ($member != null) { echo $member->zipCode; } ?>',
 			unit: 'c',
 			success: function(weather) {
 				var html = '';
