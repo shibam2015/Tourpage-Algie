@@ -194,6 +194,10 @@ class AuthController extends FrontendController {
               } */
         }
         $this->view->form = $form;
+        $this->view->banners = \Tourpage\Models\Banners::find(array(
+            'conditions' => 'bannerStatus = :status: AND bannerType = :type:',
+            'bind' => array('status' => \Tourpage\Models\Banners::ACTIVE_STATUS_CODE, 'type' => 'userRegistration')
+        ));
     }
 
     /**
