@@ -225,6 +225,7 @@ class StoreController extends FrontendController {
         $this->view->pager = $pager;
         $this->view->classGrid = $classGrid;
         $this->view->classList = $classList;
+		$this->view->bannerImages = $storeVendor->vendorBanners;
     }
 
     /**
