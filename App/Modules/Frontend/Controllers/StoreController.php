@@ -65,7 +65,7 @@ class StoreController extends FrontendController {
 		$groupTours = \Tourpage\Models\GroupsTours::find(array(
                     'conditions' => 'vendorId = :vendor_id:',
                     'order' => 'groupToursId DESC',
-                    'limit' => 6,
+                    //'limit' => 6, *** todo: temporary comment this out to display all the tours in a group
                     'bind' => array(
                     'vendor_id' => $storeVendor->vendorId
                     )
