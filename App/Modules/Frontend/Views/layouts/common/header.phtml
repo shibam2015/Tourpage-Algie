@@ -187,7 +187,7 @@ if ($banners && $banners->count() > 0) {
         </div>
         </header>
         <main>
-        <?php if ($banners == null ): ?>
+        <?php if (isset($banners) && $banners == null ): ?>
         <div class="banner">
         	<img src="/public/elements/frontend/assets/images/banner-img2.png" class="scale" data-scale="best-fill" data-align="center" >
         </div>
