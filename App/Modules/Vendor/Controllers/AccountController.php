@@ -164,21 +164,41 @@ class AccountController extends VendorController {
                     $baseLocation = $this->vendors->getTourImagesPath();
                     $i = 1;
                     foreach ($this->request->getUploadedFiles(TRUE) as $file) {
-                        $imageName = 'aboutUsBanner' . time() . $i . '.' . $file->getExtension();
-                        if ($vendor->aboutUsBanner) {
-                            
-                            if (file_exists($vendor->getAboutUsBannerUri($vendor->aboutUsBanner, TRUE))) {
-                              //die("hii4");  
-                                unlink($vendor->getAboutUsBannerUri($vendor->aboutUsBanner, TRUE));
+                        $imageType = $file->getKey();
+                        if ($imageType == 'about_us_banner') {
+                            /*** handle about us banner ***/
+                            $imageName = 'aboutUsBanner' . time() . $i . '.' . $file->getExtension();
+                            if ($vendor->aboutUsBanner) {
+                                
+                                if (file_exists($vendor->getAboutUsBannerUri($vendor->aboutUsBanner, TRUE))) {
+                                  //die("hii4");  
+                                    unlink($vendor->getAboutUsBannerUri($vendor->aboutUsBanner, TRUE));
+                                }
+                            }
+                            if ($file->moveTo($baseLocation . '/' . $imageName)) {
+                                //die($baseLocation);
+                                $vendor->aboutUsBanner = $imageName;
+                                $abUsBanner = new \Phalcon\Image\Adapter\GD($baseLocation . '/' . $imageName);
+                                $abUsBanner->resize(800, 360);
+                                $abUsBanner->save($baseLocation . '/' . $imageName);
                             }
                         }
-                        if ($file->moveTo($baseLocation . '/' . $imageName)) {
-                            //die($baseLocation);
-                            $vendor->aboutUsBanner = $imageName;
-                            $abUsBanner = new \Phalcon\Image\Adapter\GD($baseLocation . '/' . $imageName);
-                            $abUsBanner->resize(800, 360);
-                            $abUsBanner->save($baseLocation . '/' . $imageName);
+                        
+                        if ($imageType == 'store_logo') {
+                            /*** handle logo ***/
+                            $imageName = 'logo' . time() . $i . '.' . $file->getExtension();
+                            if ($vendor->logo) {
+                                if (file_exists($vendor->getLogoUri($vendor->logo, TRUE))) {
+                                    unlink($vendor->getLogoUri($vendor->logo, TRUE));
+                                }
                             }
+                            if ($file->moveTo($baseLocation . '/' . $imageName)) {
+                                $vendor->logo = $imageName;
+                                $logo = new \Phalcon\Image\Adapter\GD($baseLocation . '/' . $imageName);
+                                $logo->resize(300, 300);
+                                $logo->save($baseLocation . '/' . $imageName);
+                            }
+                        }
                         $i++;
                     }
                 }
@@ -196,6 +216,7 @@ class AccountController extends VendorController {
                     }
                     $vendor->logo = NULL;
                 }
+                /*
                 if ($this->request->hasFiles(TRUE)) {
                     $baseLocation = $this->vendors->getTourImagesPath();
                     $i = 1;
@@ -215,6 +236,7 @@ class AccountController extends VendorController {
                         $i++;
                     }
                 }
+                */
                 $socialMedia = [];
                 if (!isset($socialMedia['links'])) {
                     $socialMedia['links'] = [];
