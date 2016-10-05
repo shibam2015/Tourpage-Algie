@@ -208,6 +208,10 @@ class AuthController extends VendorController {
                   } */
             }
         }
+        $this->view->banners = \Tourpage\Models\Banners::find(array(
+                    'conditions' => 'bannerStatus = :status: AND bannerType = :type:',
+                    'bind' => array('status' => \Tourpage\Models\Banners::ACTIVE_STATUS_CODE, 'type' => 'vendorRegistration')
+        ));
         $this->view->reCaptchaError = $reCaptchaError;
         $this->view->form = $registrationForm;
     }
