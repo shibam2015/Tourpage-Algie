@@ -51,7 +51,7 @@
                             <td><?php echo $item->group->groupName; ?></td>
                                 <td>
                                     <?php if ($this->vendors->isAllowed('groups', 'remove')) { ?>
-                                        <?php echo $this->tag->linkTo(array('/vendor/groups/remove/' . $item->groupId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour Mapping')); ?>
+                                        <?php echo $this->tag->linkTo(array('/vendor/groups/removemappedtour/' . $item->groupToursId, '<span class="glyphicon glyphicon-trash"></span>', 'class' => 'btn btn-danger btn-xs tooltips', 'title' => 'Remove Tour Mapping')); ?>
                                     <?php } ?>
                                 </td>
                             </tr>
