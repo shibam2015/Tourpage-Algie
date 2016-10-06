@@ -144,14 +144,17 @@ class GroupsController extends VendorController {
 		$tour->order("\Tourpage\Models\VendorsTours.vendorTourId DESC");
 		$tour->groupBy("\Tourpage\Models\VendorsTours.vendorTourId");
 		$tours = $tour->execute();
+		$this->view->toursData = $this->getToursData($tours);
+		/*
 		$pager = new \Tourpage\Library\Pager(array(
 			"data" => $tours,
 			"page" => $page,
 		));
+		*/
 		$this->tag->setTitle('Tours');
 		$this->view->vendorId = $vendorId;
 		$this->view->setVars(array(
-			'pager' => $pager,
+			//'pager' => $pager,
 			'defaultValues' => $defaultValues
 		));
 		$this->tag->setTitle('Map Tour');
@@ -183,6 +186,24 @@ class GroupsController extends VendorController {
 		$this->view->vendorId = $vendorId;
 		$this->view->groupTours = $groupTours;
 	    $this->view->form = $mapForm;
+	}
+	
+	private function getToursData($result)
+	{
+		$data = [];
+		foreach ($result as $item) {
+			$groupTour = \Tourpage\Models\GroupsTours::find([
+				'conditions' => 'tourId = :tour_id: AND vendorId = :vendor_id:',
+				'bind' => ['tour_id' => $item->tourId, 'vendor_id' => $item->vendorId]
+			]);
+			// exclude the group tours that are already mapped
+			if ($groupTour->count() > 0) {
+				continue;
+			} else {
+				$data[] = $item;
+			}
+		}
+		return $data;
 	}
 
 	public function listAction($page = 1) {
@@ -335,6 +356,14 @@ class GroupsController extends VendorController {
             }
         }
         $this->view->group = $group;
+    }
+	
+	public function removemappedtourAction($groupToursId = 0)
+	{
+		$groupTours = \Tourpage\Models\GroupsTours::findFirstByGroupToursId($groupToursId);
+		$groupTours->delete();
+        $this->flash->success("Mapped tour has been deleted successfuly.");
+        $this->response->redirect('/vendor/groups/list');
     }
 
 }
