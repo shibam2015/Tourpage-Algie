@@ -19,8 +19,8 @@
                                         <hr style="margin: 0px;"/>
                                         <ul id="sortable1" class="connectedSortable">
                                         
-                                        <?php if ($pager->getTotalItems() > 0) { ?>
-                                        <?php foreach ($pager->getItems() as $item) { ?>
+                                        <?php if (count($toursData) > 0) { ?>
+                                        <?php foreach ($toursData as $item) { ?>
                                           <li class="ui-state-default" id="items_<?php echo $item->tour->tourId; ?>"><?php echo $item->tour->tourTitle; ?></li>
                                         <?php }?>
                                         <?php }?>
