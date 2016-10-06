@@ -64,9 +64,9 @@
 
 <!--- banner header -->
 <div>
-<?php if ($banners && $banners->count() > 0) { ?>
+<?php //if ($banners && $banners->count() > 0) { ?>
 
-   <div id="vendor-login-ad" class="carousel slide" data-ride="carousel">
+   <div id="vendor-login-ad" class="carousel slide" data-ride="carousel" style="display: none">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             <?php for ($b = 0; $b < $banners->count(); $b++) { ?>
@@ -99,7 +99,7 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-<?php } ?>
+<?php //} ?>
 </div>
 
 <h1 style="margin:35px 0 50px; text-align:center; color:#044467; font-size:36px;">Login to View Your Account</h1>
