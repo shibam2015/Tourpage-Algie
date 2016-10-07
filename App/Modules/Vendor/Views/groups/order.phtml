@@ -92,7 +92,6 @@ jQuery(function() {
 			data: 'sdata='+sdata+'&usdata='+usdata,
 			url:'<?php echo $this->url->get("/vendor/groups/order");?>',
 			success:function(result) {
-				alert(result);
 				setTimeout(function(){
 					location.reload(); 
 				}, 1000);
