@@ -300,24 +300,32 @@ class GroupsController extends VendorController {
 			  //$redirectTo = $this->url->get('/vendor/groups/order');
 			  $val = 1;
 			  $flag = 0;
-			  foreach($sdata as $data){
-				  $data = substr($data,strpos($data,"_")+1);
-				  $groupSql = 'vendorId = "' . $vendorId . '" AND groupId = "' . $data . '"';
-				  $group_order = \Tourpage\Models\GroupsVendors::findFirst($groupSql);
-				  $group_order->groupVendorsDisplay='Y';
-				  $group_order->groupVendorsOrder = $val;
-				  $group_order->update();
-				  $flag = 1;
-				  $val++;
+			  if (count($sdata) > 1) {
+				foreach($sdata as $data){
+					if (!empty($data)) {
+						$data = substr($data,strpos($data,"_")+1);
+						$groupSql = 'vendorId = "' . $vendorId . '" AND groupId = "' . $data . '"';
+						$group_order = \Tourpage\Models\GroupsVendors::findFirst($groupSql);
+						$group_order->groupVendorsDisplay='Y';
+						$group_order->groupVendorsOrder = $val;
+						$group_order->update();
+					}
+					$flag = 1;
+					$val++;
+				}
 			  }
-			  foreach($usdata as $udata){
-				  $udata = substr($udata,strpos($udata,"_")+1);
-				  $ugroupSql = 'vendorId = "' . $vendorId . '" AND groupId = "' . $udata . '"';
-				  $group_order = \Tourpage\Models\GroupsVendors::findFirst($ugroupSql);
-				  $group_order->groupVendorsDisplay='N';
-				  $group_order->groupVendorsOrder = 0;
-				  $group_order->update();
-				  $flag = 1;
+			  if (count($usdata) > 1) {
+				foreach($usdata as $udata){
+					if (!empty($udata)) {
+						$udata = substr($udata,strpos($udata,"_")+1);
+						$ugroupSql = 'vendorId = "' . $vendorId . '" AND groupId = "' . $udata . '"';
+						$group_order = \Tourpage\Models\GroupsVendors::findFirst($ugroupSql);
+						$group_order->groupVendorsDisplay='N';
+						$group_order->groupVendorsOrder = 0;
+						$group_order->update();
+					}
+					$flag = 1;
+				}
 			  }
 			  if($flag == 1){
 				  $this->flash->success("Group Order success."); 
@@ -326,7 +334,8 @@ class GroupsController extends VendorController {
 					  $this->flash->error((string) $message);
                   }
 			  }
-			  return $this->response->redirect($this->url->get('/vendor/groups/order'));
+			  exit();
+			  //return $this->response->redirect($this->url->get('/vendor/groups/order'));
 		  }
     }
 /**
