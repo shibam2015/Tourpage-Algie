@@ -56,7 +56,7 @@ class StoreController extends FrontendController {
 
         $groupVendors = \Tourpage\Models\GroupsVendors::find(array(
                     'conditions' => 'vendorId = :vendor_id:',
-                    'order' => 'groupVendorsId DESC',
+                    'order' => 'groupVendorsOrder ASC',
                     'limit' => 5,
                     'bind' => array(
                         'vendor_id' => $storeVendor->vendorId
