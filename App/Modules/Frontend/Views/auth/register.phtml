@@ -88,7 +88,12 @@ $this->assets->outputCss();
                </div>
                    
                     <div class="vacation-img">
-                    	<img src="../public/elements/frontend/assets/images/vacation-img.jpg">
+						<?php if ($banners->count() > 0): ?>
+							<a href="<?php echo $banners[0]->bannerLink;?>" target="_blank">
+								<img src="<?php echo $banners[0]->getBannerUri(); ?>">
+							</a>
+						<?php endif; ?>
+                    	<!--<img src="../public/elements/frontend/assets/images/vacation-img.jpg">-->
                     </div>
                 </div>
             </div>
