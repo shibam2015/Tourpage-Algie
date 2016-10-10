@@ -195,7 +195,12 @@ foreach (array("y" => "Yes", "n" => "No", "ns" => "Not Sure") as $tadvKey => $ta
 </div>
 
 <div class="img-sec">
-<a href="#"><img style="max-width:100%; height:auto;" src="/public/elements/vendor/images/login-img.jpg" alt="img" /></a>
+	<?php if ($banners->count() > 0): ?>
+		<a href="<?php echo $banners[0]->bannerLink;?>" target="_blank">
+			<img src="<?php echo $banners[0]->getBannerUri(); ?>" style="max-width:100%; height:auto;">
+		</a>
+	<?php endif; ?>
+<!--<a href="#"><img style="max-width:100%; height:auto;" src="/public/elements/vendor/images/login-img.jpg" alt="img" /></a>-->
 </div>
 
 <div class="clearfix"></div>
