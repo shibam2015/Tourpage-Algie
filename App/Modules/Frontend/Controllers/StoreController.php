@@ -35,7 +35,9 @@ class StoreController extends FrontendController {
             return FALSE;
         }
 
-		if (isset($this->request->getPost()['vendor_id'])) {
+		if (isset($_GET['vid'])) {
+			$store = $_GET['vid'];
+		} else if (isset($this->request->getPost()['vendor_id'])) {
 			$store = $this->request->getPost()['vendor_id'];
 		} else if (!preg_match_all('/[0-9]/', $store)) {
             return FALSE;
@@ -147,7 +149,9 @@ class StoreController extends FrontendController {
             return FALSE;
         }
 
-        if (isset($this->request->getPost()['vendor_id'])) {
+        if (isset($_GET['vid'])) {
+			$store = $_GET['vid'];
+		} else if (isset($this->request->getPost()['vendor_id'])) {
 			$store = $this->request->getPost()['vendor_id'];
 		} else if (!preg_match_all('/[0-9]/', $store)) {
             return FALSE;
