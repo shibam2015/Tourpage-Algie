@@ -385,13 +385,20 @@ else{ echo '';}*/?></strong>, Duration: <strong>
                                                             });</script>
                                                         </li>
                                                     </ul>
-                                                    <p>
+													<p class="clone-row-review-<?php echo $review->reviewId; ?>" style="display:none;">
+														<?php
+                                                            $reviewContent = \Tourpage\Helpers\Utils::decodeString($review->reviewContent);
+															echo $reviewContent;
+														?>
+													</p>
+                                                    <p class="row-review-<?php echo $review->reviewId; ?>">
                                                         <?php
                                                             $reviewContent = \Tourpage\Helpers\Utils::decodeString($review->reviewContent);
                                                             if (strlen($reviewContent) > 200) {
                                                                 $reviewContent = substr($reviewContent, 0, 200);
                                                                 $reviewContent .= '.. ';
-                                                                $reviewContent .= $this->tag->linkTo(array('#', 'more', 'local' => false));
+																$reviewContent .= "<a href='javascript:showFull({$review->reviewId})'>more</a>";
+                                                                //$reviewContent .= $this->tag->linkTo(array('#', 'more', 'local' => false));
                                                             }
                                                             echo $reviewContent;
                                                         ?>
@@ -783,4 +790,9 @@ $(document).ready(function(){
             mapForm.submit();
     	}
     }
+	
+	function showFull(id) {
+		var fulltxt = $(".clone-row-review-"+id).html();
+		$(".row-review-"+id).html(fulltxt);
+	}
 </script>
