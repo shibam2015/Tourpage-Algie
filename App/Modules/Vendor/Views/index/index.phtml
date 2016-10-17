@@ -1,11 +1,268 @@
 <div class="col-lg-9">
+    <h4>Getting Started. Complete your vendor account with the following steps that will guide you.</h4>
+    <div class="container">
+        <div class="row">
+            <section>
+            <div class="wizard">
+                <div class="wizard-inner">
+                    <div class="connecting-line"></div>
+                    <ul class="nav nav-tabs" role="tablist">
+    
+                        <li role="presentation" class="active">
+                            <?php if ($stepsCompleted['profile_settings']): ?>
+                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1 (Profile Settings)">
+                                    <span class="round-tab activated">
+                                        <i class="glyphicon glyphicon-user"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="Step 1 (Profile Settings)">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-user"></i>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+    
+                        <li role="presentation" class="disabledd">
+                            <?php if ($stepsCompleted['store_settings']): ?>
+                                <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2 (Storefront Settings)">
+                                    <span class="round-tab activated">
+                                        <i class="glyphicon glyphicon-shopping-cart"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="Step 2 (Storefront Settings)">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-shopping-cart"></i>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                        <li role="presentation" class="disabledd">
+                            <?php if ($stepsCompleted['groups']): ?>
+                                <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3 (Create Group)">
+                                    <span class="round-tab activated">
+                                        <i class="glyphicon glyphicon-list-alt"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#step3" data-toggle="tab" aria-controls="step3" role="tab" title="Step 3 (Create Group)">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-list-alt"></i>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                        
+                        <li role="presentation" class="disabledd">
+                            <?php if ($stepsCompleted['tours']): ?>
+                                <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4 (Create Tour)">
+                                    <span class="round-tab activated">
+                                        <i class="glyphicon glyphicon-plane"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#step4" data-toggle="tab" aria-controls="step4" role="tab" title="Step 4 (Create Tour)">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-plane"></i>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                        
+                        <li role="presentation" class="disabledd">
+                            <?php if ($stepsCompleted['group_tours']): ?>
+                                <a href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Step 5 (Map Tour)">
+                                    <span class="round-tab activated">
+                                        <i class="glyphicon glyphicon-map-marker"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#step5" data-toggle="tab" aria-controls="step5" role="tab" title="Step 5 (Map Tour)">
+                                <span class="round-tab">
+                                    <i class="glyphicon glyphicon-map-marker"></i>
+                                </span>
+                            </a>
+                            <?php endif; ?>
+                        </li>
+                        
+                        <li role="presentation" class="disabledd">
+                            <?php if ($stepsCompleted['groups_orders']): ?>
+                                <a href="#step6" data-toggle="tab" aria-controls="step6" role="tab" title="Step 6 (Sort Group)">
+                                    <span class="round-tab activated">
+                                        <i class="glyphicon glyphicon-sort"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#step6" data-toggle="tab" aria-controls="step6" role="tab" title="Step 6 (Sort Group)">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-sort"></i>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+    
+                        <li role="presentation" class="disabledd">
+                            <?php if ($stepsCompleted['profile_settings'] && $stepsCompleted['store_settings'] && $stepsCompleted['groups'] && $stepsCompleted['tours'] && $stepsCompleted['group_tours'] && $stepsCompleted['groups_orders']): ?>
+                                <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Completed">
+                                    <span class="round-tab completed">
+                                        <i class="glyphicon glyphicon-ok"></i>
+                                    </span>
+                                </a>
+                            <?php else: ?>
+                                <a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Completed">
+                                    <span class="round-tab">
+                                        <i class="glyphicon glyphicon-ok"></i>
+                                    </span>
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    </ul>
+                </div>
+    
+                <form role="form">
+                    <div class="tab-content">
+                        <div class="tab-pane active" role="tabpanel" id="step1">
+                            <?php if ($stepsCompleted['profile_settings']): ?>
+                                <h4>Step 1 (Profile Settings) <i class="glyphicon glyphicon-ok" style="color: #53C842"></i></h4>
+                                <p>You have completed step 1. Proceed to other uncompleted steps. Or you may update your profile <a href="/vendor/account/edit">here</a></p>
+                            <?php else: ?>
+                                <h4>Step 1 (Profile Settings) <i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57)"></i></h4>
+                                <p>Complete your profile settings by clicking <a href="/vendor/account/edit">here</a></p>
+                            <?php endif; ?>
+                            <!--
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
+                            </ul>
+                            -->
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="step2">
+                            <?php if ($stepsCompleted['store_settings']): ?>
+                                <h4>Step 2 (Storefront Settings) <i class="glyphicon glyphicon-ok" style="color: #53C842;"></i></h4>
+                                <p>You have completed step 2. Proceed to other uncompleted steps. Or you may update your store settings <a href="/vendor/account/storesetting">here</a></p>
+                            <?php else: ?>
+                                <h4>Step 2 (Storefront Settings) <i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57)"></i></h4>
+                                <p>Complete your store settings by clicking <a href="/vendor/account/storesetting">here</a></p>
+                            <?php endif; ?>
+                            <!--
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
+                                <li><button type="button" class="btn btn-primary next-step">Save and continue</button></li>
+                            </ul>
+                            -->
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="step3">
+                            <?php if ($stepsCompleted['groups']): ?>
+                                <h4>Step 3 (Create Group) <i class="glyphicon glyphicon-ok" style="color: #53C842;"></i></h4>
+                                <p>You have completed step 3. Proceed to other uncompleted steps. Or you may add more <a href="/vendor/groups/add">groups</a>.</p>
+                            <?php else: ?>
+                                <h4>Step 3 (Create Group) <i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57);"></i></h4>
+                                <p>It seems like you have not created or activated a group. <a href="/vendor/groups/add">Create</a> a group now.</p>
+                            <?php endif; ?>
+                            <!--
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
+                                <li><button type="button" class="btn btn-default next-step">Skip</button></li>
+                                <li><button type="button" class="btn btn-primary btn-info-full next-step">Save and continue</button></li>
+                            </ul>
+                            -->
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="step4">
+                            <?php if ($stepsCompleted['tours']): ?>
+                                <h4>Step 4 (Create Tour)<i class="glyphicon glyphicon-ok" style="color: #53C842;"></i></h4>
+                                <p>You have completed step 4. Proceed to other uncompleted steps. Or you may <a href="/vendor/tours/add">add</a> more tours.</p>
+                            <?php else: ?>
+                                <h4>Step 4 (Create Tour)<i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57);"></i></h4>
+                            <p>It seems like you have not created a tour. <a href="/vendor/tours/add">Create</a> a tour now.</p>
+                            <?php endif; ?>
+                            <!--
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
+                                <li><button type="button" class="btn btn-default next-step">Skip</button></li>
+                                <li><button type="button" class="btn btn-primary btn-info-full next-step">Save and continue</button></li>
+                            </ul>
+                            -->
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="step5">
+                            <?php if ($stepsCompleted['group_tours']): ?>
+                                <h4>Step 5 (Mapped A Tour) <i class="glyphicon glyphicon-ok" style="color: #53C842;"></i></h4>
+                                <p>You have completed step 5. Proceed to other uncompleted steps. Or you may <a href="/vendor/groups/map">mapped</a> more tours to a group.</p>
+                            <?php else: ?>
+                                <h4>Step 5 (Mapped A Tour) <i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57);"></i></h4>
+                            <p>It seems like you have not mapped a tour. <a href="/vendor/groups/map">Mapped</a> a tour in a group.</p>
+                            <?php endif; ?>
+                            <!--
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
+                                <li><button type="button" class="btn btn-default next-step">Skip</button></li>
+                                <li><button type="button" class="btn btn-primary btn-info-full next-step">Save and continue</button></li>
+                            </ul>
+                            -->
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="step6">
+                            <?php if ($stepsCompleted['group_tours']): ?>
+                                <h4>Step 6 (Group Order) <i class="glyphicon glyphicon-ok" style="color: #53C842;"></i></h4>
+                                <p>You have completed step 6. Proceed to other uncompleted steps. Or you may <a href="/vendor/groups/order">update</a> the group sorting.</p>
+                            <?php else: ?>
+                                <h4>Step 6 (Group Order) <i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57);"></i></h4>
+                            <p>It seems like you have not sort a group tour. <a href="/vendor/groups/order">Sort</a> a group tour.</p>
+                            <?php endif; ?>
+                            <!--
+                            <ul class="list-inline pull-right">
+                                <li><button type="button" class="btn btn-default prev-step">Previous</button></li>
+                                <li><button type="button" class="btn btn-default next-step">Skip</button></li>
+                                <li><button type="button" class="btn btn-primary btn-info-full next-step">Save and continue</button></li>
+                            </ul>
+                            -->
+                        </div>
+                        <div class="tab-pane" role="tabpanel" id="complete">
+                            <?php if ($stepsCompleted['profile_settings'] && $stepsCompleted['store_settings'] && $stepsCompleted['groups'] && $stepsCompleted['tours'] && $stepsCompleted['group_tours'] && $stepsCompleted['groups_orders']): ?>
+                                <h4>Completed <i class="glyphicon glyphicon-ok" style="color: #53C842;"></i></h4>
+                                <p>You have successfully completed all steps.</p>
+                            <?php else: ?>
+                                <h4>You have not completed all the steps <i class="glyphicon glyphicon-remove" style="color: rgb(239, 69, 57);"></i></h4>
+                                <?php
+                                    $steps = [];
+                                    if (!$stepsCompleted['profile_settings']) {
+                                        $steps[] = 'Step 1 (Profile Settings)';
+                                    }
+                                    if (!$stepsCompleted['store_settings']) {
+                                        $steps[] = 'Step 2 (Store Settings)';
+                                    }
+                                    if (!$stepsCompleted['groups']) {
+                                        $steps[] = 'Step 3 (Create Group)';
+                                    }
+                                    if (!$stepsCompleted['tours']) {
+                                        $steps[] = 'Step 4 (Create Tour)';
+                                    }
+                                    if (!$stepsCompleted['group_tours']) {
+                                        $steps[] = 'Step 5 (Map Tour)';
+                                    }
+                                    if (!$stepsCompleted['groups_orders']) {
+                                        $steps[] = 'Step 6 (Group Order)';
+                                    }
+                                ?>
+                                <p>Please complete these step(s) <?php echo implode(', ', $steps); ?>.</p>
+                            <?php endif; ?>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </form>
+            </div>
+        </section>
+       </div>
+    </div>
+</div>
+<div class="col-lg-9">
     <?php if ($announcementContent != '') { ?>
-        <div id="notice" class="panel panel-primary">
+        <!--<div id="notice" class="panel panel-primary">
             <div class="panel-body">
                 <a class="close tooltips" title="Close Notice"><?php echo $this->tag->image(array(VENDOR_DIR . 'images/btn_close.jpg')); ?></a>
-                <?php echo $announcementContent; ?>
+                <?php #echo $announcementContent; ?>
             </div>
         </div>
+        -->
     <?php } ?>
     <?php if ($this->vendors->isAllowed('tours')) { ?>
         <div class="panel panel-success">
@@ -224,4 +481,39 @@
             jQuery('#notice').slideUp(1000);
         });
     });
+    $(document).ready(function () {
+    //Initialize tooltips
+    $('.nav-tabs > li a[title]').tooltip();
+    
+    //Wizard
+    $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+        var $target = $(e.target);
+    
+        if ($target.parent().hasClass('disabled')) {
+            return false;
+        }
+    });
+
+    $(".next-step").click(function (e) {
+
+        var $active = $('.wizard .nav-tabs li.active');
+        $active.next().removeClass('disabled');
+        nextTab($active);
+
+    });
+    $(".prev-step").click(function (e) {
+
+        var $active = $('.wizard .nav-tabs li.active');
+        prevTab($active);
+
+    });
+});
+
+function nextTab(elem) {
+    $(elem).next().find('a[data-toggle="tab"]').click();
+}
+function prevTab(elem) {
+    $(elem).prev().find('a[data-toggle="tab"]').click();
+}
 </script>
