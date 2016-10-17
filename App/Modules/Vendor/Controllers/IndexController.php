@@ -84,6 +84,10 @@ class IndexController extends VendorController {
 				'conditions' => 'vendorId = :vendor_id: AND vendorMessageStatus = :status:',
 				'bind' => array('vendor_id' => $vendorId, 'status' => \Tourpage\Models\VendorsMessages::UNREAD_STATUS_CODE)
 			));
+			
+			/*** check step by step process if completed ***/
+			//print "<pre>"; print_r($this->checkStepsCompleted($vendorId)); exit;
+			$this->view->stepsCompleted = $this->checkStepsCompleted($vendorId);
 		}
 		if ($action == 'message') {
 			$vendorsMessages = \Tourpage\Models\VendorsMessages::findFirst(array(
@@ -110,5 +114,79 @@ class IndexController extends VendorController {
 		}
 		echo $return;		
 		exit();
+	}
+	
+	private function checkStepsCompleted($vendorId)
+	{
+		$steps = [];
+		// check profile and store settings
+		$vendorInfo = \Tourpage\Models\Vendors::findFirstByVendorId($vendorId);
+		if (($vendorInfo->businessName == '' || $vendorInfo->businessName == null)) {
+			$steps['profile_settings'] = false;
+		} else {
+			$steps['profile_settings'] = true;
+		}
+		
+		if (($vendorInfo->slogan == '' || $vendorInfo->slogan == null)) {
+			$steps['store_settings'] = false;
+		} else {
+			$steps['store_settings'] = true;
+		}
+		
+		//check groups
+		$groups = \Tourpage\Models\GroupsVendors::find([
+			'vendorId = :vendor_id:',
+			'bind' => [
+				'vendor_id' => $vendorId
+			]
+		]);
+		if ($groups->count() > 0) {
+			$steps['groups'] = true;
+		} else {
+			$steps['groups'] = false;
+		}
+		
+		// check tours
+		$tours = \Tourpage\Models\VendorsTours::find([
+			'vendorId = :vendor_id:',
+			'bind' => [
+				'vendor_id' => $vendorId
+			]
+		]);
+		if ($tours->count() > 0) {
+			$steps['tours'] = true;
+		} else {
+			$steps['tours'] = false;
+		}
+		
+		//check mapped tours
+		$groupTours = \Tourpage\Models\GroupsTours::find([
+			'vendorId = :vendor_id:',
+			'bind' => [
+				'vendor_id' => $vendorId
+			]
+		]);
+		if ($groupTours->count() > 0) {
+			$steps['group_tours'] = true;
+		} else {
+			$steps['group_tours'] = false;
+		}
+		
+		//check group orders
+		$groupVendors = \Tourpage\Models\GroupsVendors::query();
+        $groupVendors->where("\Tourpage\Models\GroupsVendors.vendorId = :vendor_id:");
+        $modelBind['vendor_id'] = $vendorId;
+        $groupVendors->bind($modelBind);
+
+        $groupVendors->order("\Tourpage\Models\GroupsVendors.groupVendorsOrder");
+        $groupVendors->groupBy("\Tourpage\Models\GroupsVendors.groupVendorsId");
+        $groups = $groupVendors->execute();
+		if ($groups->count() > 0) {
+			$steps['groups_orders'] = true;
+		} else {
+			$steps['groups_orders'] = false;
+		}
+		
+		return $steps;
 	}
 }
